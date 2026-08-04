@@ -31,7 +31,13 @@ async def get_document_command_service(
 ) -> DocumentCommandServiceImpl:
     settings = get_settings()
     repository = SqlAlchemyDocumentRepository(session)
-    storage = CloudinaryDocumentStorage()
+    try:
+        storage = CloudinaryDocumentStorage()
+    except DocumentStorageUploadError as error:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=str(error),
+        ) from error
     return DocumentCommandServiceImpl(
         document_repository=repository,
         document_storage=storage,
@@ -83,11 +89,12 @@ async def create_document(
     content = await file.read()
 
     try:
+        normalized_mime_type = (file.content_type or "application/octet-stream").split(";", maxsplit=1)[0].strip().lower()
         command = CreateDocumentCommand(
             owner_user_id=owner_user_id,
             name=name,
             original_filename=file.filename or "document",
-            mime_type=file.content_type or "application/octet-stream",
+            mime_type=normalized_mime_type,
             size_bytes=len(content),
             content=content,
         )
@@ -96,6 +103,11 @@ async def create_document(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)) from error
     except DocumentStorageUploadError as error:
         raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail=str(error)) from error
+    except Exception as error:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Unexpected error while uploading document",
+        ) from error
 
     return _to_document_resource(document)
 

@@ -28,19 +28,20 @@ class DocumentCommandServiceImpl(DocumentCommandService):
 
     async def handle_create_document(self, command: CreateDocumentCommand) -> Document:
         self._validate_document_size(command.size_bytes)
-        self._validate_mime_type(command.mime_type)
+        normalized_mime_type = self._normalize_mime_type(command.mime_type)
+        self._validate_mime_type(normalized_mime_type)
 
         storage_path = await self._document_storage.store(
             command.original_filename,
             command.content,
-            command.mime_type,
+            normalized_mime_type,
         )
 
         document = Document.create(
             owner_user_id=command.owner_user_id,
             name=command.name,
             original_filename=command.original_filename,
-            mime_type=command.mime_type,
+            mime_type=normalized_mime_type,
             size_bytes=command.size_bytes,
             storage_path=storage_path,
         )
@@ -87,3 +88,6 @@ class DocumentCommandServiceImpl(DocumentCommandService):
     def _validate_mime_type(self, mime_type: str) -> None:
         if mime_type not in self._allowed_mime_types:
             raise UnsupportedDocumentTypeError(f"Unsupported document type: {mime_type}")
+
+    def _normalize_mime_type(self, mime_type: str) -> str:
+        return mime_type.split(";", maxsplit=1)[0].strip().lower()
