@@ -67,4 +67,3 @@ class Document:
         self.status = DocumentStatus.BLOCKED
         self.blocked_reason = reason
         self.updated_at = datetime.now(UTC)
-

@@ -9,7 +9,7 @@ from app.documents.domain.model.valueobjects.document_status import DocumentStat
 from app.documents.domain.repositories.document_repository import DocumentRepository
 from app.documents.domain.services.document_command_service import DocumentCommandService
 from app.documents.infrastructure.storage.local_document_storage import LocalDocumentStorage
-from app.documents.shared.model.entities.document import Document
+from app.documents.domain.model.entities.document import Document
 
 
 class DocumentCommandServiceImpl(DocumentCommandService):

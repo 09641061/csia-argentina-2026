@@ -2,7 +2,7 @@ from app.documents.domain.model.queries.get_document_by_id_query import GetDocum
 from app.documents.domain.model.queries.list_documents_query import ListDocumentsQuery
 from app.documents.domain.repositories.document_repository import DocumentRepository
 from app.documents.domain.services.document_query_service import DocumentQueryService
-from app.documents.shared.model.entities.document import Document
+from app.documents.domain.model.entities.document import Document
 
 
 class DocumentQueryServiceImpl(DocumentQueryService):

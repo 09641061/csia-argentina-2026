@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from app.documents.shared.model.entities.document import Document
+from app.documents.domain.model.entities.document import Document
 
 
 class DocumentRepository(Protocol):

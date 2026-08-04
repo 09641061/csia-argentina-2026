@@ -8,7 +8,7 @@ from app.documents.domain.model.valueobjects.document_status import DocumentStat
 from app.documents.domain.model.valueobjects.document_storage_path import DocumentStoragePath
 from app.documents.domain.repositories.document_repository import DocumentRepository
 from app.documents.infrastructure.persistence.sqlalchemy.models.document_model import DocumentModel
-from app.documents.shared.model.entities.document import Document
+from app.documents.domain.model.entities.document import Document
 
 
 class SqlAlchemyDocumentRepository(DocumentRepository):

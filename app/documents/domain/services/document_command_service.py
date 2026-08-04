@@ -1,7 +1,7 @@
 from typing import Protocol
 
 from app.documents.domain.model.commands.create_document_command import CreateDocumentCommand
-from app.documents.shared.model.entities.document import Document
+from app.documents.domain.model.entities.document import Document
 
 
 class DocumentCommandService(Protocol):

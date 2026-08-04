@@ -2,7 +2,7 @@ from typing import Protocol
 
 from app.documents.domain.model.queries.get_document_by_id_query import GetDocumentByIdQuery
 from app.documents.domain.model.queries.list_documents_query import ListDocumentsQuery
-from app.documents.shared.model.entities.document import Document
+from app.documents.domain.model.entities.document import Document
 
 
 class DocumentQueryService(Protocol):
