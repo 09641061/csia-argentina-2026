@@ -1,2 +1,0 @@
-Sample text document for testing document upload.
-Owner: test

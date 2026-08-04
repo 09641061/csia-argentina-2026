@@ -1,12 +1,14 @@
 from datetime import UTC, datetime
 
-from app.documents.domain.exceptions import DocumentFileTooLargeError, UnsupportedDocumentTypeError
+from app.documents.domain.exceptions import DocumentFileTooLargeError
 from app.documents.domain.model.commands.create_document_command import CreateDocumentCommand
 from app.documents.domain.model.commands.update_document_status_command import UpdateDocumentStatusCommand
 from app.documents.domain.model.events.document_status_changed_event import DocumentStatusChangedEvent
 from app.documents.domain.model.events.document_uploaded_event import DocumentUploadedEvent
 from app.documents.domain.model.entities.document import Document
+from app.documents.domain.model.valueobjects.document_mime_type import DocumentMimeType
 from app.documents.domain.model.valueobjects.document_status import DocumentStatus
+from app.documents.domain.model.valueobjects.json_document_content import JsonDocumentContent
 from app.documents.domain.repositories.document_repository import DocumentRepository
 from app.documents.domain.services.document_command_service import DocumentCommandService
 from app.documents.infrastructure.storage.cloudinary_document_storage import CloudinaryDocumentStorage
@@ -17,31 +19,30 @@ class DocumentCommandServiceImpl(DocumentCommandService):
         self,
         document_repository: DocumentRepository,
         document_storage: CloudinaryDocumentStorage,
-        allowed_mime_types: list[str],
         max_document_size_bytes: int,
     ) -> None:
         self._document_repository = document_repository
         self._document_storage = document_storage
-        self._allowed_mime_types = allowed_mime_types
         self._max_document_size_bytes = max_document_size_bytes
         self.published_events: list[object] = []
 
     async def handle_create_document(self, command: CreateDocumentCommand) -> Document:
         self._validate_document_size(command.size_bytes)
-        self._validate_mime_type(command.mime_type)
+        mime_type = DocumentMimeType(command.mime_type)
+        content = JsonDocumentContent(command.content)
 
         storage_path = await self._document_storage.store(
             command.original_filename,
-            command.content,
-            command.mime_type,
+            content.value,
+            mime_type.value,
         )
 
         document = Document.create(
             owner_user_id=command.owner_user_id,
             name=command.name,
             original_filename=command.original_filename,
-            mime_type=command.mime_type,
-            size_bytes=command.size_bytes,
+            mime_type=mime_type.value,
+            size_bytes=content.size_bytes,
             storage_path=storage_path,
         )
 
@@ -84,6 +85,3 @@ class DocumentCommandServiceImpl(DocumentCommandService):
                 f"Document size exceeds the limit of {self._max_document_size_bytes} bytes"
             )
 
-    def _validate_mime_type(self, mime_type: str) -> None:
-        if mime_type not in self._allowed_mime_types:
-            raise UnsupportedDocumentTypeError(f"Unsupported document type: {mime_type}")

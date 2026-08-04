@@ -13,3 +13,7 @@ class UnsupportedDocumentTypeError(DocumentDomainError):
 class DocumentFileTooLargeError(DocumentDomainError):
     pass
 
+
+class InvalidDocumentContentError(DocumentDomainError):
+    pass
+

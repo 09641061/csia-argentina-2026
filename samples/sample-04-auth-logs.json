@@ -1,0 +1,6032 @@
+{
+  "source": "auth-api",
+  "window": {
+    "from": "2026-07-01T00:00:00Z",
+    "to": "2026-07-01T06:09:23Z"
+  },
+  "total_events": 600,
+  "events": [
+    {
+      "timestamp": "2026-07-01T00:00:00Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "ana.gomez@example.com",
+      "source_ip": "10.20.5.84",
+      "session_id": "sess_bf6918d05b87",
+      "duration_ms": 523
+    },
+    {
+      "timestamp": "2026-07-01T00:00:37Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "bruno.gomez@example.com",
+      "source_ip": "10.20.1.179",
+      "session_id": "sess_90a1e754d41b",
+      "duration_ms": 125
+    },
+    {
+      "timestamp": "2026-07-01T00:01:14Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "carla.gomez@example.com",
+      "source_ip": "10.20.1.130",
+      "session_id": "sess_b35d6000d9f0",
+      "duration_ms": 572
+    },
+    {
+      "timestamp": "2026-07-01T00:01:51Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "diego.gomez@example.com",
+      "source_ip": "10.20.2.225",
+      "session_id": "sess_b0adec163694",
+      "duration_ms": 240
+    },
+    {
+      "timestamp": "2026-07-01T00:02:28Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "elena.gomez@example.com",
+      "source_ip": "10.20.3.71",
+      "session_id": "sess_81587ec8bc7b",
+      "duration_ms": 812
+    },
+    {
+      "timestamp": "2026-07-01T00:03:05Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "facundo.gomez@example.com",
+      "source_ip": "10.20.7.91",
+      "session_id": "sess_062e437ec52c",
+      "duration_ms": 692
+    },
+    {
+      "timestamp": "2026-07-01T00:03:42Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "token.refresh",
+      "user": "gisela.gomez@example.com",
+      "source_ip": "10.20.0.37",
+      "session_id": "sess_695b68a962e1",
+      "duration_ms": 87
+    },
+    {
+      "timestamp": "2026-07-01T00:04:19Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "login.failed",
+      "user": "hernan.perez@example.com",
+      "source_ip": "10.20.1.146",
+      "session_id": "sess_aa9a3a42b1b0",
+      "duration_ms": 792,
+      "debug_payload": {
+        "username": "hernan.perez@example.com",
+        "password": "Summer2026-7!"
+      },
+      "message": "Invalid credentials accidentally written to the debug log"
+    },
+    {
+      "timestamp": "2026-07-01T00:04:56Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "logout",
+      "user": "ines.perez@example.com",
+      "source_ip": "10.20.1.123",
+      "session_id": "sess_a2ee3a9a4e32",
+      "duration_ms": 208
+    },
+    {
+      "timestamp": "2026-07-01T00:05:33Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "julian.perez@example.com",
+      "source_ip": "10.20.1.152",
+      "session_id": "sess_91f82fd2e8cb",
+      "duration_ms": 939
+    },
+    {
+      "timestamp": "2026-07-01T00:06:10Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "ana.perez@example.com",
+      "source_ip": "10.20.5.38",
+      "session_id": "sess_87e5773ed153",
+      "duration_ms": 253
+    },
+    {
+      "timestamp": "2026-07-01T00:06:47Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "bruno.perez@example.com",
+      "source_ip": "10.20.0.94",
+      "session_id": "sess_0eda537b797a",
+      "duration_ms": 34
+    },
+    {
+      "timestamp": "2026-07-01T00:07:24Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "carla.perez@example.com",
+      "source_ip": "10.20.4.240",
+      "session_id": "sess_d0ff71bc1b59",
+      "duration_ms": 424
+    },
+    {
+      "timestamp": "2026-07-01T00:08:01Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "diego.perez@example.com",
+      "source_ip": "10.20.0.37",
+      "session_id": "sess_1559739fdf51",
+      "duration_ms": 475
+    },
+    {
+      "timestamp": "2026-07-01T00:08:38Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "elena.silva@example.com",
+      "source_ip": "10.20.7.91",
+      "session_id": "sess_7f2318dbe6e3",
+      "duration_ms": 65
+    },
+    {
+      "timestamp": "2026-07-01T00:09:15Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "facundo.silva@example.com",
+      "source_ip": "10.20.1.102",
+      "session_id": "sess_690f8f8a0bde",
+      "duration_ms": 750
+    },
+    {
+      "timestamp": "2026-07-01T00:09:52Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "gisela.silva@example.com",
+      "source_ip": "10.20.6.216",
+      "session_id": "sess_df2234a03fb9",
+      "duration_ms": 947
+    },
+    {
+      "timestamp": "2026-07-01T00:10:29Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "logout",
+      "user": "hernan.silva@example.com",
+      "source_ip": "10.20.3.71",
+      "session_id": "sess_094ba33d9dd3",
+      "duration_ms": 64
+    },
+    {
+      "timestamp": "2026-07-01T00:11:06Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "ines.silva@example.com",
+      "source_ip": "10.20.5.6",
+      "session_id": "sess_21c62d382d66",
+      "duration_ms": 494
+    },
+    {
+      "timestamp": "2026-07-01T00:11:43Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "login.success",
+      "user": "julian.silva@example.com",
+      "source_ip": "10.20.1.146",
+      "session_id": "sess_1502565e98f3",
+      "duration_ms": 61
+    },
+    {
+      "timestamp": "2026-07-01T00:12:20Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "ana.silva@example.com",
+      "source_ip": "10.20.0.194",
+      "session_id": "sess_de28923b3808",
+      "duration_ms": 864
+    },
+    {
+      "timestamp": "2026-07-01T00:12:57Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "mfa.challenge",
+      "user": "bruno.rossi@example.com",
+      "source_ip": "10.20.4.240",
+      "session_id": "sess_515e4a4028f9",
+      "duration_ms": 874
+    },
+    {
+      "timestamp": "2026-07-01T00:13:34Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "carla.rossi@example.com",
+      "source_ip": "10.20.2.250",
+      "session_id": "sess_664f32bf0ab2",
+      "duration_ms": 26
+    },
+    {
+      "timestamp": "2026-07-01T00:14:11Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "diego.rossi@example.com",
+      "source_ip": "10.20.1.27",
+      "session_id": "sess_7962f67b9b01",
+      "duration_ms": 645
+    },
+    {
+      "timestamp": "2026-07-01T00:14:48Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "elena.rossi@example.com",
+      "source_ip": "10.20.2.3",
+      "session_id": "sess_958b530f5923",
+      "duration_ms": 788
+    },
+    {
+      "timestamp": "2026-07-01T00:15:25Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "facundo.rossi@example.com",
+      "source_ip": "10.20.5.38",
+      "session_id": "sess_0c8d49757695",
+      "duration_ms": 412
+    },
+    {
+      "timestamp": "2026-07-01T00:16:02Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "gisela.rossi@example.com",
+      "source_ip": "10.20.6.202",
+      "session_id": "sess_77801c1640da",
+      "duration_ms": 775
+    },
+    {
+      "timestamp": "2026-07-01T00:16:39Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "hernan.rossi@example.com",
+      "source_ip": "10.20.6.202",
+      "session_id": "sess_01b48fe62a5e",
+      "duration_ms": 212
+    },
+    {
+      "timestamp": "2026-07-01T00:17:16Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "mfa.challenge",
+      "user": "ines.molina@example.com",
+      "source_ip": "10.20.6.62",
+      "session_id": "sess_dd85711a16cc",
+      "duration_ms": 307
+    },
+    {
+      "timestamp": "2026-07-01T00:17:53Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "julian.molina@example.com",
+      "source_ip": "10.20.4.185",
+      "session_id": "sess_009860e02e6b",
+      "duration_ms": 816
+    },
+    {
+      "timestamp": "2026-07-01T00:18:30Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "ana.molina@example.com",
+      "source_ip": "10.20.6.202",
+      "session_id": "sess_9748c38e0cad",
+      "duration_ms": 31
+    },
+    {
+      "timestamp": "2026-07-01T00:19:07Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "bruno.molina@example.com",
+      "source_ip": "10.20.6.216",
+      "session_id": "sess_101a641a5355",
+      "duration_ms": 871
+    },
+    {
+      "timestamp": "2026-07-01T00:19:44Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "carla.molina@example.com",
+      "source_ip": "10.20.4.240",
+      "session_id": "sess_645505085d2a",
+      "duration_ms": 579
+    },
+    {
+      "timestamp": "2026-07-01T00:20:21Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "diego.molina@example.com",
+      "source_ip": "10.20.5.38",
+      "session_id": "sess_0fcf301becff",
+      "duration_ms": 759
+    },
+    {
+      "timestamp": "2026-07-01T00:20:58Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "elena.molina@example.com",
+      "source_ip": "10.20.2.16",
+      "session_id": "sess_f6d3344b91e5",
+      "duration_ms": 144
+    },
+    {
+      "timestamp": "2026-07-01T00:21:35Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "facundo.vega@example.com",
+      "source_ip": "10.20.4.118",
+      "session_id": "sess_5fdfddf637df",
+      "duration_ms": 50
+    },
+    {
+      "timestamp": "2026-07-01T00:22:12Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "login.failed",
+      "user": "gisela.vega@example.com",
+      "source_ip": "10.20.4.185",
+      "session_id": "sess_dbc15c592b23",
+      "duration_ms": 163
+    },
+    {
+      "timestamp": "2026-07-01T00:22:49Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "mfa.challenge",
+      "user": "hernan.vega@example.com",
+      "source_ip": "10.20.4.240",
+      "session_id": "sess_fda10b031490",
+      "duration_ms": 913
+    },
+    {
+      "timestamp": "2026-07-01T00:23:26Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "ines.vega@example.com",
+      "source_ip": "10.20.1.179",
+      "session_id": "sess_d8e3183547c0",
+      "duration_ms": 524
+    },
+    {
+      "timestamp": "2026-07-01T00:24:03Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "julian.vega@example.com",
+      "source_ip": "10.20.1.152",
+      "session_id": "sess_23791e63af31",
+      "duration_ms": 717
+    },
+    {
+      "timestamp": "2026-07-01T00:24:40Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "ana.vega@example.com",
+      "source_ip": "10.20.5.38",
+      "session_id": "sess_4a415c782842",
+      "duration_ms": 573
+    },
+    {
+      "timestamp": "2026-07-01T00:25:17Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "bruno.vega@example.com",
+      "source_ip": "10.20.2.225",
+      "session_id": "sess_9d5b442cf1a0",
+      "duration_ms": 143
+    },
+    {
+      "timestamp": "2026-07-01T00:25:54Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "carla.ferrari@example.com",
+      "source_ip": "10.20.1.25",
+      "session_id": "sess_d74aad5ddc1a",
+      "duration_ms": 899
+    },
+    {
+      "timestamp": "2026-07-01T00:26:31Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "diego.ferrari@example.com",
+      "source_ip": "10.20.7.2",
+      "session_id": "sess_e96ca79454d0",
+      "duration_ms": 397
+    },
+    {
+      "timestamp": "2026-07-01T00:27:08Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "logout",
+      "user": "elena.ferrari@example.com",
+      "source_ip": "10.20.8.110",
+      "session_id": "sess_128ab06dc3b2",
+      "duration_ms": 751
+    },
+    {
+      "timestamp": "2026-07-01T00:27:45Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "facundo.ferrari@example.com",
+      "source_ip": "10.20.3.37",
+      "session_id": "sess_79cec1733f7d",
+      "duration_ms": 308
+    },
+    {
+      "timestamp": "2026-07-01T00:28:22Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "gisela.ferrari@example.com",
+      "source_ip": "10.20.1.27",
+      "session_id": "sess_66e00c660867",
+      "duration_ms": 352
+    },
+    {
+      "timestamp": "2026-07-01T00:28:59Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "token.refresh",
+      "user": "hernan.ferrari@example.com",
+      "source_ip": "10.20.6.216",
+      "session_id": "sess_bd64f5429044",
+      "duration_ms": 746
+    },
+    {
+      "timestamp": "2026-07-01T00:29:36Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "ines.ferrari@example.com",
+      "source_ip": "10.20.2.16",
+      "session_id": "sess_93cbbfdb131b",
+      "duration_ms": 208
+    },
+    {
+      "timestamp": "2026-07-01T00:30:13Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "julian.quiroga@example.com",
+      "source_ip": "10.20.1.102",
+      "session_id": "sess_a520c2a0cac5",
+      "duration_ms": 295
+    },
+    {
+      "timestamp": "2026-07-01T00:30:50Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "mfa.challenge",
+      "user": "ana.quiroga@example.com",
+      "source_ip": "10.20.7.91",
+      "session_id": "sess_01ef1cb0d13e",
+      "duration_ms": 620
+    },
+    {
+      "timestamp": "2026-07-01T00:31:27Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "logout",
+      "user": "bruno.quiroga@example.com",
+      "source_ip": "10.20.5.38",
+      "session_id": "sess_780ec1112cb9",
+      "duration_ms": 831
+    },
+    {
+      "timestamp": "2026-07-01T00:32:04Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "carla.quiroga@example.com",
+      "source_ip": "10.20.5.174",
+      "session_id": "sess_235e541afe85",
+      "duration_ms": 42
+    },
+    {
+      "timestamp": "2026-07-01T00:32:41Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "diego.quiroga@example.com",
+      "source_ip": "10.20.2.3",
+      "session_id": "sess_fe354424d93f",
+      "duration_ms": 409
+    },
+    {
+      "timestamp": "2026-07-01T00:33:18Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "elena.quiroga@example.com",
+      "source_ip": "10.20.5.6",
+      "session_id": "sess_3a6cca736a51",
+      "duration_ms": 323
+    },
+    {
+      "timestamp": "2026-07-01T00:33:55Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "facundo.quiroga@example.com",
+      "source_ip": "10.20.5.174",
+      "session_id": "sess_1e689467fd81",
+      "duration_ms": 224
+    },
+    {
+      "timestamp": "2026-07-01T00:34:32Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "gisela.sosa@example.com",
+      "source_ip": "10.20.8.64",
+      "session_id": "sess_72a4ecacecec",
+      "duration_ms": 944
+    },
+    {
+      "timestamp": "2026-07-01T00:35:09Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "hernan.sosa@example.com",
+      "source_ip": "10.20.6.202",
+      "session_id": "sess_1dd732037d29",
+      "duration_ms": 55
+    },
+    {
+      "timestamp": "2026-07-01T00:35:46Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "logout",
+      "user": "ines.sosa@example.com",
+      "source_ip": "10.20.5.6",
+      "session_id": "sess_c6aaeb517c1f",
+      "duration_ms": 544
+    },
+    {
+      "timestamp": "2026-07-01T00:36:23Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "julian.sosa@example.com",
+      "source_ip": "10.20.1.152",
+      "session_id": "sess_476ca465441c",
+      "duration_ms": 386
+    },
+    {
+      "timestamp": "2026-07-01T00:37:00Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "ana.sosa@example.com",
+      "source_ip": "10.20.4.230",
+      "session_id": "sess_a9eea5bfee42",
+      "duration_ms": 309
+    },
+    {
+      "timestamp": "2026-07-01T00:37:37Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "bruno.sosa@example.com",
+      "source_ip": "10.20.3.71",
+      "session_id": "sess_b3d5d20738f3",
+      "duration_ms": 471,
+      "authorization_header": "Bearer token=eyJhbGciOiJIUzI1NiJ9.d237ae3e777b56be48947f0a"
+    },
+    {
+      "timestamp": "2026-07-01T00:38:14Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "carla.sosa@example.com",
+      "source_ip": "10.20.4.240",
+      "session_id": "sess_04553e9b47a7",
+      "duration_ms": 317
+    },
+    {
+      "timestamp": "2026-07-01T00:38:51Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "diego.duarte@example.com",
+      "source_ip": "10.20.1.179",
+      "session_id": "sess_1caeecd08ade",
+      "duration_ms": 597
+    },
+    {
+      "timestamp": "2026-07-01T00:39:28Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "elena.duarte@example.com",
+      "source_ip": "10.20.2.3",
+      "session_id": "sess_25b295586b4d",
+      "duration_ms": 758
+    },
+    {
+      "timestamp": "2026-07-01T00:40:05Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "facundo.duarte@example.com",
+      "source_ip": "10.20.3.37",
+      "session_id": "sess_23807b2bccf8",
+      "duration_ms": 600
+    },
+    {
+      "timestamp": "2026-07-01T00:40:42Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "gisela.duarte@example.com",
+      "source_ip": "10.20.4.230",
+      "session_id": "sess_e407a53c4c15",
+      "duration_ms": 663
+    },
+    {
+      "timestamp": "2026-07-01T00:41:19Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "hernan.duarte@example.com",
+      "source_ip": "10.20.3.71",
+      "session_id": "sess_0357ddc7035b",
+      "duration_ms": 632
+    },
+    {
+      "timestamp": "2026-07-01T00:41:56Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "login.success",
+      "user": "ines.duarte@example.com",
+      "source_ip": "10.20.1.75",
+      "session_id": "sess_972bf4494aa9",
+      "duration_ms": 321
+    },
+    {
+      "timestamp": "2026-07-01T00:42:33Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "token.refresh",
+      "user": "julian.duarte@example.com",
+      "source_ip": "10.20.5.6",
+      "session_id": "sess_62dac28197d2",
+      "duration_ms": 87
+    },
+    {
+      "timestamp": "2026-07-01T00:43:10Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "ana.gomez@example.com",
+      "source_ip": "10.20.2.3",
+      "session_id": "sess_4afacf94ee80",
+      "duration_ms": 712
+    },
+    {
+      "timestamp": "2026-07-01T00:43:47Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "bruno.gomez@example.com",
+      "source_ip": "10.20.7.45",
+      "session_id": "sess_0c40c7e89392",
+      "duration_ms": 254
+    },
+    {
+      "timestamp": "2026-07-01T00:44:24Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "carla.gomez@example.com",
+      "source_ip": "10.20.8.44",
+      "session_id": "sess_ec06ab5d2210",
+      "duration_ms": 57
+    },
+    {
+      "timestamp": "2026-07-01T00:45:01Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "login.failed",
+      "user": "diego.gomez@example.com",
+      "source_ip": "10.20.5.6",
+      "session_id": "sess_be42e5a8be73",
+      "duration_ms": 744
+    },
+    {
+      "timestamp": "2026-07-01T00:45:38Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "elena.gomez@example.com",
+      "source_ip": "10.20.1.102",
+      "session_id": "sess_b918e5adf3be",
+      "duration_ms": 352
+    },
+    {
+      "timestamp": "2026-07-01T00:46:15Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "facundo.gomez@example.com",
+      "source_ip": "10.20.8.64",
+      "session_id": "sess_e73b840a4d31",
+      "duration_ms": 740
+    },
+    {
+      "timestamp": "2026-07-01T00:46:52Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "gisela.gomez@example.com",
+      "source_ip": "10.20.1.27",
+      "session_id": "sess_bd2e7e66c124",
+      "duration_ms": 855
+    },
+    {
+      "timestamp": "2026-07-01T00:47:29Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "token.refresh",
+      "user": "hernan.perez@example.com",
+      "source_ip": "10.20.0.37",
+      "session_id": "sess_1c0b7e15058a",
+      "duration_ms": 430
+    },
+    {
+      "timestamp": "2026-07-01T00:48:06Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "ines.perez@example.com",
+      "source_ip": "10.20.0.225",
+      "session_id": "sess_ec8152bbb892",
+      "duration_ms": 293
+    },
+    {
+      "timestamp": "2026-07-01T00:48:43Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "julian.perez@example.com",
+      "source_ip": "10.20.1.146",
+      "session_id": "sess_7017754d1aae",
+      "duration_ms": 113
+    },
+    {
+      "timestamp": "2026-07-01T00:49:20Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "ana.perez@example.com",
+      "source_ip": "10.20.5.84",
+      "session_id": "sess_9a774796ce9e",
+      "duration_ms": 739
+    },
+    {
+      "timestamp": "2026-07-01T00:49:57Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "bruno.perez@example.com",
+      "source_ip": "10.20.1.102",
+      "session_id": "sess_ff1558cdbdd8",
+      "duration_ms": 618
+    },
+    {
+      "timestamp": "2026-07-01T00:50:34Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "carla.perez@example.com",
+      "source_ip": "10.20.1.130",
+      "session_id": "sess_159398f14788",
+      "duration_ms": 365
+    },
+    {
+      "timestamp": "2026-07-01T00:51:11Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "diego.perez@example.com",
+      "source_ip": "10.20.0.194",
+      "session_id": "sess_dec69cc6ab82",
+      "duration_ms": 227
+    },
+    {
+      "timestamp": "2026-07-01T00:51:48Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "elena.silva@example.com",
+      "source_ip": "10.20.8.64",
+      "session_id": "sess_094c260735a2",
+      "duration_ms": 235
+    },
+    {
+      "timestamp": "2026-07-01T00:52:25Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "facundo.silva@example.com",
+      "source_ip": "10.20.5.6",
+      "session_id": "sess_31e07b346de5",
+      "duration_ms": 887
+    },
+    {
+      "timestamp": "2026-07-01T00:53:02Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "gisela.silva@example.com",
+      "source_ip": "10.20.2.225",
+      "session_id": "sess_95a2e459a9c3",
+      "duration_ms": 256
+    },
+    {
+      "timestamp": "2026-07-01T00:53:39Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "hernan.silva@example.com",
+      "source_ip": "10.20.2.25",
+      "session_id": "sess_bc3d5a2af154",
+      "duration_ms": 244
+    },
+    {
+      "timestamp": "2026-07-01T00:54:16Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "ines.silva@example.com",
+      "source_ip": "10.20.5.174",
+      "session_id": "sess_ab58a4850380",
+      "duration_ms": 383
+    },
+    {
+      "timestamp": "2026-07-01T00:54:53Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "julian.silva@example.com",
+      "source_ip": "10.20.0.37",
+      "session_id": "sess_95847225c565",
+      "duration_ms": 879
+    },
+    {
+      "timestamp": "2026-07-01T00:55:30Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "mfa.challenge",
+      "user": "ana.silva@example.com",
+      "source_ip": "10.20.7.53",
+      "session_id": "sess_0f04cb47d936",
+      "duration_ms": 651
+    },
+    {
+      "timestamp": "2026-07-01T00:56:07Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "logout",
+      "user": "bruno.rossi@example.com",
+      "source_ip": "10.20.2.225",
+      "session_id": "sess_cd496baa6b1a",
+      "duration_ms": 761
+    },
+    {
+      "timestamp": "2026-07-01T00:56:44Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "carla.rossi@example.com",
+      "source_ip": "10.20.0.194",
+      "session_id": "sess_d0a42a065c8a",
+      "duration_ms": 84
+    },
+    {
+      "timestamp": "2026-07-01T00:57:21Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "diego.rossi@example.com",
+      "source_ip": "10.20.8.64",
+      "session_id": "sess_37dec6e35ce2",
+      "duration_ms": 27
+    },
+    {
+      "timestamp": "2026-07-01T00:57:58Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "elena.rossi@example.com",
+      "source_ip": "10.20.2.25",
+      "session_id": "sess_89733a67d906",
+      "duration_ms": 305
+    },
+    {
+      "timestamp": "2026-07-01T00:58:35Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "facundo.rossi@example.com",
+      "source_ip": "10.20.4.240",
+      "session_id": "sess_f39c85aa28da",
+      "duration_ms": 563
+    },
+    {
+      "timestamp": "2026-07-01T00:59:12Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "gisela.rossi@example.com",
+      "source_ip": "10.20.1.146",
+      "session_id": "sess_b2349da83d40",
+      "duration_ms": 469
+    },
+    {
+      "timestamp": "2026-07-01T00:59:49Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "hernan.rossi@example.com",
+      "source_ip": "10.20.2.3",
+      "session_id": "sess_90661e06efba",
+      "duration_ms": 682
+    },
+    {
+      "timestamp": "2026-07-01T01:00:26Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "ines.molina@example.com",
+      "source_ip": "10.20.0.37",
+      "session_id": "sess_197e915fc28e",
+      "duration_ms": 106
+    },
+    {
+      "timestamp": "2026-07-01T01:01:03Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "julian.molina@example.com",
+      "source_ip": "10.20.8.64",
+      "session_id": "sess_aa8a500c08a3",
+      "duration_ms": 520
+    },
+    {
+      "timestamp": "2026-07-01T01:01:40Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "ana.molina@example.com",
+      "source_ip": "10.20.6.202",
+      "session_id": "sess_e0af28244d4e",
+      "duration_ms": 649
+    },
+    {
+      "timestamp": "2026-07-01T01:02:17Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "login.success",
+      "user": "bruno.molina@example.com",
+      "source_ip": "10.20.8.64",
+      "session_id": "sess_0924f0091d68",
+      "duration_ms": 673
+    },
+    {
+      "timestamp": "2026-07-01T01:02:54Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "carla.molina@example.com",
+      "source_ip": "10.20.0.94",
+      "session_id": "sess_d63f1690b027",
+      "duration_ms": 245
+    },
+    {
+      "timestamp": "2026-07-01T01:03:31Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "diego.molina@example.com",
+      "source_ip": "10.20.8.64",
+      "session_id": "sess_a3b176fa5dd7",
+      "duration_ms": 212
+    },
+    {
+      "timestamp": "2026-07-01T01:04:08Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "elena.molina@example.com",
+      "source_ip": "10.20.5.38",
+      "session_id": "sess_f5cec3e43d24",
+      "duration_ms": 252
+    },
+    {
+      "timestamp": "2026-07-01T01:04:45Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "facundo.vega@example.com",
+      "source_ip": "10.20.6.216",
+      "session_id": "sess_a3c372e613e5",
+      "duration_ms": 442
+    },
+    {
+      "timestamp": "2026-07-01T01:05:22Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "token.refresh",
+      "user": "gisela.vega@example.com",
+      "source_ip": "10.20.1.102",
+      "session_id": "sess_443e31499133",
+      "duration_ms": 864
+    },
+    {
+      "timestamp": "2026-07-01T01:05:59Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "hernan.vega@example.com",
+      "source_ip": "10.20.2.250",
+      "session_id": "sess_0999b8489fe6",
+      "duration_ms": 459
+    },
+    {
+      "timestamp": "2026-07-01T01:06:36Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "ines.vega@example.com",
+      "source_ip": "10.20.1.27",
+      "session_id": "sess_f620546fa322",
+      "duration_ms": 552
+    },
+    {
+      "timestamp": "2026-07-01T01:07:13Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "julian.vega@example.com",
+      "source_ip": "10.20.7.45",
+      "session_id": "sess_e52ae3b2c87e",
+      "duration_ms": 147
+    },
+    {
+      "timestamp": "2026-07-01T01:07:50Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "ana.vega@example.com",
+      "source_ip": "10.20.2.16",
+      "session_id": "sess_6e4074205dbd",
+      "duration_ms": 99
+    },
+    {
+      "timestamp": "2026-07-01T01:08:27Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "login.failed",
+      "user": "bruno.vega@example.com",
+      "source_ip": "10.20.2.225",
+      "session_id": "sess_056de3189780",
+      "duration_ms": 562
+    },
+    {
+      "timestamp": "2026-07-01T01:09:04Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "carla.ferrari@example.com",
+      "source_ip": "10.20.4.230",
+      "session_id": "sess_b32ffeddfbc5",
+      "duration_ms": 726
+    },
+    {
+      "timestamp": "2026-07-01T01:09:41Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "mfa.challenge",
+      "user": "diego.ferrari@example.com",
+      "source_ip": "10.20.6.202",
+      "session_id": "sess_cb407bdbb00f",
+      "duration_ms": 871
+    },
+    {
+      "timestamp": "2026-07-01T01:10:18Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "elena.ferrari@example.com",
+      "source_ip": "10.20.1.146",
+      "session_id": "sess_f28c6a69e504",
+      "duration_ms": 327
+    },
+    {
+      "timestamp": "2026-07-01T01:10:55Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "facundo.ferrari@example.com",
+      "source_ip": "10.20.5.6",
+      "session_id": "sess_b175d75d6db6",
+      "duration_ms": 454
+    },
+    {
+      "timestamp": "2026-07-01T01:11:32Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "gisela.ferrari@example.com",
+      "source_ip": "10.20.2.225",
+      "session_id": "sess_a064231207af",
+      "duration_ms": 665
+    },
+    {
+      "timestamp": "2026-07-01T01:12:09Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "hernan.ferrari@example.com",
+      "source_ip": "10.20.1.25",
+      "session_id": "sess_3c655d424bcc",
+      "duration_ms": 213
+    },
+    {
+      "timestamp": "2026-07-01T01:12:46Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "ines.ferrari@example.com",
+      "source_ip": "10.20.6.62",
+      "session_id": "sess_3495bce499f9",
+      "duration_ms": 360
+    },
+    {
+      "timestamp": "2026-07-01T01:13:23Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "julian.quiroga@example.com",
+      "source_ip": "10.20.1.75",
+      "session_id": "sess_a70f2bb89f7b",
+      "duration_ms": 727
+    },
+    {
+      "timestamp": "2026-07-01T01:14:00Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "logout",
+      "user": "ana.quiroga@example.com",
+      "source_ip": "10.20.2.25",
+      "session_id": "sess_4e5aa22b2bff",
+      "duration_ms": 836
+    },
+    {
+      "timestamp": "2026-07-01T01:14:37Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "login.success",
+      "user": "bruno.quiroga@example.com",
+      "source_ip": "10.20.1.102",
+      "session_id": "sess_02851b1394fa",
+      "duration_ms": 817
+    },
+    {
+      "timestamp": "2026-07-01T01:15:14Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "carla.quiroga@example.com",
+      "source_ip": "10.20.8.110",
+      "session_id": "sess_13d6aad597dc",
+      "duration_ms": 607
+    },
+    {
+      "timestamp": "2026-07-01T01:15:51Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "diego.quiroga@example.com",
+      "source_ip": "10.20.6.62",
+      "session_id": "sess_a46352e230bc",
+      "duration_ms": 172
+    },
+    {
+      "timestamp": "2026-07-01T01:16:28Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "token.refresh",
+      "user": "elena.quiroga@example.com",
+      "source_ip": "10.20.1.123",
+      "session_id": "sess_86f07f6291d0",
+      "duration_ms": 814
+    },
+    {
+      "timestamp": "2026-07-01T01:17:05Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "facundo.quiroga@example.com",
+      "source_ip": "10.20.2.225",
+      "session_id": "sess_b86b1e58597d",
+      "duration_ms": 908
+    },
+    {
+      "timestamp": "2026-07-01T01:17:42Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "gisela.sosa@example.com",
+      "source_ip": "10.20.3.71",
+      "session_id": "sess_b55a5f4d1096",
+      "duration_ms": 791
+    },
+    {
+      "timestamp": "2026-07-01T01:18:19Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "hernan.sosa@example.com",
+      "source_ip": "10.20.5.38",
+      "session_id": "sess_18f4e3080ffb",
+      "duration_ms": 118
+    },
+    {
+      "timestamp": "2026-07-01T01:18:56Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "ines.sosa@example.com",
+      "source_ip": "10.20.1.102",
+      "session_id": "sess_85b69adf5a1e",
+      "duration_ms": 861
+    },
+    {
+      "timestamp": "2026-07-01T01:19:33Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "julian.sosa@example.com",
+      "source_ip": "10.20.8.110",
+      "session_id": "sess_06cc4660e5bf",
+      "duration_ms": 589
+    },
+    {
+      "timestamp": "2026-07-01T01:20:10Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "ana.sosa@example.com",
+      "source_ip": "10.20.3.71",
+      "session_id": "sess_f7cdd03fb812",
+      "duration_ms": 598
+    },
+    {
+      "timestamp": "2026-07-01T01:20:47Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "bruno.sosa@example.com",
+      "source_ip": "10.20.1.27",
+      "session_id": "sess_d031886a061f",
+      "duration_ms": 94
+    },
+    {
+      "timestamp": "2026-07-01T01:21:24Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "login.failed",
+      "user": "carla.sosa@example.com",
+      "source_ip": "10.20.4.185",
+      "session_id": "sess_f60865a0ac83",
+      "duration_ms": 246
+    },
+    {
+      "timestamp": "2026-07-01T01:22:01Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "token.refresh",
+      "user": "diego.duarte@example.com",
+      "source_ip": "10.20.8.64",
+      "session_id": "sess_b73d98c2f6a0",
+      "duration_ms": 812
+    },
+    {
+      "timestamp": "2026-07-01T01:22:38Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "login.success",
+      "user": "elena.duarte@example.com",
+      "source_ip": "10.20.2.3",
+      "session_id": "sess_3483f8e603c4",
+      "duration_ms": 573
+    },
+    {
+      "timestamp": "2026-07-01T01:23:15Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "facundo.duarte@example.com",
+      "source_ip": "10.20.1.152",
+      "session_id": "sess_02703369aad7",
+      "duration_ms": 381
+    },
+    {
+      "timestamp": "2026-07-01T01:23:52Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "gisela.duarte@example.com",
+      "source_ip": "10.20.2.250",
+      "session_id": "sess_cb9a0578d92c",
+      "duration_ms": 883
+    },
+    {
+      "timestamp": "2026-07-01T01:24:29Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "hernan.duarte@example.com",
+      "source_ip": "10.20.0.194",
+      "session_id": "sess_96b3d43ec60d",
+      "duration_ms": 751
+    },
+    {
+      "timestamp": "2026-07-01T01:25:06Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "mfa.challenge",
+      "user": "ines.duarte@example.com",
+      "source_ip": "10.20.2.80",
+      "session_id": "sess_c3c7127c8d5e",
+      "duration_ms": 466
+    },
+    {
+      "timestamp": "2026-07-01T01:25:43Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "julian.duarte@example.com",
+      "source_ip": "10.20.1.27",
+      "session_id": "sess_3318fb8be257",
+      "duration_ms": 587
+    },
+    {
+      "timestamp": "2026-07-01T01:26:20Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "ana.gomez@example.com",
+      "source_ip": "10.20.8.64",
+      "session_id": "sess_92376ceb29dd",
+      "duration_ms": 290
+    },
+    {
+      "timestamp": "2026-07-01T01:26:57Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "bruno.gomez@example.com",
+      "source_ip": "10.20.7.91",
+      "session_id": "sess_619ef82f9cf1",
+      "duration_ms": 522
+    },
+    {
+      "timestamp": "2026-07-01T01:27:34Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "carla.gomez@example.com",
+      "source_ip": "10.20.3.37",
+      "session_id": "sess_1a37af2b0cfe",
+      "duration_ms": 454
+    },
+    {
+      "timestamp": "2026-07-01T01:28:11Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "login.failed",
+      "user": "diego.gomez@example.com",
+      "source_ip": "10.20.7.53",
+      "session_id": "sess_2ec06213eeee",
+      "duration_ms": 912,
+      "debug_payload": {
+        "username": "diego.gomez@example.com",
+        "password": "Summer2026-143!"
+      },
+      "message": "Invalid credentials accidentally written to the debug log"
+    },
+    {
+      "timestamp": "2026-07-01T01:28:48Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "elena.gomez@example.com",
+      "source_ip": "10.20.7.53",
+      "session_id": "sess_99527e6983d2",
+      "duration_ms": 845
+    },
+    {
+      "timestamp": "2026-07-01T01:29:25Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "facundo.gomez@example.com",
+      "source_ip": "10.20.0.194",
+      "session_id": "sess_2764b8591dab",
+      "duration_ms": 826
+    },
+    {
+      "timestamp": "2026-07-01T01:30:02Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "gisela.gomez@example.com",
+      "source_ip": "10.20.0.37",
+      "session_id": "sess_4b0e819f3a51",
+      "duration_ms": 149
+    },
+    {
+      "timestamp": "2026-07-01T01:30:39Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "hernan.perez@example.com",
+      "source_ip": "10.20.8.44",
+      "session_id": "sess_2e4e495a6c85",
+      "duration_ms": 661
+    },
+    {
+      "timestamp": "2026-07-01T01:31:16Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "ines.perez@example.com",
+      "source_ip": "10.20.0.37",
+      "session_id": "sess_b91e18b3b1a3",
+      "duration_ms": 169
+    },
+    {
+      "timestamp": "2026-07-01T01:31:53Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "login.success",
+      "user": "julian.perez@example.com",
+      "source_ip": "10.20.1.102",
+      "session_id": "sess_ee3d37c55d41",
+      "duration_ms": 47
+    },
+    {
+      "timestamp": "2026-07-01T01:32:30Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "login.failed",
+      "user": "ana.perez@example.com",
+      "source_ip": "10.20.1.27",
+      "session_id": "sess_985b85139995",
+      "duration_ms": 198
+    },
+    {
+      "timestamp": "2026-07-01T01:33:07Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "bruno.perez@example.com",
+      "source_ip": "10.20.2.16",
+      "session_id": "sess_2b4c06d36292",
+      "duration_ms": 604
+    },
+    {
+      "timestamp": "2026-07-01T01:33:44Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "mfa.challenge",
+      "user": "carla.perez@example.com",
+      "source_ip": "10.20.6.216",
+      "session_id": "sess_51a1cf3fc37d",
+      "duration_ms": 227
+    },
+    {
+      "timestamp": "2026-07-01T01:34:21Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "diego.perez@example.com",
+      "source_ip": "10.20.7.2",
+      "session_id": "sess_2480052bccda",
+      "duration_ms": 128
+    },
+    {
+      "timestamp": "2026-07-01T01:34:58Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "elena.silva@example.com",
+      "source_ip": "10.20.0.225",
+      "session_id": "sess_91a49f655f4b",
+      "duration_ms": 811
+    },
+    {
+      "timestamp": "2026-07-01T01:35:35Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "facundo.silva@example.com",
+      "source_ip": "10.20.2.3",
+      "session_id": "sess_05198e82f5eb",
+      "duration_ms": 464
+    },
+    {
+      "timestamp": "2026-07-01T01:36:12Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "gisela.silva@example.com",
+      "source_ip": "10.20.1.146",
+      "session_id": "sess_ad404a238205",
+      "duration_ms": 906
+    },
+    {
+      "timestamp": "2026-07-01T01:36:49Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "hernan.silva@example.com",
+      "source_ip": "10.20.3.37",
+      "session_id": "sess_0fe240822c56",
+      "duration_ms": 222
+    },
+    {
+      "timestamp": "2026-07-01T01:37:26Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "ines.silva@example.com",
+      "source_ip": "10.20.6.216",
+      "session_id": "sess_813e0191859d",
+      "duration_ms": 276
+    },
+    {
+      "timestamp": "2026-07-01T01:38:03Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "julian.silva@example.com",
+      "source_ip": "10.20.2.3",
+      "session_id": "sess_a9866922b804",
+      "duration_ms": 437
+    },
+    {
+      "timestamp": "2026-07-01T01:38:40Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "ana.silva@example.com",
+      "source_ip": "10.20.8.110",
+      "session_id": "sess_724cdb0dccb3",
+      "duration_ms": 350
+    },
+    {
+      "timestamp": "2026-07-01T01:39:17Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "bruno.rossi@example.com",
+      "source_ip": "10.20.2.250",
+      "session_id": "sess_305486387ac0",
+      "duration_ms": 788
+    },
+    {
+      "timestamp": "2026-07-01T01:39:54Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "mfa.challenge",
+      "user": "carla.rossi@example.com",
+      "source_ip": "10.20.0.225",
+      "session_id": "sess_1f46537dff75",
+      "duration_ms": 707
+    },
+    {
+      "timestamp": "2026-07-01T01:40:31Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "diego.rossi@example.com",
+      "source_ip": "10.20.8.110",
+      "session_id": "sess_cca3da0189ef",
+      "duration_ms": 329
+    },
+    {
+      "timestamp": "2026-07-01T01:41:08Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "elena.rossi@example.com",
+      "source_ip": "10.20.0.225",
+      "session_id": "sess_e8b9c338ba87",
+      "duration_ms": 55
+    },
+    {
+      "timestamp": "2026-07-01T01:41:45Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "facundo.rossi@example.com",
+      "source_ip": "10.20.5.174",
+      "session_id": "sess_81e96eab6c95",
+      "duration_ms": 354
+    },
+    {
+      "timestamp": "2026-07-01T01:42:22Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "gisela.rossi@example.com",
+      "source_ip": "10.20.6.216",
+      "session_id": "sess_e7874e2379bf",
+      "duration_ms": 181
+    },
+    {
+      "timestamp": "2026-07-01T01:42:59Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "hernan.rossi@example.com",
+      "source_ip": "10.20.8.110",
+      "session_id": "sess_c6be5ff661c4",
+      "duration_ms": 681
+    },
+    {
+      "timestamp": "2026-07-01T01:43:36Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "ines.molina@example.com",
+      "source_ip": "10.20.1.146",
+      "session_id": "sess_5fa275e8b8e5",
+      "duration_ms": 478
+    },
+    {
+      "timestamp": "2026-07-01T01:44:13Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "login.success",
+      "user": "julian.molina@example.com",
+      "source_ip": "10.20.2.250",
+      "session_id": "sess_012d76359348",
+      "duration_ms": 167
+    },
+    {
+      "timestamp": "2026-07-01T01:44:50Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "ana.molina@example.com",
+      "source_ip": "10.20.8.44",
+      "session_id": "sess_0adcef9c801f",
+      "duration_ms": 650
+    },
+    {
+      "timestamp": "2026-07-01T01:45:27Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "bruno.molina@example.com",
+      "source_ip": "10.20.5.38",
+      "session_id": "sess_444684da9ff8",
+      "duration_ms": 652
+    },
+    {
+      "timestamp": "2026-07-01T01:46:04Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "token.refresh",
+      "user": "carla.molina@example.com",
+      "source_ip": "10.20.3.37",
+      "session_id": "sess_cbc8a1320b9d",
+      "duration_ms": 492
+    },
+    {
+      "timestamp": "2026-07-01T01:46:41Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "mfa.challenge",
+      "user": "diego.molina@example.com",
+      "source_ip": "10.20.1.102",
+      "session_id": "sess_9c95d8848274",
+      "duration_ms": 113
+    },
+    {
+      "timestamp": "2026-07-01T01:47:18Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "login.success",
+      "user": "elena.molina@example.com",
+      "source_ip": "10.20.3.71",
+      "session_id": "sess_b2f1f5998f45",
+      "duration_ms": 185
+    },
+    {
+      "timestamp": "2026-07-01T01:47:55Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "facundo.vega@example.com",
+      "source_ip": "10.20.1.75",
+      "session_id": "sess_60480c08a106",
+      "duration_ms": 598
+    },
+    {
+      "timestamp": "2026-07-01T01:48:32Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "logout",
+      "user": "gisela.vega@example.com",
+      "source_ip": "10.20.1.25",
+      "session_id": "sess_13216c885427",
+      "duration_ms": 187
+    },
+    {
+      "timestamp": "2026-07-01T01:49:09Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "hernan.vega@example.com",
+      "source_ip": "10.20.1.102",
+      "session_id": "sess_54d32b63a42c",
+      "duration_ms": 409
+    },
+    {
+      "timestamp": "2026-07-01T01:49:46Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "ines.vega@example.com",
+      "source_ip": "10.20.8.64",
+      "session_id": "sess_aa31efb32535",
+      "duration_ms": 266
+    },
+    {
+      "timestamp": "2026-07-01T01:50:23Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "julian.vega@example.com",
+      "source_ip": "10.20.2.250",
+      "session_id": "sess_075304ad9131",
+      "duration_ms": 901
+    },
+    {
+      "timestamp": "2026-07-01T01:51:00Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "ana.vega@example.com",
+      "source_ip": "10.20.1.27",
+      "session_id": "sess_81c844b62aff",
+      "duration_ms": 387
+    },
+    {
+      "timestamp": "2026-07-01T01:51:37Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "logout",
+      "user": "bruno.vega@example.com",
+      "source_ip": "10.20.1.25",
+      "session_id": "sess_c86bcc3e876c",
+      "duration_ms": 293
+    },
+    {
+      "timestamp": "2026-07-01T01:52:14Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "carla.ferrari@example.com",
+      "source_ip": "10.20.1.123",
+      "session_id": "sess_e0544b0d8b22",
+      "duration_ms": 556
+    },
+    {
+      "timestamp": "2026-07-01T01:52:51Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "diego.ferrari@example.com",
+      "source_ip": "10.20.6.62",
+      "session_id": "sess_65b1812c4a70",
+      "duration_ms": 202
+    },
+    {
+      "timestamp": "2026-07-01T01:53:28Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "elena.ferrari@example.com",
+      "source_ip": "10.20.4.230",
+      "session_id": "sess_e0f21f257a09",
+      "duration_ms": 316
+    },
+    {
+      "timestamp": "2026-07-01T01:54:05Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "facundo.ferrari@example.com",
+      "source_ip": "10.20.7.45",
+      "session_id": "sess_e3e09e05392f",
+      "duration_ms": 579
+    },
+    {
+      "timestamp": "2026-07-01T01:54:42Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "mfa.challenge",
+      "user": "gisela.ferrari@example.com",
+      "source_ip": "10.20.4.118",
+      "session_id": "sess_436567f77662",
+      "duration_ms": 96
+    },
+    {
+      "timestamp": "2026-07-01T01:55:19Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "hernan.ferrari@example.com",
+      "source_ip": "10.20.8.44",
+      "session_id": "sess_1b73680546d8",
+      "duration_ms": 507
+    },
+    {
+      "timestamp": "2026-07-01T01:55:56Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "ines.ferrari@example.com",
+      "source_ip": "10.20.6.62",
+      "session_id": "sess_ca0d5fc19016",
+      "duration_ms": 274
+    },
+    {
+      "timestamp": "2026-07-01T01:56:33Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "token.refresh",
+      "user": "julian.quiroga@example.com",
+      "source_ip": "10.20.7.53",
+      "session_id": "sess_c4b8c10e30a9",
+      "duration_ms": 210
+    },
+    {
+      "timestamp": "2026-07-01T01:57:10Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "ana.quiroga@example.com",
+      "source_ip": "10.20.8.110",
+      "session_id": "sess_7ea58efb0aba",
+      "duration_ms": 718
+    },
+    {
+      "timestamp": "2026-07-01T01:57:47Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "bruno.quiroga@example.com",
+      "source_ip": "10.20.6.216",
+      "session_id": "sess_253b5d986eef",
+      "duration_ms": 815
+    },
+    {
+      "timestamp": "2026-07-01T01:58:24Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "carla.quiroga@example.com",
+      "source_ip": "10.20.5.174",
+      "session_id": "sess_5b4a602c8a7e",
+      "duration_ms": 463
+    },
+    {
+      "timestamp": "2026-07-01T01:59:01Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "diego.quiroga@example.com",
+      "source_ip": "10.20.1.179",
+      "session_id": "sess_6d7295f9d0c3",
+      "duration_ms": 185
+    },
+    {
+      "timestamp": "2026-07-01T01:59:38Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "elena.quiroga@example.com",
+      "source_ip": "10.20.1.152",
+      "session_id": "sess_65a1e3ad43c6",
+      "duration_ms": 563
+    },
+    {
+      "timestamp": "2026-07-01T02:00:15Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "facundo.quiroga@example.com",
+      "source_ip": "10.20.0.94",
+      "session_id": "sess_ea32f9765c45",
+      "duration_ms": 122
+    },
+    {
+      "timestamp": "2026-07-01T02:00:52Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "gisela.sosa@example.com",
+      "source_ip": "10.20.1.27",
+      "session_id": "sess_d6ccb4acd2b8",
+      "duration_ms": 643
+    },
+    {
+      "timestamp": "2026-07-01T02:01:29Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "hernan.sosa@example.com",
+      "source_ip": "10.20.0.9",
+      "session_id": "sess_bf164e19ce70",
+      "duration_ms": 741
+    },
+    {
+      "timestamp": "2026-07-01T02:02:06Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "ines.sosa@example.com",
+      "source_ip": "10.20.0.37",
+      "session_id": "sess_dd8a0e030e27",
+      "duration_ms": 911
+    },
+    {
+      "timestamp": "2026-07-01T02:02:43Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "julian.sosa@example.com",
+      "source_ip": "10.20.1.27",
+      "session_id": "sess_f3ca11468352",
+      "duration_ms": 376
+    },
+    {
+      "timestamp": "2026-07-01T02:03:20Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "ana.sosa@example.com",
+      "source_ip": "10.20.7.2",
+      "session_id": "sess_9163592e3f55",
+      "duration_ms": 733
+    },
+    {
+      "timestamp": "2026-07-01T02:03:57Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "bruno.sosa@example.com",
+      "source_ip": "10.20.8.110",
+      "session_id": "sess_7d78c052f34a",
+      "duration_ms": 675
+    },
+    {
+      "timestamp": "2026-07-01T02:04:34Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "carla.sosa@example.com",
+      "source_ip": "10.20.7.2",
+      "session_id": "sess_28c923c1ba24",
+      "duration_ms": 152
+    },
+    {
+      "timestamp": "2026-07-01T02:05:11Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "diego.duarte@example.com",
+      "source_ip": "10.20.5.6",
+      "session_id": "sess_38d5a1f5e3e6",
+      "duration_ms": 180
+    },
+    {
+      "timestamp": "2026-07-01T02:05:48Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "login.success",
+      "user": "elena.duarte@example.com",
+      "source_ip": "10.20.5.6",
+      "session_id": "sess_73727dc19584",
+      "duration_ms": 907
+    },
+    {
+      "timestamp": "2026-07-01T02:06:25Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "facundo.duarte@example.com",
+      "source_ip": "10.20.7.45",
+      "session_id": "sess_68af64d88157",
+      "duration_ms": 126
+    },
+    {
+      "timestamp": "2026-07-01T02:07:02Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "gisela.duarte@example.com",
+      "source_ip": "10.20.2.225",
+      "session_id": "sess_92cf66085553",
+      "duration_ms": 266
+    },
+    {
+      "timestamp": "2026-07-01T02:07:39Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "hernan.duarte@example.com",
+      "source_ip": "10.20.2.80",
+      "session_id": "sess_111f865b922b",
+      "duration_ms": 183
+    },
+    {
+      "timestamp": "2026-07-01T02:08:16Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "ines.duarte@example.com",
+      "source_ip": "10.20.0.225",
+      "session_id": "sess_961783687b57",
+      "duration_ms": 374
+    },
+    {
+      "timestamp": "2026-07-01T02:08:53Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "julian.duarte@example.com",
+      "source_ip": "10.20.3.71",
+      "session_id": "sess_32fb7e8441b4",
+      "duration_ms": 76
+    },
+    {
+      "timestamp": "2026-07-01T02:09:30Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "mfa.challenge",
+      "user": "ana.gomez@example.com",
+      "source_ip": "10.20.1.152",
+      "session_id": "sess_5b540d87468d",
+      "duration_ms": 185
+    },
+    {
+      "timestamp": "2026-07-01T02:10:07Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "bruno.gomez@example.com",
+      "source_ip": "10.20.5.174",
+      "session_id": "sess_21985773f3d0",
+      "duration_ms": 323
+    },
+    {
+      "timestamp": "2026-07-01T02:10:44Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "login.failed",
+      "user": "carla.gomez@example.com",
+      "source_ip": "10.20.5.84",
+      "session_id": "sess_462dfd43391c",
+      "duration_ms": 323
+    },
+    {
+      "timestamp": "2026-07-01T02:11:21Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "diego.gomez@example.com",
+      "source_ip": "10.20.3.37",
+      "session_id": "sess_a85c1b885f9b",
+      "duration_ms": 90
+    },
+    {
+      "timestamp": "2026-07-01T02:11:58Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "elena.gomez@example.com",
+      "source_ip": "10.20.1.123",
+      "session_id": "sess_7de8976d63b8",
+      "duration_ms": 464
+    },
+    {
+      "timestamp": "2026-07-01T02:12:35Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "logout",
+      "user": "facundo.gomez@example.com",
+      "source_ip": "10.20.8.64",
+      "session_id": "sess_42647bcde24c",
+      "duration_ms": 702
+    },
+    {
+      "timestamp": "2026-07-01T02:13:12Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "gisela.gomez@example.com",
+      "source_ip": "10.20.5.84",
+      "session_id": "sess_6c677897dcce",
+      "duration_ms": 404
+    },
+    {
+      "timestamp": "2026-07-01T02:13:49Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "hernan.perez@example.com",
+      "source_ip": "10.20.1.146",
+      "session_id": "sess_c2a45dab75f4",
+      "duration_ms": 85
+    },
+    {
+      "timestamp": "2026-07-01T02:14:26Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "ines.perez@example.com",
+      "source_ip": "10.20.5.174",
+      "session_id": "sess_3b6ec82e8cec",
+      "duration_ms": 729
+    },
+    {
+      "timestamp": "2026-07-01T02:15:03Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "julian.perez@example.com",
+      "source_ip": "10.20.0.37",
+      "session_id": "sess_f3d7678465b5",
+      "duration_ms": 88
+    },
+    {
+      "timestamp": "2026-07-01T02:15:40Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "login.failed",
+      "user": "ana.perez@example.com",
+      "source_ip": "10.20.4.240",
+      "session_id": "sess_8c9afc68d19c",
+      "duration_ms": 445
+    },
+    {
+      "timestamp": "2026-07-01T02:16:17Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "bruno.perez@example.com",
+      "source_ip": "10.20.2.80",
+      "session_id": "sess_fffe52c73790",
+      "duration_ms": 110
+    },
+    {
+      "timestamp": "2026-07-01T02:16:54Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "carla.perez@example.com",
+      "source_ip": "10.20.7.45",
+      "session_id": "sess_b58d4a3fc814",
+      "duration_ms": 142
+    },
+    {
+      "timestamp": "2026-07-01T02:17:31Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "diego.perez@example.com",
+      "source_ip": "10.20.0.9",
+      "session_id": "sess_c3f874988c04",
+      "duration_ms": 905
+    },
+    {
+      "timestamp": "2026-07-01T02:18:08Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "token.refresh",
+      "user": "elena.silva@example.com",
+      "source_ip": "10.20.1.27",
+      "session_id": "sess_00f03c34f4a1",
+      "duration_ms": 757
+    },
+    {
+      "timestamp": "2026-07-01T02:18:45Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "facundo.silva@example.com",
+      "source_ip": "10.20.2.80",
+      "session_id": "sess_49f5198f87ce",
+      "duration_ms": 291
+    },
+    {
+      "timestamp": "2026-07-01T02:19:22Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "login.failed",
+      "user": "gisela.silva@example.com",
+      "source_ip": "10.20.4.185",
+      "session_id": "sess_bb79df7935af",
+      "duration_ms": 22
+    },
+    {
+      "timestamp": "2026-07-01T02:19:59Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "hernan.silva@example.com",
+      "source_ip": "10.20.6.216",
+      "session_id": "sess_67bb37d7d7f5",
+      "duration_ms": 99
+    },
+    {
+      "timestamp": "2026-07-01T02:20:36Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "ines.silva@example.com",
+      "source_ip": "10.20.0.9",
+      "session_id": "sess_66151d5c931a",
+      "duration_ms": 629
+    },
+    {
+      "timestamp": "2026-07-01T02:21:13Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "mfa.challenge",
+      "user": "julian.silva@example.com",
+      "source_ip": "10.20.0.225",
+      "session_id": "sess_a76d36e5dc7a",
+      "duration_ms": 766
+    },
+    {
+      "timestamp": "2026-07-01T02:21:50Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "ana.silva@example.com",
+      "source_ip": "10.20.5.38",
+      "session_id": "sess_f03d95ea256e",
+      "duration_ms": 192
+    },
+    {
+      "timestamp": "2026-07-01T02:22:27Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "bruno.rossi@example.com",
+      "source_ip": "10.20.1.146",
+      "session_id": "sess_2df0a019a0ac",
+      "duration_ms": 785
+    },
+    {
+      "timestamp": "2026-07-01T02:23:04Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "carla.rossi@example.com",
+      "source_ip": "10.20.1.75",
+      "session_id": "sess_d338347d84e4",
+      "duration_ms": 573
+    },
+    {
+      "timestamp": "2026-07-01T02:23:41Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "diego.rossi@example.com",
+      "source_ip": "10.20.6.62",
+      "session_id": "sess_20fd5235ac33",
+      "duration_ms": 763
+    },
+    {
+      "timestamp": "2026-07-01T02:24:18Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "token.refresh",
+      "user": "elena.rossi@example.com",
+      "source_ip": "10.20.7.53",
+      "session_id": "sess_caece2fd5009",
+      "duration_ms": 684
+    },
+    {
+      "timestamp": "2026-07-01T02:24:55Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "facundo.rossi@example.com",
+      "source_ip": "10.20.1.179",
+      "session_id": "sess_391570aefcd0",
+      "duration_ms": 352
+    },
+    {
+      "timestamp": "2026-07-01T02:25:32Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "gisela.rossi@example.com",
+      "source_ip": "10.20.2.25",
+      "session_id": "sess_18d7a5abc945",
+      "duration_ms": 429
+    },
+    {
+      "timestamp": "2026-07-01T02:26:09Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "hernan.rossi@example.com",
+      "source_ip": "10.20.5.6",
+      "session_id": "sess_99b1da912b5a",
+      "duration_ms": 868
+    },
+    {
+      "timestamp": "2026-07-01T02:26:46Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "ines.molina@example.com",
+      "source_ip": "10.20.2.25",
+      "session_id": "sess_1d5d88815b4d",
+      "duration_ms": 776
+    },
+    {
+      "timestamp": "2026-07-01T02:27:23Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "julian.molina@example.com",
+      "source_ip": "10.20.1.25",
+      "session_id": "sess_8fa7700a150c",
+      "duration_ms": 858
+    },
+    {
+      "timestamp": "2026-07-01T02:28:00Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "ana.molina@example.com",
+      "source_ip": "10.20.1.27",
+      "session_id": "sess_457a44f04d25",
+      "duration_ms": 949
+    },
+    {
+      "timestamp": "2026-07-01T02:28:37Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "login.success",
+      "user": "bruno.molina@example.com",
+      "source_ip": "10.20.4.230",
+      "session_id": "sess_0ef6cc32e2dc",
+      "duration_ms": 33
+    },
+    {
+      "timestamp": "2026-07-01T02:29:14Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "carla.molina@example.com",
+      "source_ip": "10.20.0.194",
+      "session_id": "sess_5b0377c2ec3b",
+      "duration_ms": 138
+    },
+    {
+      "timestamp": "2026-07-01T02:29:51Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "login.failed",
+      "user": "diego.molina@example.com",
+      "source_ip": "10.20.8.44",
+      "session_id": "sess_aae3c83c2cbd",
+      "duration_ms": 638
+    },
+    {
+      "timestamp": "2026-07-01T02:30:28Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "elena.molina@example.com",
+      "source_ip": "10.20.1.75",
+      "session_id": "sess_252a1594de90",
+      "duration_ms": 549
+    },
+    {
+      "timestamp": "2026-07-01T02:31:05Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "facundo.vega@example.com",
+      "source_ip": "10.20.2.3",
+      "session_id": "sess_23329991cbc3",
+      "duration_ms": 770
+    },
+    {
+      "timestamp": "2026-07-01T02:31:42Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "gisela.vega@example.com",
+      "source_ip": "10.20.3.37",
+      "session_id": "sess_86b1f3fc20ce",
+      "duration_ms": 244
+    },
+    {
+      "timestamp": "2026-07-01T02:32:19Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "hernan.vega@example.com",
+      "source_ip": "10.20.0.194",
+      "session_id": "sess_5925a9b6d14c",
+      "duration_ms": 934
+    },
+    {
+      "timestamp": "2026-07-01T02:32:56Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "ines.vega@example.com",
+      "source_ip": "10.20.6.62",
+      "session_id": "sess_4f7c7cf234d8",
+      "duration_ms": 83
+    },
+    {
+      "timestamp": "2026-07-01T02:33:33Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "julian.vega@example.com",
+      "source_ip": "10.20.1.123",
+      "session_id": "sess_b279118f2c6e",
+      "duration_ms": 774
+    },
+    {
+      "timestamp": "2026-07-01T02:34:10Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "ana.vega@example.com",
+      "source_ip": "10.20.0.94",
+      "session_id": "sess_fa571e2c2907",
+      "duration_ms": 102
+    },
+    {
+      "timestamp": "2026-07-01T02:34:47Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "bruno.vega@example.com",
+      "source_ip": "10.20.4.240",
+      "session_id": "sess_e71d775dff94",
+      "duration_ms": 122
+    },
+    {
+      "timestamp": "2026-07-01T02:35:24Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "token.refresh",
+      "user": "carla.ferrari@example.com",
+      "source_ip": "10.20.0.194",
+      "session_id": "sess_db814407fb02",
+      "duration_ms": 928
+    },
+    {
+      "timestamp": "2026-07-01T02:36:01Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "login.success",
+      "user": "diego.ferrari@example.com",
+      "source_ip": "10.20.5.84",
+      "session_id": "sess_83070c08ddb7",
+      "duration_ms": 82
+    },
+    {
+      "timestamp": "2026-07-01T02:36:38Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "elena.ferrari@example.com",
+      "source_ip": "10.20.7.2",
+      "session_id": "sess_7f0dde392af4",
+      "duration_ms": 896
+    },
+    {
+      "timestamp": "2026-07-01T02:37:15Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "facundo.ferrari@example.com",
+      "source_ip": "10.20.1.152",
+      "session_id": "sess_f9c9ef42981d",
+      "duration_ms": 256
+    },
+    {
+      "timestamp": "2026-07-01T02:37:52Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "gisela.ferrari@example.com",
+      "source_ip": "10.20.7.2",
+      "session_id": "sess_fb00b361b0ff",
+      "duration_ms": 709
+    },
+    {
+      "timestamp": "2026-07-01T02:38:29Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "token.refresh",
+      "user": "hernan.ferrari@example.com",
+      "source_ip": "10.20.0.225",
+      "session_id": "sess_29a3db17978c",
+      "duration_ms": 241
+    },
+    {
+      "timestamp": "2026-07-01T02:39:06Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "ines.ferrari@example.com",
+      "source_ip": "10.20.2.3",
+      "session_id": "sess_58fd27627f2d",
+      "duration_ms": 118
+    },
+    {
+      "timestamp": "2026-07-01T02:39:43Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "julian.quiroga@example.com",
+      "source_ip": "10.20.2.250",
+      "session_id": "sess_f79162add688",
+      "duration_ms": 531
+    },
+    {
+      "timestamp": "2026-07-01T02:40:20Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "ana.quiroga@example.com",
+      "source_ip": "10.20.7.2",
+      "session_id": "sess_c9799c8a1bc9",
+      "duration_ms": 436
+    },
+    {
+      "timestamp": "2026-07-01T02:40:57Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "bruno.quiroga@example.com",
+      "source_ip": "10.20.1.102",
+      "session_id": "sess_bc7eaf1cd933",
+      "duration_ms": 777
+    },
+    {
+      "timestamp": "2026-07-01T02:41:34Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "carla.quiroga@example.com",
+      "source_ip": "10.20.1.152",
+      "session_id": "sess_b530a2904351",
+      "duration_ms": 330
+    },
+    {
+      "timestamp": "2026-07-01T02:42:11Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "diego.quiroga@example.com",
+      "source_ip": "10.20.5.6",
+      "session_id": "sess_1c3f1ebd88f8",
+      "duration_ms": 301
+    },
+    {
+      "timestamp": "2026-07-01T02:42:48Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "elena.quiroga@example.com",
+      "source_ip": "10.20.5.6",
+      "session_id": "sess_2dc64d2ca28c",
+      "duration_ms": 61
+    },
+    {
+      "timestamp": "2026-07-01T02:43:25Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "facundo.quiroga@example.com",
+      "source_ip": "10.20.8.44",
+      "session_id": "sess_63970995366c",
+      "duration_ms": 116
+    },
+    {
+      "timestamp": "2026-07-01T02:44:02Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "gisela.sosa@example.com",
+      "source_ip": "10.20.4.118",
+      "session_id": "sess_0f0e14a8fb6f",
+      "duration_ms": 395
+    },
+    {
+      "timestamp": "2026-07-01T02:44:39Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "login.success",
+      "user": "hernan.sosa@example.com",
+      "source_ip": "10.20.1.123",
+      "session_id": "sess_a88a3fbdbce8",
+      "duration_ms": 376
+    },
+    {
+      "timestamp": "2026-07-01T02:45:16Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "ines.sosa@example.com",
+      "source_ip": "10.20.4.240",
+      "session_id": "sess_ecaa5f98b22f",
+      "duration_ms": 757
+    },
+    {
+      "timestamp": "2026-07-01T02:45:53Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "julian.sosa@example.com",
+      "source_ip": "10.20.5.6",
+      "session_id": "sess_c02a2bcc2f89",
+      "duration_ms": 781
+    },
+    {
+      "timestamp": "2026-07-01T02:46:30Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "ana.sosa@example.com",
+      "source_ip": "10.20.2.80",
+      "session_id": "sess_98dc564a97b1",
+      "duration_ms": 224
+    },
+    {
+      "timestamp": "2026-07-01T02:47:07Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "bruno.sosa@example.com",
+      "source_ip": "10.20.3.71",
+      "session_id": "sess_c56033ca245f",
+      "duration_ms": 423
+    },
+    {
+      "timestamp": "2026-07-01T02:47:44Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "carla.sosa@example.com",
+      "source_ip": "10.20.0.194",
+      "session_id": "sess_73f2a354591c",
+      "duration_ms": 915
+    },
+    {
+      "timestamp": "2026-07-01T02:48:21Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "diego.duarte@example.com",
+      "source_ip": "10.20.8.44",
+      "session_id": "sess_756d05420865",
+      "duration_ms": 579
+    },
+    {
+      "timestamp": "2026-07-01T02:48:58Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "elena.duarte@example.com",
+      "source_ip": "10.20.8.64",
+      "session_id": "sess_c942d3440da0",
+      "duration_ms": 449
+    },
+    {
+      "timestamp": "2026-07-01T02:49:35Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "facundo.duarte@example.com",
+      "source_ip": "10.20.6.216",
+      "session_id": "sess_e682a9a69e33",
+      "duration_ms": 353
+    },
+    {
+      "timestamp": "2026-07-01T02:50:12Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "gisela.duarte@example.com",
+      "source_ip": "10.20.6.62",
+      "session_id": "sess_ed6cb024d623",
+      "duration_ms": 527
+    },
+    {
+      "timestamp": "2026-07-01T02:50:49Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "login.failed",
+      "user": "hernan.duarte@example.com",
+      "source_ip": "10.20.7.53",
+      "session_id": "sess_3cdf5336a334",
+      "duration_ms": 759
+    },
+    {
+      "timestamp": "2026-07-01T02:51:26Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "ines.duarte@example.com",
+      "source_ip": "10.20.0.9",
+      "session_id": "sess_5f6bf9533cc7",
+      "duration_ms": 419
+    },
+    {
+      "timestamp": "2026-07-01T02:52:03Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "julian.duarte@example.com",
+      "source_ip": "10.20.1.179",
+      "session_id": "sess_c32090fea1cc",
+      "duration_ms": 790
+    },
+    {
+      "timestamp": "2026-07-01T02:52:40Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "ana.gomez@example.com",
+      "source_ip": "10.20.2.225",
+      "session_id": "sess_4fbde1b5518f",
+      "duration_ms": 446
+    },
+    {
+      "timestamp": "2026-07-01T02:53:17Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "bruno.gomez@example.com",
+      "source_ip": "10.20.7.53",
+      "session_id": "sess_57f912b4c021",
+      "duration_ms": 780
+    },
+    {
+      "timestamp": "2026-07-01T02:53:54Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "carla.gomez@example.com",
+      "source_ip": "10.20.1.130",
+      "session_id": "sess_9eb13069ce18",
+      "duration_ms": 458
+    },
+    {
+      "timestamp": "2026-07-01T02:54:31Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "diego.gomez@example.com",
+      "source_ip": "10.20.0.94",
+      "session_id": "sess_074e44738b89",
+      "duration_ms": 718
+    },
+    {
+      "timestamp": "2026-07-01T02:55:08Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "elena.gomez@example.com",
+      "source_ip": "10.20.5.174",
+      "session_id": "sess_3c8bbb619743",
+      "duration_ms": 668
+    },
+    {
+      "timestamp": "2026-07-01T02:55:45Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "token.refresh",
+      "user": "facundo.gomez@example.com",
+      "source_ip": "10.20.8.110",
+      "session_id": "sess_0cf9c2693746",
+      "duration_ms": 462
+    },
+    {
+      "timestamp": "2026-07-01T02:56:22Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "gisela.gomez@example.com",
+      "source_ip": "10.20.2.225",
+      "session_id": "sess_74bd555303c0",
+      "duration_ms": 24
+    },
+    {
+      "timestamp": "2026-07-01T02:56:59Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "hernan.perez@example.com",
+      "source_ip": "10.20.2.3",
+      "session_id": "sess_aa774ecc596b",
+      "duration_ms": 69
+    },
+    {
+      "timestamp": "2026-07-01T02:57:36Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "ines.perez@example.com",
+      "source_ip": "10.20.1.123",
+      "session_id": "sess_9d43b11db055",
+      "duration_ms": 114
+    },
+    {
+      "timestamp": "2026-07-01T02:58:13Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "julian.perez@example.com",
+      "source_ip": "10.20.2.3",
+      "session_id": "sess_4f017bb6e350",
+      "duration_ms": 827
+    },
+    {
+      "timestamp": "2026-07-01T02:58:50Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "ana.perez@example.com",
+      "source_ip": "10.20.1.146",
+      "session_id": "sess_2697980c7939",
+      "duration_ms": 176
+    },
+    {
+      "timestamp": "2026-07-01T02:59:27Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "bruno.perez@example.com",
+      "source_ip": "10.20.3.37",
+      "session_id": "sess_933fb197396c",
+      "duration_ms": 523
+    },
+    {
+      "timestamp": "2026-07-01T03:00:04Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "carla.perez@example.com",
+      "source_ip": "10.20.4.230",
+      "session_id": "sess_fbad1bc99b60",
+      "duration_ms": 620
+    },
+    {
+      "timestamp": "2026-07-01T03:00:41Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "diego.perez@example.com",
+      "source_ip": "10.20.3.37",
+      "session_id": "sess_a43c5acd4063",
+      "duration_ms": 872
+    },
+    {
+      "timestamp": "2026-07-01T03:01:18Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "elena.silva@example.com",
+      "source_ip": "10.20.4.230",
+      "session_id": "sess_09ec9bcd6cf9",
+      "duration_ms": 948
+    },
+    {
+      "timestamp": "2026-07-01T03:01:55Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "facundo.silva@example.com",
+      "source_ip": "10.20.2.80",
+      "session_id": "sess_9dbd43a9861a",
+      "duration_ms": 451
+    },
+    {
+      "timestamp": "2026-07-01T03:02:32Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "gisela.silva@example.com",
+      "source_ip": "10.20.6.62",
+      "session_id": "sess_80876d83f81e",
+      "duration_ms": 757
+    },
+    {
+      "timestamp": "2026-07-01T03:03:09Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "login.failed",
+      "user": "hernan.silva@example.com",
+      "source_ip": "10.20.1.25",
+      "session_id": "sess_5bf053b23d7a",
+      "duration_ms": 648
+    },
+    {
+      "timestamp": "2026-07-01T03:03:46Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "ines.silva@example.com",
+      "source_ip": "10.20.6.216",
+      "session_id": "sess_e322840a73b2",
+      "duration_ms": 841
+    },
+    {
+      "timestamp": "2026-07-01T03:04:23Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "login.success",
+      "user": "julian.silva@example.com",
+      "source_ip": "10.20.0.9",
+      "session_id": "sess_c416ccf49ab1",
+      "duration_ms": 792
+    },
+    {
+      "timestamp": "2026-07-01T03:05:00Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "ana.silva@example.com",
+      "source_ip": "10.20.4.185",
+      "session_id": "sess_5129ab8faabc",
+      "duration_ms": 843
+    },
+    {
+      "timestamp": "2026-07-01T03:05:37Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "bruno.rossi@example.com",
+      "source_ip": "10.20.8.110",
+      "session_id": "sess_e29fe3f7be74",
+      "duration_ms": 201
+    },
+    {
+      "timestamp": "2026-07-01T03:06:14Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "carla.rossi@example.com",
+      "source_ip": "10.20.5.38",
+      "session_id": "sess_e62dc9ea3da3",
+      "duration_ms": 588
+    },
+    {
+      "timestamp": "2026-07-01T03:06:51Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "diego.rossi@example.com",
+      "source_ip": "10.20.2.25",
+      "session_id": "sess_0ed6ab692640",
+      "duration_ms": 642
+    },
+    {
+      "timestamp": "2026-07-01T03:07:28Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "elena.rossi@example.com",
+      "source_ip": "10.20.5.84",
+      "session_id": "sess_48b421801d7b",
+      "duration_ms": 799
+    },
+    {
+      "timestamp": "2026-07-01T03:08:05Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "facundo.rossi@example.com",
+      "source_ip": "10.20.7.91",
+      "session_id": "sess_5e43880ada6e",
+      "duration_ms": 267,
+      "authorization_header": "Bearer token=eyJhbGciOiJIUzI1NiJ9.391300699ce5712be70fd138"
+    },
+    {
+      "timestamp": "2026-07-01T03:08:42Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "mfa.challenge",
+      "user": "gisela.rossi@example.com",
+      "source_ip": "10.20.6.216",
+      "session_id": "sess_e33d9d829325",
+      "duration_ms": 321
+    },
+    {
+      "timestamp": "2026-07-01T03:09:19Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "hernan.rossi@example.com",
+      "source_ip": "10.20.5.174",
+      "session_id": "sess_2435eb90e468",
+      "duration_ms": 299
+    },
+    {
+      "timestamp": "2026-07-01T03:09:56Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "ines.molina@example.com",
+      "source_ip": "10.20.4.240",
+      "session_id": "sess_8ee51749d529",
+      "duration_ms": 814
+    },
+    {
+      "timestamp": "2026-07-01T03:10:33Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "julian.molina@example.com",
+      "source_ip": "10.20.2.225",
+      "session_id": "sess_c837f653295b",
+      "duration_ms": 261
+    },
+    {
+      "timestamp": "2026-07-01T03:11:10Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "ana.molina@example.com",
+      "source_ip": "10.20.2.16",
+      "session_id": "sess_98a6e7d5fd3b",
+      "duration_ms": 123
+    },
+    {
+      "timestamp": "2026-07-01T03:11:47Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "bruno.molina@example.com",
+      "source_ip": "10.20.2.250",
+      "session_id": "sess_5b19f7d295b1",
+      "duration_ms": 261
+    },
+    {
+      "timestamp": "2026-07-01T03:12:24Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "carla.molina@example.com",
+      "source_ip": "10.20.0.94",
+      "session_id": "sess_d1b6350310a6",
+      "duration_ms": 80
+    },
+    {
+      "timestamp": "2026-07-01T03:13:01Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "diego.molina@example.com",
+      "source_ip": "10.20.6.202",
+      "session_id": "sess_323229c5870b",
+      "duration_ms": 199
+    },
+    {
+      "timestamp": "2026-07-01T03:13:38Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "elena.molina@example.com",
+      "source_ip": "10.20.1.27",
+      "session_id": "sess_0f20b2aaa09f",
+      "duration_ms": 115
+    },
+    {
+      "timestamp": "2026-07-01T03:14:15Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "facundo.vega@example.com",
+      "source_ip": "10.20.4.230",
+      "session_id": "sess_8749d7d02856",
+      "duration_ms": 504
+    },
+    {
+      "timestamp": "2026-07-01T03:14:52Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "gisela.vega@example.com",
+      "source_ip": "10.20.0.94",
+      "session_id": "sess_1ecbaf535176",
+      "duration_ms": 934
+    },
+    {
+      "timestamp": "2026-07-01T03:15:29Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "hernan.vega@example.com",
+      "source_ip": "10.20.0.225",
+      "session_id": "sess_2c20227c499c",
+      "duration_ms": 512
+    },
+    {
+      "timestamp": "2026-07-01T03:16:06Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "ines.vega@example.com",
+      "source_ip": "10.20.8.44",
+      "session_id": "sess_fd153f5683d4",
+      "duration_ms": 27
+    },
+    {
+      "timestamp": "2026-07-01T03:16:43Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "julian.vega@example.com",
+      "source_ip": "10.20.0.9",
+      "session_id": "sess_8a9323961043",
+      "duration_ms": 139
+    },
+    {
+      "timestamp": "2026-07-01T03:17:20Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "ana.vega@example.com",
+      "source_ip": "10.20.2.225",
+      "session_id": "sess_dc0c7388dd59",
+      "duration_ms": 146
+    },
+    {
+      "timestamp": "2026-07-01T03:17:57Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "login.failed",
+      "user": "bruno.vega@example.com",
+      "source_ip": "10.20.2.250",
+      "session_id": "sess_d3c22699e52a",
+      "duration_ms": 587
+    },
+    {
+      "timestamp": "2026-07-01T03:18:34Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "carla.ferrari@example.com",
+      "source_ip": "10.20.2.16",
+      "session_id": "sess_8d0d56de385c",
+      "duration_ms": 673
+    },
+    {
+      "timestamp": "2026-07-01T03:19:11Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "diego.ferrari@example.com",
+      "source_ip": "10.20.5.174",
+      "session_id": "sess_ab06742921ae",
+      "duration_ms": 472
+    },
+    {
+      "timestamp": "2026-07-01T03:19:48Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "elena.ferrari@example.com",
+      "source_ip": "10.20.5.84",
+      "session_id": "sess_d1f6a1ff7b40",
+      "duration_ms": 407
+    },
+    {
+      "timestamp": "2026-07-01T03:20:25Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "facundo.ferrari@example.com",
+      "source_ip": "10.20.1.102",
+      "session_id": "sess_220cac4b597f",
+      "duration_ms": 638
+    },
+    {
+      "timestamp": "2026-07-01T03:21:02Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "gisela.ferrari@example.com",
+      "source_ip": "10.20.7.2",
+      "session_id": "sess_283544b15c87",
+      "duration_ms": 268
+    },
+    {
+      "timestamp": "2026-07-01T03:21:39Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "hernan.ferrari@example.com",
+      "source_ip": "10.20.2.16",
+      "session_id": "sess_d1aaba526b46",
+      "duration_ms": 81
+    },
+    {
+      "timestamp": "2026-07-01T03:22:16Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "login.failed",
+      "user": "ines.ferrari@example.com",
+      "source_ip": "10.20.0.37",
+      "session_id": "sess_d2dbaf65d1d1",
+      "duration_ms": 724
+    },
+    {
+      "timestamp": "2026-07-01T03:22:53Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "token.refresh",
+      "user": "julian.quiroga@example.com",
+      "source_ip": "10.20.2.16",
+      "session_id": "sess_4883cbb0be1a",
+      "duration_ms": 916
+    },
+    {
+      "timestamp": "2026-07-01T03:23:30Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "ana.quiroga@example.com",
+      "source_ip": "10.20.4.230",
+      "session_id": "sess_4ed4ae9f5480",
+      "duration_ms": 607
+    },
+    {
+      "timestamp": "2026-07-01T03:24:07Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "bruno.quiroga@example.com",
+      "source_ip": "10.20.5.38",
+      "session_id": "sess_3480bbcc5d29",
+      "duration_ms": 860
+    },
+    {
+      "timestamp": "2026-07-01T03:24:44Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "carla.quiroga@example.com",
+      "source_ip": "10.20.1.102",
+      "session_id": "sess_5684a0a4b366",
+      "duration_ms": 289
+    },
+    {
+      "timestamp": "2026-07-01T03:25:21Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "logout",
+      "user": "diego.quiroga@example.com",
+      "source_ip": "10.20.6.216",
+      "session_id": "sess_42c9a227f248",
+      "duration_ms": 202
+    },
+    {
+      "timestamp": "2026-07-01T03:25:58Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "mfa.challenge",
+      "user": "elena.quiroga@example.com",
+      "source_ip": "10.20.1.152",
+      "session_id": "sess_b486a4888a83",
+      "duration_ms": 299
+    },
+    {
+      "timestamp": "2026-07-01T03:26:35Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "facundo.quiroga@example.com",
+      "source_ip": "10.20.0.37",
+      "session_id": "sess_79b045b1ec4b",
+      "duration_ms": 804
+    },
+    {
+      "timestamp": "2026-07-01T03:27:12Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "gisela.sosa@example.com",
+      "source_ip": "10.20.2.3",
+      "session_id": "sess_637ef5e9a554",
+      "duration_ms": 514
+    },
+    {
+      "timestamp": "2026-07-01T03:27:49Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "hernan.sosa@example.com",
+      "source_ip": "10.20.1.123",
+      "session_id": "sess_cba80fe4d053",
+      "duration_ms": 284
+    },
+    {
+      "timestamp": "2026-07-01T03:28:26Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "ines.sosa@example.com",
+      "source_ip": "10.20.1.130",
+      "session_id": "sess_47341307db1e",
+      "duration_ms": 768
+    },
+    {
+      "timestamp": "2026-07-01T03:29:03Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "julian.sosa@example.com",
+      "source_ip": "10.20.7.91",
+      "session_id": "sess_2c4788900ad6",
+      "duration_ms": 390
+    },
+    {
+      "timestamp": "2026-07-01T03:29:40Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "ana.sosa@example.com",
+      "source_ip": "10.20.7.45",
+      "session_id": "sess_62547ba5eb84",
+      "duration_ms": 508
+    },
+    {
+      "timestamp": "2026-07-01T03:30:17Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "bruno.sosa@example.com",
+      "source_ip": "10.20.2.3",
+      "session_id": "sess_be635408e8a1",
+      "duration_ms": 928
+    },
+    {
+      "timestamp": "2026-07-01T03:30:54Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "carla.sosa@example.com",
+      "source_ip": "10.20.5.84",
+      "session_id": "sess_4e260cd27c61",
+      "duration_ms": 357
+    },
+    {
+      "timestamp": "2026-07-01T03:31:31Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "diego.duarte@example.com",
+      "source_ip": "10.20.5.174",
+      "session_id": "sess_5f86a34b5d32",
+      "duration_ms": 338
+    },
+    {
+      "timestamp": "2026-07-01T03:32:08Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "elena.duarte@example.com",
+      "source_ip": "10.20.3.71",
+      "session_id": "sess_d69953fa767e",
+      "duration_ms": 731
+    },
+    {
+      "timestamp": "2026-07-01T03:32:45Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "facundo.duarte@example.com",
+      "source_ip": "10.20.7.91",
+      "session_id": "sess_3378f8501028",
+      "duration_ms": 654
+    },
+    {
+      "timestamp": "2026-07-01T03:33:22Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "login.success",
+      "user": "gisela.duarte@example.com",
+      "source_ip": "10.20.2.3",
+      "session_id": "sess_e53cce4a5a8e",
+      "duration_ms": 739
+    },
+    {
+      "timestamp": "2026-07-01T03:33:59Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "logout",
+      "user": "hernan.duarte@example.com",
+      "source_ip": "10.20.2.250",
+      "session_id": "sess_36b11bff5a78",
+      "duration_ms": 859
+    },
+    {
+      "timestamp": "2026-07-01T03:34:36Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "ines.duarte@example.com",
+      "source_ip": "10.20.5.6",
+      "session_id": "sess_1d7bc0304f18",
+      "duration_ms": 497
+    },
+    {
+      "timestamp": "2026-07-01T03:35:13Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "mfa.challenge",
+      "user": "julian.duarte@example.com",
+      "source_ip": "10.20.6.62",
+      "session_id": "sess_414aa841b7e7",
+      "duration_ms": 521
+    },
+    {
+      "timestamp": "2026-07-01T03:35:50Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "ana.gomez@example.com",
+      "source_ip": "10.20.6.62",
+      "session_id": "sess_4131f4965647",
+      "duration_ms": 42
+    },
+    {
+      "timestamp": "2026-07-01T03:36:27Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "bruno.gomez@example.com",
+      "source_ip": "10.20.0.194",
+      "session_id": "sess_194cd673ee02",
+      "duration_ms": 253
+    },
+    {
+      "timestamp": "2026-07-01T03:37:04Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "carla.gomez@example.com",
+      "source_ip": "10.20.7.91",
+      "session_id": "sess_06f459408511",
+      "duration_ms": 365
+    },
+    {
+      "timestamp": "2026-07-01T03:37:41Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "diego.gomez@example.com",
+      "source_ip": "10.20.8.110",
+      "session_id": "sess_3654c87034ba",
+      "duration_ms": 807
+    },
+    {
+      "timestamp": "2026-07-01T03:38:18Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "elena.gomez@example.com",
+      "source_ip": "10.20.6.62",
+      "session_id": "sess_14286d02ed28",
+      "duration_ms": 663
+    },
+    {
+      "timestamp": "2026-07-01T03:38:55Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "facundo.gomez@example.com",
+      "source_ip": "10.20.7.53",
+      "session_id": "sess_faeef3d862b9",
+      "duration_ms": 427
+    },
+    {
+      "timestamp": "2026-07-01T03:39:32Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "gisela.gomez@example.com",
+      "source_ip": "10.20.7.45",
+      "session_id": "sess_34dcb9138f92",
+      "duration_ms": 185
+    },
+    {
+      "timestamp": "2026-07-01T03:40:09Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "hernan.perez@example.com",
+      "source_ip": "10.20.2.80",
+      "session_id": "sess_549af751b6b3",
+      "duration_ms": 34
+    },
+    {
+      "timestamp": "2026-07-01T03:40:46Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "token.refresh",
+      "user": "ines.perez@example.com",
+      "source_ip": "10.20.1.146",
+      "session_id": "sess_151f8601266f",
+      "duration_ms": 361
+    },
+    {
+      "timestamp": "2026-07-01T03:41:23Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "julian.perez@example.com",
+      "source_ip": "10.20.4.230",
+      "session_id": "sess_3fc57d7fb441",
+      "duration_ms": 146
+    },
+    {
+      "timestamp": "2026-07-01T03:42:00Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "ana.perez@example.com",
+      "source_ip": "10.20.3.37",
+      "session_id": "sess_936feb8cafa8",
+      "duration_ms": 636
+    },
+    {
+      "timestamp": "2026-07-01T03:42:37Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "bruno.perez@example.com",
+      "source_ip": "10.20.2.225",
+      "session_id": "sess_5c12b6147abb",
+      "duration_ms": 822
+    },
+    {
+      "timestamp": "2026-07-01T03:43:14Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "carla.perez@example.com",
+      "source_ip": "10.20.1.75",
+      "session_id": "sess_106514d7cc4d",
+      "duration_ms": 568
+    },
+    {
+      "timestamp": "2026-07-01T03:43:51Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "diego.perez@example.com",
+      "source_ip": "10.20.5.174",
+      "session_id": "sess_1b0546edf394",
+      "duration_ms": 175
+    },
+    {
+      "timestamp": "2026-07-01T03:44:28Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "elena.silva@example.com",
+      "source_ip": "10.20.0.9",
+      "session_id": "sess_e9c4208e1483",
+      "duration_ms": 224
+    },
+    {
+      "timestamp": "2026-07-01T03:45:05Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "facundo.silva@example.com",
+      "source_ip": "10.20.4.118",
+      "session_id": "sess_f57e4d1d322c",
+      "duration_ms": 427
+    },
+    {
+      "timestamp": "2026-07-01T03:45:42Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "gisela.silva@example.com",
+      "source_ip": "10.20.0.225",
+      "session_id": "sess_c7e55403895c",
+      "duration_ms": 886
+    },
+    {
+      "timestamp": "2026-07-01T03:46:19Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "mfa.challenge",
+      "user": "hernan.silva@example.com",
+      "source_ip": "10.20.2.16",
+      "session_id": "sess_becea34d778a",
+      "duration_ms": 104
+    },
+    {
+      "timestamp": "2026-07-01T03:46:56Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "mfa.challenge",
+      "user": "ines.silva@example.com",
+      "source_ip": "10.20.5.84",
+      "session_id": "sess_38581b832f49",
+      "duration_ms": 288
+    },
+    {
+      "timestamp": "2026-07-01T03:47:33Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "token.refresh",
+      "user": "julian.silva@example.com",
+      "source_ip": "10.20.7.53",
+      "session_id": "sess_4e3806d013b0",
+      "duration_ms": 420
+    },
+    {
+      "timestamp": "2026-07-01T03:48:10Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "ana.silva@example.com",
+      "source_ip": "10.20.7.91",
+      "session_id": "sess_6dded895e2a7",
+      "duration_ms": 76
+    },
+    {
+      "timestamp": "2026-07-01T03:48:47Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "bruno.rossi@example.com",
+      "source_ip": "10.20.5.38",
+      "session_id": "sess_6c9a7568f3b0",
+      "duration_ms": 356
+    },
+    {
+      "timestamp": "2026-07-01T03:49:24Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "carla.rossi@example.com",
+      "source_ip": "10.20.0.194",
+      "session_id": "sess_faf46dea7b84",
+      "duration_ms": 124
+    },
+    {
+      "timestamp": "2026-07-01T03:50:01Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "diego.rossi@example.com",
+      "source_ip": "10.20.1.25",
+      "session_id": "sess_6821dfbd16ba",
+      "duration_ms": 98
+    },
+    {
+      "timestamp": "2026-07-01T03:50:38Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "elena.rossi@example.com",
+      "source_ip": "10.20.8.64",
+      "session_id": "sess_08bf19e52684",
+      "duration_ms": 904
+    },
+    {
+      "timestamp": "2026-07-01T03:51:15Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "facundo.rossi@example.com",
+      "source_ip": "10.20.1.25",
+      "session_id": "sess_c202f7f0f58d",
+      "duration_ms": 806
+    },
+    {
+      "timestamp": "2026-07-01T03:51:52Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "gisela.rossi@example.com",
+      "source_ip": "10.20.0.94",
+      "session_id": "sess_73b5ca980e7a",
+      "duration_ms": 769
+    },
+    {
+      "timestamp": "2026-07-01T03:52:29Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "hernan.rossi@example.com",
+      "source_ip": "10.20.8.44",
+      "session_id": "sess_3c255669fe1d",
+      "duration_ms": 96
+    },
+    {
+      "timestamp": "2026-07-01T03:53:06Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "ines.molina@example.com",
+      "source_ip": "10.20.8.44",
+      "session_id": "sess_1414ec2f2dde",
+      "duration_ms": 714
+    },
+    {
+      "timestamp": "2026-07-01T03:53:43Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "julian.molina@example.com",
+      "source_ip": "10.20.7.45",
+      "session_id": "sess_c3f73156e4b9",
+      "duration_ms": 130
+    },
+    {
+      "timestamp": "2026-07-01T03:54:20Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "ana.molina@example.com",
+      "source_ip": "10.20.2.80",
+      "session_id": "sess_48c105961f6c",
+      "duration_ms": 300
+    },
+    {
+      "timestamp": "2026-07-01T03:54:57Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "bruno.molina@example.com",
+      "source_ip": "10.20.1.130",
+      "session_id": "sess_b14b28adcb43",
+      "duration_ms": 335
+    },
+    {
+      "timestamp": "2026-07-01T03:55:34Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "login.failed",
+      "user": "carla.molina@example.com",
+      "source_ip": "10.20.5.6",
+      "session_id": "sess_ce397a2fc549",
+      "duration_ms": 223
+    },
+    {
+      "timestamp": "2026-07-01T03:56:11Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "diego.molina@example.com",
+      "source_ip": "10.20.5.84",
+      "session_id": "sess_4278977b09a2",
+      "duration_ms": 199
+    },
+    {
+      "timestamp": "2026-07-01T03:56:48Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "elena.molina@example.com",
+      "source_ip": "10.20.0.194",
+      "session_id": "sess_f7bb375b53f3",
+      "duration_ms": 754
+    },
+    {
+      "timestamp": "2026-07-01T03:57:25Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "facundo.vega@example.com",
+      "source_ip": "10.20.8.64",
+      "session_id": "sess_624d45ebf449",
+      "duration_ms": 797
+    },
+    {
+      "timestamp": "2026-07-01T03:58:02Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "gisela.vega@example.com",
+      "source_ip": "10.20.4.118",
+      "session_id": "sess_679215596460",
+      "duration_ms": 578
+    },
+    {
+      "timestamp": "2026-07-01T03:58:39Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "hernan.vega@example.com",
+      "source_ip": "10.20.1.27",
+      "session_id": "sess_e725bd0b8c52",
+      "duration_ms": 50
+    },
+    {
+      "timestamp": "2026-07-01T03:59:16Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "ines.vega@example.com",
+      "source_ip": "10.20.0.225",
+      "session_id": "sess_815927d86799",
+      "duration_ms": 39
+    },
+    {
+      "timestamp": "2026-07-01T03:59:53Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "julian.vega@example.com",
+      "source_ip": "10.20.5.84",
+      "session_id": "sess_03b376fdbd9a",
+      "duration_ms": 106
+    },
+    {
+      "timestamp": "2026-07-01T04:00:30Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "login.success",
+      "user": "ana.vega@example.com",
+      "source_ip": "10.20.1.152",
+      "session_id": "sess_7c900e63c33a",
+      "duration_ms": 902
+    },
+    {
+      "timestamp": "2026-07-01T04:01:07Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "mfa.challenge",
+      "user": "bruno.vega@example.com",
+      "source_ip": "10.20.1.152",
+      "session_id": "sess_c35e7fa80e2e",
+      "duration_ms": 216
+    },
+    {
+      "timestamp": "2026-07-01T04:01:44Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "carla.ferrari@example.com",
+      "source_ip": "10.20.7.53",
+      "session_id": "sess_94471f2f555b",
+      "duration_ms": 135
+    },
+    {
+      "timestamp": "2026-07-01T04:02:21Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "token.refresh",
+      "user": "diego.ferrari@example.com",
+      "source_ip": "10.20.3.71",
+      "session_id": "sess_d1d87e485bea",
+      "duration_ms": 127
+    },
+    {
+      "timestamp": "2026-07-01T04:02:58Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "elena.ferrari@example.com",
+      "source_ip": "10.20.8.110",
+      "session_id": "sess_4e345cae24d2",
+      "duration_ms": 176
+    },
+    {
+      "timestamp": "2026-07-01T04:03:35Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "facundo.ferrari@example.com",
+      "source_ip": "10.20.7.45",
+      "session_id": "sess_0b4cdbf089e6",
+      "duration_ms": 700
+    },
+    {
+      "timestamp": "2026-07-01T04:04:12Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "gisela.ferrari@example.com",
+      "source_ip": "10.20.4.240",
+      "session_id": "sess_bc15e3838b6d",
+      "duration_ms": 678
+    },
+    {
+      "timestamp": "2026-07-01T04:04:49Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "hernan.ferrari@example.com",
+      "source_ip": "10.20.7.91",
+      "session_id": "sess_2f39a44b0c61",
+      "duration_ms": 763
+    },
+    {
+      "timestamp": "2026-07-01T04:05:26Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "ines.ferrari@example.com",
+      "source_ip": "10.20.1.123",
+      "session_id": "sess_71898f590798",
+      "duration_ms": 373
+    },
+    {
+      "timestamp": "2026-07-01T04:06:03Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "julian.quiroga@example.com",
+      "source_ip": "10.20.5.174",
+      "session_id": "sess_a5a01cb602bf",
+      "duration_ms": 942
+    },
+    {
+      "timestamp": "2026-07-01T04:06:40Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "ana.quiroga@example.com",
+      "source_ip": "10.20.6.216",
+      "session_id": "sess_aa47333b22dd",
+      "duration_ms": 558
+    },
+    {
+      "timestamp": "2026-07-01T04:07:17Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "logout",
+      "user": "bruno.quiroga@example.com",
+      "source_ip": "10.20.7.2",
+      "session_id": "sess_388e4a4abd33",
+      "duration_ms": 285
+    },
+    {
+      "timestamp": "2026-07-01T04:07:54Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "mfa.challenge",
+      "user": "carla.quiroga@example.com",
+      "source_ip": "10.20.2.3",
+      "session_id": "sess_db276e65efed",
+      "duration_ms": 325
+    },
+    {
+      "timestamp": "2026-07-01T04:08:31Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "diego.quiroga@example.com",
+      "source_ip": "10.20.4.185",
+      "session_id": "sess_a12b564d6f6a",
+      "duration_ms": 226
+    },
+    {
+      "timestamp": "2026-07-01T04:09:08Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "login.success",
+      "user": "elena.quiroga@example.com",
+      "source_ip": "10.20.0.194",
+      "session_id": "sess_099679338828",
+      "duration_ms": 497
+    },
+    {
+      "timestamp": "2026-07-01T04:09:45Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "facundo.quiroga@example.com",
+      "source_ip": "10.20.0.225",
+      "session_id": "sess_75906258e080",
+      "duration_ms": 314
+    },
+    {
+      "timestamp": "2026-07-01T04:10:22Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "gisela.sosa@example.com",
+      "source_ip": "10.20.2.25",
+      "session_id": "sess_08ca2152f98c",
+      "duration_ms": 911
+    },
+    {
+      "timestamp": "2026-07-01T04:10:59Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "login.success",
+      "user": "hernan.sosa@example.com",
+      "source_ip": "10.20.1.123",
+      "session_id": "sess_c7b65fed3cf5",
+      "duration_ms": 105
+    },
+    {
+      "timestamp": "2026-07-01T04:11:36Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "ines.sosa@example.com",
+      "source_ip": "10.20.7.45",
+      "session_id": "sess_b059167d891f",
+      "duration_ms": 340
+    },
+    {
+      "timestamp": "2026-07-01T04:12:13Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "julian.sosa@example.com",
+      "source_ip": "10.20.7.2",
+      "session_id": "sess_5c3e48a09fa9",
+      "duration_ms": 888
+    },
+    {
+      "timestamp": "2026-07-01T04:12:50Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "ana.sosa@example.com",
+      "source_ip": "10.20.1.146",
+      "session_id": "sess_832f633f9bb2",
+      "duration_ms": 583
+    },
+    {
+      "timestamp": "2026-07-01T04:13:27Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "token.refresh",
+      "user": "bruno.sosa@example.com",
+      "source_ip": "10.20.6.216",
+      "session_id": "sess_810e3b8d2835",
+      "duration_ms": 383
+    },
+    {
+      "timestamp": "2026-07-01T04:14:04Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "login.failed",
+      "user": "carla.sosa@example.com",
+      "source_ip": "10.20.2.25",
+      "session_id": "sess_c9191f15dd7e",
+      "duration_ms": 190,
+      "debug_payload": {
+        "username": "carla.sosa@example.com",
+        "password": "Summer2026-412!"
+      },
+      "message": "Invalid credentials accidentally written to the debug log"
+    },
+    {
+      "timestamp": "2026-07-01T04:14:41Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "diego.duarte@example.com",
+      "source_ip": "10.20.1.152",
+      "session_id": "sess_b45ef91e917a",
+      "duration_ms": 579
+    },
+    {
+      "timestamp": "2026-07-01T04:15:18Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "elena.duarte@example.com",
+      "source_ip": "10.20.0.37",
+      "session_id": "sess_b51dbb490673",
+      "duration_ms": 821
+    },
+    {
+      "timestamp": "2026-07-01T04:15:55Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "token.refresh",
+      "user": "facundo.duarte@example.com",
+      "source_ip": "10.20.7.2",
+      "session_id": "sess_00c3081938e7",
+      "duration_ms": 538
+    },
+    {
+      "timestamp": "2026-07-01T04:16:32Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "token.refresh",
+      "user": "gisela.duarte@example.com",
+      "source_ip": "10.20.7.45",
+      "session_id": "sess_89f5c875c548",
+      "duration_ms": 470
+    },
+    {
+      "timestamp": "2026-07-01T04:17:09Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "hernan.duarte@example.com",
+      "source_ip": "10.20.1.123",
+      "session_id": "sess_f23165770a34",
+      "duration_ms": 566
+    },
+    {
+      "timestamp": "2026-07-01T04:17:46Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "ines.duarte@example.com",
+      "source_ip": "10.20.1.25",
+      "session_id": "sess_7a6b17b10247",
+      "duration_ms": 61
+    },
+    {
+      "timestamp": "2026-07-01T04:18:23Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "mfa.challenge",
+      "user": "julian.duarte@example.com",
+      "source_ip": "10.20.4.185",
+      "session_id": "sess_d212d983bdaa",
+      "duration_ms": 733
+    },
+    {
+      "timestamp": "2026-07-01T04:19:00Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "ana.gomez@example.com",
+      "source_ip": "10.20.5.174",
+      "session_id": "sess_567a8681349d",
+      "duration_ms": 561
+    },
+    {
+      "timestamp": "2026-07-01T04:19:37Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "login.success",
+      "user": "bruno.gomez@example.com",
+      "source_ip": "10.20.2.25",
+      "session_id": "sess_a87f7dfd5f8f",
+      "duration_ms": 63
+    },
+    {
+      "timestamp": "2026-07-01T04:20:14Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "carla.gomez@example.com",
+      "source_ip": "10.20.5.174",
+      "session_id": "sess_b308a19ef7a4",
+      "duration_ms": 50
+    },
+    {
+      "timestamp": "2026-07-01T04:20:51Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "diego.gomez@example.com",
+      "source_ip": "10.20.7.45",
+      "session_id": "sess_03f38c7857e3",
+      "duration_ms": 203
+    },
+    {
+      "timestamp": "2026-07-01T04:21:28Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "elena.gomez@example.com",
+      "source_ip": "10.20.1.152",
+      "session_id": "sess_1af660f5ba74",
+      "duration_ms": 346
+    },
+    {
+      "timestamp": "2026-07-01T04:22:05Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "logout",
+      "user": "facundo.gomez@example.com",
+      "source_ip": "10.20.3.71",
+      "session_id": "sess_917327212bd7",
+      "duration_ms": 418
+    },
+    {
+      "timestamp": "2026-07-01T04:22:42Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "gisela.gomez@example.com",
+      "source_ip": "10.20.5.6",
+      "session_id": "sess_fcf70996e675",
+      "duration_ms": 893
+    },
+    {
+      "timestamp": "2026-07-01T04:23:19Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "hernan.perez@example.com",
+      "source_ip": "10.20.1.27",
+      "session_id": "sess_5e16943736ee",
+      "duration_ms": 111
+    },
+    {
+      "timestamp": "2026-07-01T04:23:56Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "ines.perez@example.com",
+      "source_ip": "10.20.1.27",
+      "session_id": "sess_0222354fd808",
+      "duration_ms": 855
+    },
+    {
+      "timestamp": "2026-07-01T04:24:33Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "julian.perez@example.com",
+      "source_ip": "10.20.8.44",
+      "session_id": "sess_4a7fbccc7985",
+      "duration_ms": 412
+    },
+    {
+      "timestamp": "2026-07-01T04:25:10Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "ana.perez@example.com",
+      "source_ip": "10.20.2.225",
+      "session_id": "sess_9ae88cbbf412",
+      "duration_ms": 420
+    },
+    {
+      "timestamp": "2026-07-01T04:25:47Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "bruno.perez@example.com",
+      "source_ip": "10.20.2.3",
+      "session_id": "sess_78f5cbda05db",
+      "duration_ms": 646
+    },
+    {
+      "timestamp": "2026-07-01T04:26:24Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "carla.perez@example.com",
+      "source_ip": "10.20.8.110",
+      "session_id": "sess_04f4f83f72f8",
+      "duration_ms": 795
+    },
+    {
+      "timestamp": "2026-07-01T04:27:01Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "diego.perez@example.com",
+      "source_ip": "10.20.1.75",
+      "session_id": "sess_8ad65c93001f",
+      "duration_ms": 233
+    },
+    {
+      "timestamp": "2026-07-01T04:27:38Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "elena.silva@example.com",
+      "source_ip": "10.20.1.102",
+      "session_id": "sess_3918bc8ff50c",
+      "duration_ms": 88
+    },
+    {
+      "timestamp": "2026-07-01T04:28:15Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "facundo.silva@example.com",
+      "source_ip": "10.20.8.64",
+      "session_id": "sess_3885487b9934",
+      "duration_ms": 600
+    },
+    {
+      "timestamp": "2026-07-01T04:28:52Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "gisela.silva@example.com",
+      "source_ip": "10.20.2.3",
+      "session_id": "sess_e63a1e51b13f",
+      "duration_ms": 863
+    },
+    {
+      "timestamp": "2026-07-01T04:29:29Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "hernan.silva@example.com",
+      "source_ip": "10.20.0.194",
+      "session_id": "sess_926fe8860bba",
+      "duration_ms": 90
+    },
+    {
+      "timestamp": "2026-07-01T04:30:06Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "login.failed",
+      "user": "ines.silva@example.com",
+      "source_ip": "10.20.6.202",
+      "session_id": "sess_49a3b2a98671",
+      "duration_ms": 555
+    },
+    {
+      "timestamp": "2026-07-01T04:30:43Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "token.refresh",
+      "user": "julian.silva@example.com",
+      "source_ip": "10.20.8.110",
+      "session_id": "sess_2859b6df9a1c",
+      "duration_ms": 768
+    },
+    {
+      "timestamp": "2026-07-01T04:31:20Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "ana.silva@example.com",
+      "source_ip": "10.20.1.25",
+      "session_id": "sess_12d0087fc230",
+      "duration_ms": 639
+    },
+    {
+      "timestamp": "2026-07-01T04:31:57Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "bruno.rossi@example.com",
+      "source_ip": "10.20.5.174",
+      "session_id": "sess_2a2853ca04e6",
+      "duration_ms": 412
+    },
+    {
+      "timestamp": "2026-07-01T04:32:34Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "carla.rossi@example.com",
+      "source_ip": "10.20.2.3",
+      "session_id": "sess_76eee8b8c9cf",
+      "duration_ms": 800
+    },
+    {
+      "timestamp": "2026-07-01T04:33:11Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "token.refresh",
+      "user": "diego.rossi@example.com",
+      "source_ip": "10.20.1.152",
+      "session_id": "sess_bc8cea88647b",
+      "duration_ms": 78
+    },
+    {
+      "timestamp": "2026-07-01T04:33:48Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "elena.rossi@example.com",
+      "source_ip": "10.20.7.2",
+      "session_id": "sess_3946044941a1",
+      "duration_ms": 629
+    },
+    {
+      "timestamp": "2026-07-01T04:34:25Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "facundo.rossi@example.com",
+      "source_ip": "10.20.1.123",
+      "session_id": "sess_fe5cbbb9ccca",
+      "duration_ms": 940
+    },
+    {
+      "timestamp": "2026-07-01T04:35:02Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "gisela.rossi@example.com",
+      "source_ip": "10.20.0.37",
+      "session_id": "sess_deb28ba6fe60",
+      "duration_ms": 675
+    },
+    {
+      "timestamp": "2026-07-01T04:35:39Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "hernan.rossi@example.com",
+      "source_ip": "10.20.5.84",
+      "session_id": "sess_13f82d71a3b6",
+      "duration_ms": 427
+    },
+    {
+      "timestamp": "2026-07-01T04:36:16Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "ines.molina@example.com",
+      "source_ip": "10.20.6.216",
+      "session_id": "sess_93183716ebe3",
+      "duration_ms": 47
+    },
+    {
+      "timestamp": "2026-07-01T04:36:53Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "mfa.challenge",
+      "user": "julian.molina@example.com",
+      "source_ip": "10.20.5.174",
+      "session_id": "sess_45cbb50e21b7",
+      "duration_ms": 921
+    },
+    {
+      "timestamp": "2026-07-01T04:37:30Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "ana.molina@example.com",
+      "source_ip": "10.20.1.152",
+      "session_id": "sess_f85d4ce9d8d7",
+      "duration_ms": 281
+    },
+    {
+      "timestamp": "2026-07-01T04:38:07Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "bruno.molina@example.com",
+      "source_ip": "10.20.7.53",
+      "session_id": "sess_0ad67a26c0e1",
+      "duration_ms": 141
+    },
+    {
+      "timestamp": "2026-07-01T04:38:44Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "carla.molina@example.com",
+      "source_ip": "10.20.7.53",
+      "session_id": "sess_8c65d670e8ab",
+      "duration_ms": 662
+    },
+    {
+      "timestamp": "2026-07-01T04:39:21Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "diego.molina@example.com",
+      "source_ip": "10.20.2.250",
+      "session_id": "sess_69c814e13257",
+      "duration_ms": 388
+    },
+    {
+      "timestamp": "2026-07-01T04:39:58Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "elena.molina@example.com",
+      "source_ip": "10.20.0.9",
+      "session_id": "sess_ef53cf4dcb0b",
+      "duration_ms": 450
+    },
+    {
+      "timestamp": "2026-07-01T04:40:35Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "facundo.vega@example.com",
+      "source_ip": "10.20.6.216",
+      "session_id": "sess_36433f9daa3a",
+      "duration_ms": 276
+    },
+    {
+      "timestamp": "2026-07-01T04:41:12Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "gisela.vega@example.com",
+      "source_ip": "10.20.5.6",
+      "session_id": "sess_4e027cda9a74",
+      "duration_ms": 256
+    },
+    {
+      "timestamp": "2026-07-01T04:41:49Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "hernan.vega@example.com",
+      "source_ip": "10.20.2.225",
+      "session_id": "sess_c67c6ca061be",
+      "duration_ms": 279
+    },
+    {
+      "timestamp": "2026-07-01T04:42:26Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "ines.vega@example.com",
+      "source_ip": "10.20.6.62",
+      "session_id": "sess_0a8299a32d38",
+      "duration_ms": 184
+    },
+    {
+      "timestamp": "2026-07-01T04:43:03Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "julian.vega@example.com",
+      "source_ip": "10.20.4.118",
+      "session_id": "sess_f55883a34e93",
+      "duration_ms": 336
+    },
+    {
+      "timestamp": "2026-07-01T04:43:40Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "mfa.challenge",
+      "user": "ana.vega@example.com",
+      "source_ip": "10.20.4.230",
+      "session_id": "sess_3862c9c8c42e",
+      "duration_ms": 535
+    },
+    {
+      "timestamp": "2026-07-01T04:44:17Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "login.failed",
+      "user": "bruno.vega@example.com",
+      "source_ip": "10.20.1.75",
+      "session_id": "sess_13d5abb114f8",
+      "duration_ms": 681
+    },
+    {
+      "timestamp": "2026-07-01T04:44:54Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "login.success",
+      "user": "carla.ferrari@example.com",
+      "source_ip": "10.20.7.53",
+      "session_id": "sess_5b8973efa4e8",
+      "duration_ms": 731
+    },
+    {
+      "timestamp": "2026-07-01T04:45:31Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "diego.ferrari@example.com",
+      "source_ip": "10.20.2.250",
+      "session_id": "sess_00ed185cd483",
+      "duration_ms": 924
+    },
+    {
+      "timestamp": "2026-07-01T04:46:08Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "elena.ferrari@example.com",
+      "source_ip": "10.20.8.110",
+      "session_id": "sess_6f4c0c8d3ff1",
+      "duration_ms": 57
+    },
+    {
+      "timestamp": "2026-07-01T04:46:45Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "facundo.ferrari@example.com",
+      "source_ip": "10.20.2.225",
+      "session_id": "sess_4e2d76b2edbb",
+      "duration_ms": 929
+    },
+    {
+      "timestamp": "2026-07-01T04:47:22Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "gisela.ferrari@example.com",
+      "source_ip": "10.20.7.45",
+      "session_id": "sess_0c08e1910baa",
+      "duration_ms": 800
+    },
+    {
+      "timestamp": "2026-07-01T04:47:59Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "hernan.ferrari@example.com",
+      "source_ip": "10.20.3.71",
+      "session_id": "sess_10666f606aa0",
+      "duration_ms": 154
+    },
+    {
+      "timestamp": "2026-07-01T04:48:36Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "logout",
+      "user": "ines.ferrari@example.com",
+      "source_ip": "10.20.3.71",
+      "session_id": "sess_f738360ac813",
+      "duration_ms": 205
+    },
+    {
+      "timestamp": "2026-07-01T04:49:13Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "login.success",
+      "user": "julian.quiroga@example.com",
+      "source_ip": "10.20.7.45",
+      "session_id": "sess_e2d3bd52993c",
+      "duration_ms": 853
+    },
+    {
+      "timestamp": "2026-07-01T04:49:50Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "ana.quiroga@example.com",
+      "source_ip": "10.20.7.2",
+      "session_id": "sess_e70b54abea4a",
+      "duration_ms": 711
+    },
+    {
+      "timestamp": "2026-07-01T04:50:27Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "mfa.challenge",
+      "user": "bruno.quiroga@example.com",
+      "source_ip": "10.20.7.91",
+      "session_id": "sess_9d4cb9ca62db",
+      "duration_ms": 712
+    },
+    {
+      "timestamp": "2026-07-01T04:51:04Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "carla.quiroga@example.com",
+      "source_ip": "10.20.8.64",
+      "session_id": "sess_b8c176c75817",
+      "duration_ms": 155
+    },
+    {
+      "timestamp": "2026-07-01T04:51:41Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "mfa.challenge",
+      "user": "diego.quiroga@example.com",
+      "source_ip": "10.20.8.44",
+      "session_id": "sess_bc8c0cd47171",
+      "duration_ms": 925
+    },
+    {
+      "timestamp": "2026-07-01T04:52:18Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "elena.quiroga@example.com",
+      "source_ip": "10.20.1.102",
+      "session_id": "sess_1fdf35c11bde",
+      "duration_ms": 303
+    },
+    {
+      "timestamp": "2026-07-01T04:52:55Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "facundo.quiroga@example.com",
+      "source_ip": "10.20.2.25",
+      "session_id": "sess_8be08305c542",
+      "duration_ms": 454
+    },
+    {
+      "timestamp": "2026-07-01T04:53:32Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "gisela.sosa@example.com",
+      "source_ip": "10.20.1.27",
+      "session_id": "sess_63ff3ad73907",
+      "duration_ms": 214
+    },
+    {
+      "timestamp": "2026-07-01T04:54:09Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "hernan.sosa@example.com",
+      "source_ip": "10.20.5.84",
+      "session_id": "sess_f7d8a2d39fd2",
+      "duration_ms": 863
+    },
+    {
+      "timestamp": "2026-07-01T04:54:46Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "ines.sosa@example.com",
+      "source_ip": "10.20.7.45",
+      "session_id": "sess_1edfc4c7e140",
+      "duration_ms": 941
+    },
+    {
+      "timestamp": "2026-07-01T04:55:23Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "julian.sosa@example.com",
+      "source_ip": "10.20.1.123",
+      "session_id": "sess_cfc12e0015b1",
+      "duration_ms": 850
+    },
+    {
+      "timestamp": "2026-07-01T04:56:00Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "ana.sosa@example.com",
+      "source_ip": "10.20.1.179",
+      "session_id": "sess_7255d91d3e4d",
+      "duration_ms": 839
+    },
+    {
+      "timestamp": "2026-07-01T04:56:37Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "login.success",
+      "user": "bruno.sosa@example.com",
+      "source_ip": "10.20.5.6",
+      "session_id": "sess_587dc850ab83",
+      "duration_ms": 516
+    },
+    {
+      "timestamp": "2026-07-01T04:57:14Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "carla.sosa@example.com",
+      "source_ip": "10.20.3.37",
+      "session_id": "sess_6cb11882c133",
+      "duration_ms": 421
+    },
+    {
+      "timestamp": "2026-07-01T04:57:51Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "diego.duarte@example.com",
+      "source_ip": "10.20.8.64",
+      "session_id": "sess_523f6641c55d",
+      "duration_ms": 267
+    },
+    {
+      "timestamp": "2026-07-01T04:58:28Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "elena.duarte@example.com",
+      "source_ip": "10.20.0.194",
+      "session_id": "sess_6c9ad833949a",
+      "duration_ms": 300
+    },
+    {
+      "timestamp": "2026-07-01T04:59:05Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "facundo.duarte@example.com",
+      "source_ip": "10.20.8.44",
+      "session_id": "sess_c28f069fe94b",
+      "duration_ms": 60
+    },
+    {
+      "timestamp": "2026-07-01T04:59:42Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "gisela.duarte@example.com",
+      "source_ip": "10.20.8.110",
+      "session_id": "sess_1ef01b4ea42e",
+      "duration_ms": 155
+    },
+    {
+      "timestamp": "2026-07-01T05:00:19Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "hernan.duarte@example.com",
+      "source_ip": "10.20.5.174",
+      "session_id": "sess_138809a6591f",
+      "duration_ms": 518
+    },
+    {
+      "timestamp": "2026-07-01T05:00:56Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "ines.duarte@example.com",
+      "source_ip": "10.20.0.94",
+      "session_id": "sess_0b58961b6059",
+      "duration_ms": 246
+    },
+    {
+      "timestamp": "2026-07-01T05:01:33Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "julian.duarte@example.com",
+      "source_ip": "10.20.1.102",
+      "session_id": "sess_c15aa5349a18",
+      "duration_ms": 212
+    },
+    {
+      "timestamp": "2026-07-01T05:02:10Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "ana.gomez@example.com",
+      "source_ip": "10.20.1.27",
+      "session_id": "sess_46e0eff5e3c4",
+      "duration_ms": 384
+    },
+    {
+      "timestamp": "2026-07-01T05:02:47Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "bruno.gomez@example.com",
+      "source_ip": "10.20.2.25",
+      "session_id": "sess_7752628b7d29",
+      "duration_ms": 780
+    },
+    {
+      "timestamp": "2026-07-01T05:03:24Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "carla.gomez@example.com",
+      "source_ip": "10.20.2.250",
+      "session_id": "sess_db6ef37c8646",
+      "duration_ms": 921
+    },
+    {
+      "timestamp": "2026-07-01T05:04:01Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "login.failed",
+      "user": "diego.gomez@example.com",
+      "source_ip": "10.20.2.225",
+      "session_id": "sess_06af8ec1113d",
+      "duration_ms": 556
+    },
+    {
+      "timestamp": "2026-07-01T05:04:38Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "elena.gomez@example.com",
+      "source_ip": "10.20.0.94",
+      "session_id": "sess_ad87e566466b",
+      "duration_ms": 150
+    },
+    {
+      "timestamp": "2026-07-01T05:05:15Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "login.success",
+      "user": "facundo.gomez@example.com",
+      "source_ip": "10.20.2.250",
+      "session_id": "sess_adf215c4f34b",
+      "duration_ms": 819
+    },
+    {
+      "timestamp": "2026-07-01T05:05:52Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "gisela.gomez@example.com",
+      "source_ip": "10.20.1.123",
+      "session_id": "sess_1de80dfb1acf",
+      "duration_ms": 882
+    },
+    {
+      "timestamp": "2026-07-01T05:06:29Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "hernan.perez@example.com",
+      "source_ip": "10.20.7.53",
+      "session_id": "sess_09ac1558df4a",
+      "duration_ms": 90
+    },
+    {
+      "timestamp": "2026-07-01T05:07:06Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "login.failed",
+      "user": "ines.perez@example.com",
+      "source_ip": "10.20.5.84",
+      "session_id": "sess_7f2b9d031522",
+      "duration_ms": 54
+    },
+    {
+      "timestamp": "2026-07-01T05:07:43Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "julian.perez@example.com",
+      "source_ip": "10.20.4.230",
+      "session_id": "sess_e1246c3749f9",
+      "duration_ms": 87
+    },
+    {
+      "timestamp": "2026-07-01T05:08:20Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "ana.perez@example.com",
+      "source_ip": "10.20.5.6",
+      "session_id": "sess_ccdb48f4b54a",
+      "duration_ms": 80
+    },
+    {
+      "timestamp": "2026-07-01T05:08:57Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "bruno.perez@example.com",
+      "source_ip": "10.20.2.3",
+      "session_id": "sess_e09ab98fffd8",
+      "duration_ms": 727
+    },
+    {
+      "timestamp": "2026-07-01T05:09:34Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "carla.perez@example.com",
+      "source_ip": "10.20.8.110",
+      "session_id": "sess_1e8d19a4fa55",
+      "duration_ms": 407
+    },
+    {
+      "timestamp": "2026-07-01T05:10:11Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "diego.perez@example.com",
+      "source_ip": "10.20.1.75",
+      "session_id": "sess_138d47d9f216",
+      "duration_ms": 893
+    },
+    {
+      "timestamp": "2026-07-01T05:10:48Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "elena.silva@example.com",
+      "source_ip": "10.20.1.146",
+      "session_id": "sess_226be929eef0",
+      "duration_ms": 565
+    },
+    {
+      "timestamp": "2026-07-01T05:11:25Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "facundo.silva@example.com",
+      "source_ip": "10.20.7.45",
+      "session_id": "sess_ae6274014aba",
+      "duration_ms": 296
+    },
+    {
+      "timestamp": "2026-07-01T05:12:02Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "login.success",
+      "user": "gisela.silva@example.com",
+      "source_ip": "10.20.1.102",
+      "session_id": "sess_3e4fe4e4162f",
+      "duration_ms": 813
+    },
+    {
+      "timestamp": "2026-07-01T05:12:39Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "login.success",
+      "user": "hernan.silva@example.com",
+      "source_ip": "10.20.0.94",
+      "session_id": "sess_6e2be8e44d6a",
+      "duration_ms": 768
+    },
+    {
+      "timestamp": "2026-07-01T05:13:16Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "ines.silva@example.com",
+      "source_ip": "10.20.0.94",
+      "session_id": "sess_7c17029000b1",
+      "duration_ms": 271
+    },
+    {
+      "timestamp": "2026-07-01T05:13:53Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "token.refresh",
+      "user": "julian.silva@example.com",
+      "source_ip": "10.20.0.37",
+      "session_id": "sess_b901b4cd7d4b",
+      "duration_ms": 527
+    },
+    {
+      "timestamp": "2026-07-01T05:14:30Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "login.success",
+      "user": "ana.silva@example.com",
+      "source_ip": "10.20.3.37",
+      "session_id": "sess_c20f6715c57e",
+      "duration_ms": 463
+    },
+    {
+      "timestamp": "2026-07-01T05:15:07Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "bruno.rossi@example.com",
+      "source_ip": "10.20.6.216",
+      "session_id": "sess_9128a08b48a5",
+      "duration_ms": 423
+    },
+    {
+      "timestamp": "2026-07-01T05:15:44Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "carla.rossi@example.com",
+      "source_ip": "10.20.5.174",
+      "session_id": "sess_2c31d5d4d486",
+      "duration_ms": 211
+    },
+    {
+      "timestamp": "2026-07-01T05:16:21Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "logout",
+      "user": "diego.rossi@example.com",
+      "source_ip": "10.20.2.3",
+      "session_id": "sess_8f5983f98c33",
+      "duration_ms": 596
+    },
+    {
+      "timestamp": "2026-07-01T05:16:58Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "elena.rossi@example.com",
+      "source_ip": "10.20.2.225",
+      "session_id": "sess_964034976f2a",
+      "duration_ms": 499
+    },
+    {
+      "timestamp": "2026-07-01T05:17:35Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "login.success",
+      "user": "facundo.rossi@example.com",
+      "source_ip": "10.20.7.45",
+      "session_id": "sess_2678ebece2c3",
+      "duration_ms": 665
+    },
+    {
+      "timestamp": "2026-07-01T05:18:12Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "gisela.rossi@example.com",
+      "source_ip": "10.20.1.102",
+      "session_id": "sess_3792dbe387bc",
+      "duration_ms": 878
+    },
+    {
+      "timestamp": "2026-07-01T05:18:49Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "hernan.rossi@example.com",
+      "source_ip": "10.20.5.174",
+      "session_id": "sess_4dd5365f7427",
+      "duration_ms": 230
+    },
+    {
+      "timestamp": "2026-07-01T05:19:26Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "ines.molina@example.com",
+      "source_ip": "10.20.0.9",
+      "session_id": "sess_eacf15e63ba2",
+      "duration_ms": 440
+    },
+    {
+      "timestamp": "2026-07-01T05:20:03Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "login.success",
+      "user": "julian.molina@example.com",
+      "source_ip": "10.20.3.37",
+      "session_id": "sess_2b3efeb76428",
+      "duration_ms": 573
+    },
+    {
+      "timestamp": "2026-07-01T05:20:40Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "ana.molina@example.com",
+      "source_ip": "10.20.6.216",
+      "session_id": "sess_817bbc209c8b",
+      "duration_ms": 532
+    },
+    {
+      "timestamp": "2026-07-01T05:21:17Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "bruno.molina@example.com",
+      "source_ip": "10.20.4.118",
+      "session_id": "sess_3429e503c5fd",
+      "duration_ms": 307
+    },
+    {
+      "timestamp": "2026-07-01T05:21:54Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "carla.molina@example.com",
+      "source_ip": "10.20.3.37",
+      "session_id": "sess_8558ab62ba32",
+      "duration_ms": 539
+    },
+    {
+      "timestamp": "2026-07-01T05:22:31Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "diego.molina@example.com",
+      "source_ip": "10.20.0.194",
+      "session_id": "sess_47897a2e7517",
+      "duration_ms": 454
+    },
+    {
+      "timestamp": "2026-07-01T05:23:08Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "elena.molina@example.com",
+      "source_ip": "10.20.1.123",
+      "session_id": "sess_c85979a953fe",
+      "duration_ms": 213
+    },
+    {
+      "timestamp": "2026-07-01T05:23:45Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "facundo.vega@example.com",
+      "source_ip": "10.20.6.62",
+      "session_id": "sess_8ac99cd3841b",
+      "duration_ms": 572
+    },
+    {
+      "timestamp": "2026-07-01T05:24:22Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "gisela.vega@example.com",
+      "source_ip": "10.20.4.240",
+      "session_id": "sess_c297de770c20",
+      "duration_ms": 576
+    },
+    {
+      "timestamp": "2026-07-01T05:24:59Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "login.success",
+      "user": "hernan.vega@example.com",
+      "source_ip": "10.20.1.27",
+      "session_id": "sess_89b218e53394",
+      "duration_ms": 95
+    },
+    {
+      "timestamp": "2026-07-01T05:25:36Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "ines.vega@example.com",
+      "source_ip": "10.20.4.118",
+      "session_id": "sess_fa1f0e960178",
+      "duration_ms": 709
+    },
+    {
+      "timestamp": "2026-07-01T05:26:13Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "julian.vega@example.com",
+      "source_ip": "10.20.0.9",
+      "session_id": "sess_0fd42bab9654",
+      "duration_ms": 792
+    },
+    {
+      "timestamp": "2026-07-01T05:26:50Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "ana.vega@example.com",
+      "source_ip": "10.20.0.37",
+      "session_id": "sess_262b0d9f92f2",
+      "duration_ms": 687
+    },
+    {
+      "timestamp": "2026-07-01T05:27:27Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "bruno.vega@example.com",
+      "source_ip": "10.20.4.185",
+      "session_id": "sess_4bccc1117c93",
+      "duration_ms": 649
+    },
+    {
+      "timestamp": "2026-07-01T05:28:04Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "mfa.challenge",
+      "user": "carla.ferrari@example.com",
+      "source_ip": "10.20.8.64",
+      "session_id": "sess_50063652559e",
+      "duration_ms": 179
+    },
+    {
+      "timestamp": "2026-07-01T05:28:41Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "token.refresh",
+      "user": "diego.ferrari@example.com",
+      "source_ip": "10.20.5.38",
+      "session_id": "sess_35649c93836e",
+      "duration_ms": 805
+    },
+    {
+      "timestamp": "2026-07-01T05:29:18Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "token.refresh",
+      "user": "elena.ferrari@example.com",
+      "source_ip": "10.20.6.202",
+      "session_id": "sess_795bb7d691bc",
+      "duration_ms": 929
+    },
+    {
+      "timestamp": "2026-07-01T05:29:55Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "facundo.ferrari@example.com",
+      "source_ip": "10.20.2.16",
+      "session_id": "sess_0aa0cd8c280a",
+      "duration_ms": 248
+    },
+    {
+      "timestamp": "2026-07-01T05:30:32Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "mfa.challenge",
+      "user": "gisela.ferrari@example.com",
+      "source_ip": "10.20.4.240",
+      "session_id": "sess_506787883917",
+      "duration_ms": 510
+    },
+    {
+      "timestamp": "2026-07-01T05:31:09Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "login.success",
+      "user": "hernan.ferrari@example.com",
+      "source_ip": "10.20.6.62",
+      "session_id": "sess_2d8855ea4d40",
+      "duration_ms": 796
+    },
+    {
+      "timestamp": "2026-07-01T05:31:46Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "ines.ferrari@example.com",
+      "source_ip": "10.20.7.91",
+      "session_id": "sess_d4e731638809",
+      "duration_ms": 768
+    },
+    {
+      "timestamp": "2026-07-01T05:32:23Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "login.failed",
+      "user": "julian.quiroga@example.com",
+      "source_ip": "10.20.4.240",
+      "session_id": "sess_649a719cf71d",
+      "duration_ms": 427
+    },
+    {
+      "timestamp": "2026-07-01T05:33:00Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "ana.quiroga@example.com",
+      "source_ip": "10.20.2.25",
+      "session_id": "sess_fa38b4c41f63",
+      "duration_ms": 202
+    },
+    {
+      "timestamp": "2026-07-01T05:33:37Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "bruno.quiroga@example.com",
+      "source_ip": "10.20.4.118",
+      "session_id": "sess_0ef2541d011f",
+      "duration_ms": 947
+    },
+    {
+      "timestamp": "2026-07-01T05:34:14Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "token.refresh",
+      "user": "carla.quiroga@example.com",
+      "source_ip": "10.20.5.38",
+      "session_id": "sess_54af58e2eb7e",
+      "duration_ms": 90
+    },
+    {
+      "timestamp": "2026-07-01T05:34:51Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "diego.quiroga@example.com",
+      "source_ip": "10.20.8.110",
+      "session_id": "sess_1c86737481f3",
+      "duration_ms": 578
+    },
+    {
+      "timestamp": "2026-07-01T05:35:28Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "elena.quiroga@example.com",
+      "source_ip": "10.20.5.38",
+      "session_id": "sess_27188597e824",
+      "duration_ms": 134
+    },
+    {
+      "timestamp": "2026-07-01T05:36:05Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "token.refresh",
+      "user": "facundo.quiroga@example.com",
+      "source_ip": "10.20.7.2",
+      "session_id": "sess_921530f34021",
+      "duration_ms": 173
+    },
+    {
+      "timestamp": "2026-07-01T05:36:42Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "gisela.sosa@example.com",
+      "source_ip": "10.20.2.3",
+      "session_id": "sess_80fcc95dc7de",
+      "duration_ms": 98
+    },
+    {
+      "timestamp": "2026-07-01T05:37:19Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "login.failed",
+      "user": "hernan.sosa@example.com",
+      "source_ip": "10.20.8.110",
+      "session_id": "sess_afa877c92abd",
+      "duration_ms": 450
+    },
+    {
+      "timestamp": "2026-07-01T05:37:56Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "ines.sosa@example.com",
+      "source_ip": "10.20.7.45",
+      "session_id": "sess_1c3274ed1a6b",
+      "duration_ms": 127
+    },
+    {
+      "timestamp": "2026-07-01T05:38:33Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "login.success",
+      "user": "julian.sosa@example.com",
+      "source_ip": "10.20.6.62",
+      "session_id": "sess_0fdd0c3639f4",
+      "duration_ms": 590
+    },
+    {
+      "timestamp": "2026-07-01T05:39:10Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "ana.sosa@example.com",
+      "source_ip": "10.20.7.45",
+      "session_id": "sess_b6dc2a57e49c",
+      "duration_ms": 826
+    },
+    {
+      "timestamp": "2026-07-01T05:39:47Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "bruno.sosa@example.com",
+      "source_ip": "10.20.1.102",
+      "session_id": "sess_e25c1bfa131c",
+      "duration_ms": 365
+    },
+    {
+      "timestamp": "2026-07-01T05:40:24Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "token.refresh",
+      "user": "carla.sosa@example.com",
+      "source_ip": "10.20.6.202",
+      "session_id": "sess_4c2c44cc6b62",
+      "duration_ms": 32
+    },
+    {
+      "timestamp": "2026-07-01T05:41:01Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "diego.duarte@example.com",
+      "source_ip": "10.20.1.179",
+      "session_id": "sess_7aa9ad457f8b",
+      "duration_ms": 482
+    },
+    {
+      "timestamp": "2026-07-01T05:41:38Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "elena.duarte@example.com",
+      "source_ip": "10.20.5.84",
+      "session_id": "sess_f9f256f51d1f",
+      "duration_ms": 656
+    },
+    {
+      "timestamp": "2026-07-01T05:42:15Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "login.failed",
+      "user": "facundo.duarte@example.com",
+      "source_ip": "10.20.3.71",
+      "session_id": "sess_a168f7f7c06c",
+      "duration_ms": 864
+    },
+    {
+      "timestamp": "2026-07-01T05:42:52Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "gisela.duarte@example.com",
+      "source_ip": "10.20.4.230",
+      "session_id": "sess_24ddb5f8253b",
+      "duration_ms": 418
+    },
+    {
+      "timestamp": "2026-07-01T05:43:29Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "hernan.duarte@example.com",
+      "source_ip": "10.20.6.202",
+      "session_id": "sess_f46a0ea0618e",
+      "duration_ms": 914
+    },
+    {
+      "timestamp": "2026-07-01T05:44:06Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "ines.duarte@example.com",
+      "source_ip": "10.20.2.16",
+      "session_id": "sess_77ccc9fbdd4c",
+      "duration_ms": 728
+    },
+    {
+      "timestamp": "2026-07-01T05:44:43Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "julian.duarte@example.com",
+      "source_ip": "10.20.1.130",
+      "session_id": "sess_a7caa92968e6",
+      "duration_ms": 366
+    },
+    {
+      "timestamp": "2026-07-01T05:45:20Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "ana.gomez@example.com",
+      "source_ip": "10.20.1.152",
+      "session_id": "sess_76faefa81e7a",
+      "duration_ms": 527
+    },
+    {
+      "timestamp": "2026-07-01T05:45:57Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "bruno.gomez@example.com",
+      "source_ip": "10.20.2.3",
+      "session_id": "sess_983f6c08a0e6",
+      "duration_ms": 715
+    },
+    {
+      "timestamp": "2026-07-01T05:46:34Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "carla.gomez@example.com",
+      "source_ip": "10.20.1.152",
+      "session_id": "sess_988af2ee7223",
+      "duration_ms": 910
+    },
+    {
+      "timestamp": "2026-07-01T05:47:11Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "diego.gomez@example.com",
+      "source_ip": "10.20.5.38",
+      "session_id": "sess_00db057c9e83",
+      "duration_ms": 328
+    },
+    {
+      "timestamp": "2026-07-01T05:47:48Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "elena.gomez@example.com",
+      "source_ip": "10.20.1.130",
+      "session_id": "sess_c99b4227cbbc",
+      "duration_ms": 147
+    },
+    {
+      "timestamp": "2026-07-01T05:48:25Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "facundo.gomez@example.com",
+      "source_ip": "10.20.2.225",
+      "session_id": "sess_3083d505b899",
+      "duration_ms": 835
+    },
+    {
+      "timestamp": "2026-07-01T05:49:02Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "gisela.gomez@example.com",
+      "source_ip": "10.20.8.64",
+      "session_id": "sess_35de1860eb60",
+      "duration_ms": 16
+    },
+    {
+      "timestamp": "2026-07-01T05:49:39Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "hernan.perez@example.com",
+      "source_ip": "10.20.1.179",
+      "session_id": "sess_70d022ea641c",
+      "duration_ms": 359
+    },
+    {
+      "timestamp": "2026-07-01T05:50:16Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "ines.perez@example.com",
+      "source_ip": "10.20.4.230",
+      "session_id": "sess_a24edd9583de",
+      "duration_ms": 732
+    },
+    {
+      "timestamp": "2026-07-01T05:50:53Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "julian.perez@example.com",
+      "source_ip": "10.20.0.37",
+      "session_id": "sess_3c755955d14b",
+      "duration_ms": 915
+    },
+    {
+      "timestamp": "2026-07-01T05:51:30Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "ana.perez@example.com",
+      "source_ip": "10.20.1.179",
+      "session_id": "sess_f63bc5ab339e",
+      "duration_ms": 68
+    },
+    {
+      "timestamp": "2026-07-01T05:52:07Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "logout",
+      "user": "bruno.perez@example.com",
+      "source_ip": "10.20.5.84",
+      "session_id": "sess_1d8fb84a4f0a",
+      "duration_ms": 610
+    },
+    {
+      "timestamp": "2026-07-01T05:52:44Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "carla.perez@example.com",
+      "source_ip": "10.20.6.202",
+      "session_id": "sess_c4ac4fbc80e3",
+      "duration_ms": 474
+    },
+    {
+      "timestamp": "2026-07-01T05:53:21Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "diego.perez@example.com",
+      "source_ip": "10.20.8.64",
+      "session_id": "sess_b347c4f5ef57",
+      "duration_ms": 143
+    },
+    {
+      "timestamp": "2026-07-01T05:53:58Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "elena.silva@example.com",
+      "source_ip": "10.20.1.75",
+      "session_id": "sess_3064c3616168",
+      "duration_ms": 521
+    },
+    {
+      "timestamp": "2026-07-01T05:54:35Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "login.failed",
+      "user": "facundo.silva@example.com",
+      "source_ip": "10.20.0.225",
+      "session_id": "sess_e16948a5aabd",
+      "duration_ms": 900
+    },
+    {
+      "timestamp": "2026-07-01T05:55:12Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "gisela.silva@example.com",
+      "source_ip": "10.20.2.16",
+      "session_id": "sess_19819eaa9379",
+      "duration_ms": 187
+    },
+    {
+      "timestamp": "2026-07-01T05:55:49Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "hernan.silva@example.com",
+      "source_ip": "10.20.4.185",
+      "session_id": "sess_166dce941e9b",
+      "duration_ms": 103
+    },
+    {
+      "timestamp": "2026-07-01T05:56:26Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "ines.silva@example.com",
+      "source_ip": "10.20.3.71",
+      "session_id": "sess_5791e71725e0",
+      "duration_ms": 188
+    },
+    {
+      "timestamp": "2026-07-01T05:57:03Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "julian.silva@example.com",
+      "source_ip": "10.20.2.250",
+      "session_id": "sess_e94c92139286",
+      "duration_ms": 183
+    },
+    {
+      "timestamp": "2026-07-01T05:57:40Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "ana.silva@example.com",
+      "source_ip": "10.20.2.16",
+      "session_id": "sess_2c9038ddfdba",
+      "duration_ms": 744
+    },
+    {
+      "timestamp": "2026-07-01T05:58:17Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "bruno.rossi@example.com",
+      "source_ip": "10.20.2.250",
+      "session_id": "sess_f1f7942d46e8",
+      "duration_ms": 646
+    },
+    {
+      "timestamp": "2026-07-01T05:58:54Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "carla.rossi@example.com",
+      "source_ip": "10.20.5.6",
+      "session_id": "sess_dd01f83cd8b3",
+      "duration_ms": 14
+    },
+    {
+      "timestamp": "2026-07-01T05:59:31Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.failed",
+      "user": "diego.rossi@example.com",
+      "source_ip": "10.20.1.179",
+      "session_id": "sess_7ea9db13793e",
+      "duration_ms": 597
+    },
+    {
+      "timestamp": "2026-07-01T06:00:08Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "elena.rossi@example.com",
+      "source_ip": "10.20.1.146",
+      "session_id": "sess_20a8efe947a6",
+      "duration_ms": 844
+    },
+    {
+      "timestamp": "2026-07-01T06:00:45Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "facundo.rossi@example.com",
+      "source_ip": "10.20.1.130",
+      "session_id": "sess_2c91c366da75",
+      "duration_ms": 850
+    },
+    {
+      "timestamp": "2026-07-01T06:01:22Z",
+      "service": "auth-api",
+      "level": "WARN",
+      "event": "logout",
+      "user": "gisela.rossi@example.com",
+      "source_ip": "10.20.1.102",
+      "session_id": "sess_90aa9923c876",
+      "duration_ms": 699
+    },
+    {
+      "timestamp": "2026-07-01T06:01:59Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "hernan.rossi@example.com",
+      "source_ip": "10.20.8.44",
+      "session_id": "sess_88b943c930ce",
+      "duration_ms": 478
+    },
+    {
+      "timestamp": "2026-07-01T06:02:36Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "login.failed",
+      "user": "ines.molina@example.com",
+      "source_ip": "10.20.6.202",
+      "session_id": "sess_4ea5001a5668",
+      "duration_ms": 932,
+      "debug_payload": {
+        "username": "ines.molina@example.com",
+        "password": "Summer2026-588!"
+      },
+      "message": "Invalid credentials accidentally written to the debug log"
+    },
+    {
+      "timestamp": "2026-07-01T06:03:13Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "julian.molina@example.com",
+      "source_ip": "10.20.1.146",
+      "session_id": "sess_f9171c65d637",
+      "duration_ms": 73
+    },
+    {
+      "timestamp": "2026-07-01T06:03:50Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "ana.molina@example.com",
+      "source_ip": "10.20.2.225",
+      "session_id": "sess_8887f5d5b6f9",
+      "duration_ms": 733
+    },
+    {
+      "timestamp": "2026-07-01T06:04:27Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "bruno.molina@example.com",
+      "source_ip": "10.20.1.123",
+      "session_id": "sess_44de0ab4fe00",
+      "duration_ms": 40
+    },
+    {
+      "timestamp": "2026-07-01T06:05:04Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "mfa.challenge",
+      "user": "carla.molina@example.com",
+      "source_ip": "10.20.1.179",
+      "session_id": "sess_868b66006aa3",
+      "duration_ms": 374
+    },
+    {
+      "timestamp": "2026-07-01T06:05:41Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "diego.molina@example.com",
+      "source_ip": "10.20.1.25",
+      "session_id": "sess_cc43ab7a87d5",
+      "duration_ms": 665
+    },
+    {
+      "timestamp": "2026-07-01T06:06:18Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "elena.molina@example.com",
+      "source_ip": "10.20.7.53",
+      "session_id": "sess_cfa562b3d3fb",
+      "duration_ms": 575
+    },
+    {
+      "timestamp": "2026-07-01T06:06:55Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "login.success",
+      "user": "facundo.vega@example.com",
+      "source_ip": "10.20.1.146",
+      "session_id": "sess_e55a758e81d8",
+      "duration_ms": 75
+    },
+    {
+      "timestamp": "2026-07-01T06:07:32Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "gisela.vega@example.com",
+      "source_ip": "10.20.5.38",
+      "session_id": "sess_fa13882974fb",
+      "duration_ms": 397
+    },
+    {
+      "timestamp": "2026-07-01T06:08:09Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "logout",
+      "user": "hernan.vega@example.com",
+      "source_ip": "10.20.3.37",
+      "session_id": "sess_2f305e61a579",
+      "duration_ms": 504
+    },
+    {
+      "timestamp": "2026-07-01T06:08:46Z",
+      "service": "auth-api",
+      "level": "INFO",
+      "event": "token.refresh",
+      "user": "ines.vega@example.com",
+      "source_ip": "10.20.1.152",
+      "session_id": "sess_3976fff456ca",
+      "duration_ms": 621
+    },
+    {
+      "timestamp": "2026-07-01T06:09:23Z",
+      "service": "auth-api",
+      "level": "ERROR",
+      "event": "logout",
+      "user": "julian.vega@example.com",
+      "source_ip": "10.20.1.102",
+      "session_id": "sess_0a2f1585165b",
+      "duration_ms": 312
+    }
+  ]
+}
