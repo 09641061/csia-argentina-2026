@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import json
 import ssl
+from pathlib import Path
 from urllib.request import Request, urlopen
 
 import certifi
@@ -20,6 +21,7 @@ class OllamaAnalysisClientImpl(OllamaAnalysisClient):
     def __init__(self, base_url: str, model_name: str) -> None:
         self._base_url = base_url.rstrip("/")
         self._model_name = model_name
+        self._system_prompt = self._load_system_prompt()
 
     async def analyze(
         self,
@@ -42,16 +44,19 @@ class OllamaAnalysisClientImpl(OllamaAnalysisClient):
         extracted_text: str,
         findings: list[AnalysisFinding],
     ) -> OllamaAnalysisInterpretation:
-        prompt = self._build_prompt(source, extracted_text, findings)
+        prompt = self._build_user_prompt(source, extracted_text, findings)
         request_payload = {
             "model": self._model_name,
-            "prompt": prompt,
+            "messages": [
+                {"role": "system", "content": self._system_prompt},
+                {"role": "user", "content": prompt},
+            ],
             "stream": False,
             "format": "json",
         }
         body = json.dumps(request_payload).encode("utf-8")
         request = Request(
-            url=f"{self._base_url}/api/generate",
+            url=f"{self._base_url}/api/chat",
             data=body,
             headers={"Content-Type": "application/json"},
             method="POST",
@@ -59,7 +64,7 @@ class OllamaAnalysisClientImpl(OllamaAnalysisClient):
         context = ssl.create_default_context(cafile=certifi.where())
         with urlopen(request, timeout=60, context=context) as response:
             payload = json.loads(response.read().decode("utf-8"))
-        raw_response = payload.get("response", "{}")
+        raw_response = payload.get("message", {}).get("content", "{}")
         try:
             response_data = json.loads(raw_response) if isinstance(raw_response, str) else raw_response
         except json.JSONDecodeError:
@@ -71,7 +76,11 @@ class OllamaAnalysisClientImpl(OllamaAnalysisClient):
             rationale=str(response_data.get("rationale", "")).strip(),
         )
 
-    def _build_prompt(
+    def _load_system_prompt(self) -> str:
+        prompt_path = Path(__file__).resolve().parents[3] / "shared" / "prompts" / "document_analysis_system_prompt.md"
+        return prompt_path.read_text(encoding="utf-8").strip()
+
+    def _build_user_prompt(
         self,
         source: SourceDocumentReference,
         extracted_text: str,
@@ -97,4 +106,3 @@ class OllamaAnalysisClientImpl(OllamaAnalysisClient):
         if normalized in {level.value for level in AnalysisRiskLevel}:
             return AnalysisRiskLevel(normalized)
         return AnalysisRiskLevel.LOW
-
