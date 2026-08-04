@@ -1,8 +1,7 @@
 from enum import StrEnum
 
 
-class AnalysisRiskLevel(StrEnum):
+class AnalysisConfidence(StrEnum):
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
-    CRITICAL = "critical"

@@ -3,6 +3,9 @@ import logging
 
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
+from app.analysis.infrastructure.persistence.sqlalchemy.analysis_schema_migration import (
+    migrate_analysis_schema,
+)
 from app.core.settings import get_settings
 from app.documents.infrastructure.persistence.sqlalchemy.models.base import Base
 
@@ -23,5 +26,6 @@ async def initialize_database() -> None:
     try:
         async with engine.begin() as connection:
             await connection.run_sync(Base.metadata.create_all)
+            await migrate_analysis_schema(connection)
     except Exception as error:
         logger.warning("Database initialization skipped: %s", error)

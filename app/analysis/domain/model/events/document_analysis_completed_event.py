@@ -18,4 +18,3 @@ class DocumentAnalysisCompletedEvent:
             raise ValueError("Analysis ID must be a positive number")
         if self.document_id <= 0:
             raise ValueError("Document ID must be a positive number")
-
