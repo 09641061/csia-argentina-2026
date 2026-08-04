@@ -11,4 +11,3 @@ class ListDocumentAnalysesQuery:
             raise ValueError("Page must be greater than zero")
         if not 1 <= self.page_size <= 100:
             raise ValueError("Page size must be between 1 and 100")
-

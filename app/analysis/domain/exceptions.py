@@ -14,6 +14,25 @@ class DocumentContentExtractionError(AnalysisDomainError):
     pass
 
 
-class AnalysisModelUnavailableError(AnalysisDomainError):
+class DocumentContentDownloadError(AnalysisDomainError):
     pass
 
+
+class AnalysisConflictError(AnalysisDomainError):
+    pass
+
+
+class AnalysisModelError(AnalysisDomainError):
+    pass
+
+
+class AnalysisModelUnavailableError(AnalysisModelError):
+    pass
+
+
+class AnalysisModelTimeoutError(AnalysisModelError):
+    pass
+
+
+class AnalysisModelInvalidResponseError(AnalysisModelError):
+    pass

@@ -6,4 +6,3 @@ class AnalysisFindingSeverity(StrEnum):
     MEDIUM = "medium"
     HIGH = "high"
     CRITICAL = "critical"
-

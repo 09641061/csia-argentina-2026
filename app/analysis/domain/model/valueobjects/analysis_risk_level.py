@@ -6,4 +6,3 @@ class AnalysisRiskLevel(StrEnum):
     MEDIUM = "medium"
     HIGH = "high"
     CRITICAL = "critical"
-

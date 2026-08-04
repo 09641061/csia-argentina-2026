@@ -1,0 +1,17 @@
+{
+  "synthetic_fixture": true,
+  "meeting": "Vendor onboarding",
+  "contacts": [
+    {
+      "full_name": "Alex Demo",
+      "email": "alex.demo@example.com",
+      "phone": "+54 11 5555-0101"
+    },
+    {
+      "full_name": "Sam Fixture",
+      "email": "sam.fixture@example.com",
+      "phone": "+54 11 5555-0102"
+    }
+  ],
+  "notes": "Two fictional contacts included for incidental personal-data coverage."
+}

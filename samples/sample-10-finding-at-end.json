@@ -1,0 +1,2461 @@
+{
+  "synthetic_fixture": true,
+  "source": "large-operational-log",
+  "total_records": 350,
+  "records": [
+    {
+      "event_id": "technical-0000",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 5,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0001",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 6,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0002",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 7,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0003",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 8,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0004",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 9,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0005",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 10,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0006",
+      "service": "worker-6",
+      "status": "ok",
+      "duration_ms": 11,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0007",
+      "service": "worker-7",
+      "status": "ok",
+      "duration_ms": 12,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0008",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 13,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0009",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 14,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0010",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 15,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0011",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 16,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0012",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 17,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0013",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 18,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0014",
+      "service": "worker-6",
+      "status": "ok",
+      "duration_ms": 19,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0015",
+      "service": "worker-7",
+      "status": "ok",
+      "duration_ms": 20,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0016",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 21,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0017",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 22,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0018",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 23,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0019",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 24,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0020",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 25,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0021",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 26,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0022",
+      "service": "worker-6",
+      "status": "ok",
+      "duration_ms": 27,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0023",
+      "service": "worker-7",
+      "status": "ok",
+      "duration_ms": 28,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0024",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 29,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0025",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 30,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0026",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 31,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0027",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 32,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0028",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 33,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0029",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 34,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0030",
+      "service": "worker-6",
+      "status": "ok",
+      "duration_ms": 35,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0031",
+      "service": "worker-7",
+      "status": "ok",
+      "duration_ms": 36,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0032",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 37,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0033",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 38,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0034",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 39,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0035",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 40,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0036",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 41,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0037",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 42,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0038",
+      "service": "worker-6",
+      "status": "ok",
+      "duration_ms": 43,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0039",
+      "service": "worker-7",
+      "status": "ok",
+      "duration_ms": 44,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0040",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 45,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0041",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 46,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0042",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 47,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0043",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 48,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0044",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 49,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0045",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 50,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0046",
+      "service": "worker-6",
+      "status": "ok",
+      "duration_ms": 51,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0047",
+      "service": "worker-7",
+      "status": "ok",
+      "duration_ms": 52,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0048",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 53,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0049",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 54,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0050",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 55,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0051",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 56,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0052",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 57,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0053",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 58,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0054",
+      "service": "worker-6",
+      "status": "ok",
+      "duration_ms": 59,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0055",
+      "service": "worker-7",
+      "status": "ok",
+      "duration_ms": 60,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0056",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 61,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0057",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 62,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0058",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 63,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0059",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 64,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0060",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 65,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0061",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 66,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0062",
+      "service": "worker-6",
+      "status": "ok",
+      "duration_ms": 67,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0063",
+      "service": "worker-7",
+      "status": "ok",
+      "duration_ms": 68,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0064",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 69,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0065",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 70,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0066",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 71,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0067",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 72,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0068",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 73,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0069",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 74,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0070",
+      "service": "worker-6",
+      "status": "ok",
+      "duration_ms": 75,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0071",
+      "service": "worker-7",
+      "status": "ok",
+      "duration_ms": 76,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0072",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 77,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0073",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 78,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0074",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 79,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0075",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 80,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0076",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 81,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0077",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 82,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0078",
+      "service": "worker-6",
+      "status": "ok",
+      "duration_ms": 83,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0079",
+      "service": "worker-7",
+      "status": "ok",
+      "duration_ms": 84,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0080",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 85,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0081",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 86,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0082",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 87,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0083",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 88,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0084",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 89,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0085",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 90,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0086",
+      "service": "worker-6",
+      "status": "ok",
+      "duration_ms": 91,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0087",
+      "service": "worker-7",
+      "status": "ok",
+      "duration_ms": 92,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0088",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 93,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0089",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 94,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0090",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 95,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0091",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 96,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0092",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 97,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0093",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 98,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0094",
+      "service": "worker-6",
+      "status": "ok",
+      "duration_ms": 99,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0095",
+      "service": "worker-7",
+      "status": "ok",
+      "duration_ms": 100,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0096",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 101,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0097",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 102,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0098",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 103,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0099",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 104,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0100",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 105,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0101",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 106,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0102",
+      "service": "worker-6",
+      "status": "ok",
+      "duration_ms": 107,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0103",
+      "service": "worker-7",
+      "status": "ok",
+      "duration_ms": 108,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0104",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 109,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0105",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 110,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0106",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 111,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0107",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 112,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0108",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 113,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0109",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 114,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0110",
+      "service": "worker-6",
+      "status": "ok",
+      "duration_ms": 115,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0111",
+      "service": "worker-7",
+      "status": "ok",
+      "duration_ms": 116,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0112",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 117,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0113",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 118,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0114",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 119,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0115",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 120,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0116",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 121,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0117",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 122,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0118",
+      "service": "worker-6",
+      "status": "ok",
+      "duration_ms": 123,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0119",
+      "service": "worker-7",
+      "status": "ok",
+      "duration_ms": 124,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0120",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 125,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0121",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 126,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0122",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 127,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0123",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 128,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0124",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 129,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0125",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 130,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0126",
+      "service": "worker-6",
+      "status": "ok",
+      "duration_ms": 131,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0127",
+      "service": "worker-7",
+      "status": "ok",
+      "duration_ms": 132,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0128",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 133,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0129",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 134,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0130",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 135,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0131",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 136,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0132",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 137,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0133",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 138,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0134",
+      "service": "worker-6",
+      "status": "ok",
+      "duration_ms": 139,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0135",
+      "service": "worker-7",
+      "status": "ok",
+      "duration_ms": 140,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0136",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 141,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0137",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 142,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0138",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 143,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0139",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 144,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0140",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 145,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0141",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 146,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0142",
+      "service": "worker-6",
+      "status": "ok",
+      "duration_ms": 147,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0143",
+      "service": "worker-7",
+      "status": "ok",
+      "duration_ms": 148,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0144",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 149,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0145",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 150,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0146",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 151,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0147",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 152,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0148",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 153,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0149",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 154,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0150",
+      "service": "worker-6",
+      "status": "ok",
+      "duration_ms": 155,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0151",
+      "service": "worker-7",
+      "status": "ok",
+      "duration_ms": 156,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0152",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 157,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0153",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 158,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0154",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 159,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0155",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 160,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0156",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 161,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0157",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 162,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0158",
+      "service": "worker-6",
+      "status": "ok",
+      "duration_ms": 163,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0159",
+      "service": "worker-7",
+      "status": "ok",
+      "duration_ms": 164,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0160",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 165,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0161",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 166,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0162",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 167,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0163",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 168,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0164",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 169,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0165",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 170,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0166",
+      "service": "worker-6",
+      "status": "ok",
+      "duration_ms": 171,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0167",
+      "service": "worker-7",
+      "status": "ok",
+      "duration_ms": 172,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0168",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 173,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0169",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 174,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0170",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 175,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0171",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 176,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0172",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 177,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0173",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 178,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0174",
+      "service": "worker-6",
+      "status": "ok",
+      "duration_ms": 179,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0175",
+      "service": "worker-7",
+      "status": "ok",
+      "duration_ms": 180,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0176",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 181,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0177",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 182,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0178",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 183,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0179",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 184,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0180",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 185,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0181",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 186,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0182",
+      "service": "worker-6",
+      "status": "ok",
+      "duration_ms": 187,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0183",
+      "service": "worker-7",
+      "status": "ok",
+      "duration_ms": 188,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0184",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 189,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0185",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 190,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0186",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 191,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0187",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 192,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0188",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 193,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0189",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 194,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0190",
+      "service": "worker-6",
+      "status": "ok",
+      "duration_ms": 195,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0191",
+      "service": "worker-7",
+      "status": "ok",
+      "duration_ms": 196,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0192",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 197,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0193",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 198,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0194",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 199,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0195",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 200,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0196",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 201,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0197",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 202,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0198",
+      "service": "worker-6",
+      "status": "ok",
+      "duration_ms": 203,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0199",
+      "service": "worker-7",
+      "status": "ok",
+      "duration_ms": 204,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0200",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 205,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0201",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 206,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0202",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 207,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0203",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 208,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0204",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 209,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0205",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 210,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0206",
+      "service": "worker-6",
+      "status": "ok",
+      "duration_ms": 211,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0207",
+      "service": "worker-7",
+      "status": "ok",
+      "duration_ms": 212,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0208",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 213,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0209",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 214,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0210",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 215,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0211",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 216,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0212",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 217,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0213",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 218,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0214",
+      "service": "worker-6",
+      "status": "ok",
+      "duration_ms": 219,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0215",
+      "service": "worker-7",
+      "status": "ok",
+      "duration_ms": 220,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0216",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 221,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0217",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 222,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0218",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 223,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0219",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 224,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0220",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 225,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0221",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 226,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0222",
+      "service": "worker-6",
+      "status": "ok",
+      "duration_ms": 227,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0223",
+      "service": "worker-7",
+      "status": "ok",
+      "duration_ms": 228,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0224",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 229,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0225",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 230,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0226",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 231,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0227",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 232,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0228",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 233,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0229",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 234,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0230",
+      "service": "worker-6",
+      "status": "ok",
+      "duration_ms": 235,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0231",
+      "service": "worker-7",
+      "status": "ok",
+      "duration_ms": 236,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0232",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 237,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0233",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 238,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0234",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 239,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0235",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 240,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0236",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 241,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0237",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 242,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0238",
+      "service": "worker-6",
+      "status": "ok",
+      "duration_ms": 243,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0239",
+      "service": "worker-7",
+      "status": "ok",
+      "duration_ms": 244,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0240",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 245,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0241",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 246,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0242",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 247,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0243",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 248,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0244",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 249,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0245",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 250,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0246",
+      "service": "worker-6",
+      "status": "ok",
+      "duration_ms": 251,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0247",
+      "service": "worker-7",
+      "status": "ok",
+      "duration_ms": 252,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0248",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 253,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0249",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 254,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0250",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 255,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0251",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 256,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0252",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 257,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0253",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 258,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0254",
+      "service": "worker-6",
+      "status": "ok",
+      "duration_ms": 259,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0255",
+      "service": "worker-7",
+      "status": "ok",
+      "duration_ms": 260,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0256",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 261,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0257",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 262,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0258",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 263,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0259",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 264,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0260",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 265,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0261",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 266,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0262",
+      "service": "worker-6",
+      "status": "ok",
+      "duration_ms": 267,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0263",
+      "service": "worker-7",
+      "status": "ok",
+      "duration_ms": 268,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0264",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 269,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0265",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 270,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0266",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 271,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0267",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 272,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0268",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 273,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0269",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 274,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0270",
+      "service": "worker-6",
+      "status": "ok",
+      "duration_ms": 275,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0271",
+      "service": "worker-7",
+      "status": "ok",
+      "duration_ms": 276,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0272",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 277,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0273",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 278,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0274",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 279,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0275",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 280,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0276",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 281,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0277",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 282,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0278",
+      "service": "worker-6",
+      "status": "ok",
+      "duration_ms": 283,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0279",
+      "service": "worker-7",
+      "status": "ok",
+      "duration_ms": 284,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0280",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 285,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0281",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 286,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0282",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 287,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0283",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 288,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0284",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 289,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0285",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 290,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0286",
+      "service": "worker-6",
+      "status": "ok",
+      "duration_ms": 291,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0287",
+      "service": "worker-7",
+      "status": "ok",
+      "duration_ms": 292,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0288",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 293,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0289",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 294,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0290",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 295,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0291",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 296,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0292",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 297,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0293",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 298,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0294",
+      "service": "worker-6",
+      "status": "ok",
+      "duration_ms": 299,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0295",
+      "service": "worker-7",
+      "status": "ok",
+      "duration_ms": 300,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0296",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 301,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0297",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 302,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0298",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 303,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0299",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 304,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0300",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 305,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0301",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 306,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0302",
+      "service": "worker-6",
+      "status": "ok",
+      "duration_ms": 307,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0303",
+      "service": "worker-7",
+      "status": "ok",
+      "duration_ms": 308,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0304",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 309,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0305",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 310,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0306",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 311,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0307",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 312,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0308",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 313,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0309",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 314,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0310",
+      "service": "worker-6",
+      "status": "ok",
+      "duration_ms": 315,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0311",
+      "service": "worker-7",
+      "status": "ok",
+      "duration_ms": 316,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0312",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 317,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0313",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 318,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0314",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 319,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0315",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 320,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0316",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 321,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0317",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 322,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0318",
+      "service": "worker-6",
+      "status": "ok",
+      "duration_ms": 323,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0319",
+      "service": "worker-7",
+      "status": "ok",
+      "duration_ms": 324,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0320",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 325,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0321",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 326,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0322",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 327,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0323",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 328,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0324",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 329,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0325",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 330,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0326",
+      "service": "worker-6",
+      "status": "ok",
+      "duration_ms": 331,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0327",
+      "service": "worker-7",
+      "status": "ok",
+      "duration_ms": 332,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0328",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 333,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0329",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 334,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0330",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 335,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0331",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 336,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0332",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 337,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0333",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 338,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0334",
+      "service": "worker-6",
+      "status": "ok",
+      "duration_ms": 339,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0335",
+      "service": "worker-7",
+      "status": "ok",
+      "duration_ms": 340,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0336",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 341,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0337",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 342,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0338",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 343,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0339",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 344,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0340",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 345,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0341",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 346,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0342",
+      "service": "worker-6",
+      "status": "ok",
+      "duration_ms": 347,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0343",
+      "service": "worker-7",
+      "status": "ok",
+      "duration_ms": 348,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0344",
+      "service": "worker-0",
+      "status": "ok",
+      "duration_ms": 349,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0345",
+      "service": "worker-1",
+      "status": "ok",
+      "duration_ms": 350,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0346",
+      "service": "worker-2",
+      "status": "ok",
+      "duration_ms": 351,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0347",
+      "service": "worker-3",
+      "status": "ok",
+      "duration_ms": 352,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0348",
+      "service": "worker-4",
+      "status": "ok",
+      "duration_ms": 353,
+      "message": "Synthetic operational event"
+    },
+    {
+      "event_id": "technical-0349",
+      "service": "worker-5",
+      "status": "ok",
+      "duration_ms": 354,
+      "message": "Synthetic operational event",
+      "diagnostics": {
+        "api_key": "sk-liveFinalRecordFixture9WsYh3Ge7Uf5Ja",
+        "message": "Sensitive value intentionally located in the final record"
+      }
+    }
+  ]
+}

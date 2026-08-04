@@ -2,8 +2,11 @@ from __future__ import annotations
 
 import json
 
-from app.analysis.application.internal.outboundservices.document_text_extractor import DocumentTextExtractor
+from app.analysis.application.internal.outboundservices.document_text_extractor import (
+    DocumentTextExtractor,
+)
 from app.analysis.domain.exceptions import DocumentContentExtractionError
+from app.analysis.domain.model.valueobjects.json_types import JsonContainer
 
 JSON_MIME_TYPE = "application/json"
 
@@ -17,7 +20,9 @@ class JsonDocumentTextExtractor(DocumentTextExtractor):
     reaches the analysis as a low-risk result.
     """
 
-    def extract_text(self, content: bytes, mime_type: str, original_filename: str) -> str:
+    def extract_json(
+        self, content: bytes, mime_type: str, original_filename: str
+    ) -> JsonContainer:
         normalized_mime_type = mime_type.split(";", maxsplit=1)[0].strip().lower()
 
         if normalized_mime_type != JSON_MIME_TYPE:
@@ -37,11 +42,17 @@ class JsonDocumentTextExtractor(DocumentTextExtractor):
                 f"Unable to extract text from {original_filename}: content is not valid JSON"
             ) from error
 
-        extracted_text = json.dumps(parsed, indent=2, ensure_ascii=False)
-
-        if not extracted_text.strip():
+        if not isinstance(parsed, (dict, list)):
             raise DocumentContentExtractionError(
-                f"Unable to extract text from {original_filename}: document is empty"
+                f"Unable to extract JSON from {original_filename}: root must be an object or array"
             )
 
-        return extracted_text
+        return parsed
+
+    def extract_text(
+        self, content: bytes, mime_type: str, original_filename: str
+    ) -> str:
+        """Compatibility helper for callers that still need a JSON rendering."""
+
+        parsed = self.extract_json(content, mime_type, original_filename)
+        return json.dumps(parsed, indent=2, ensure_ascii=False)

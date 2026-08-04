@@ -1,0 +1,14 @@
+{
+  "synthetic_fixture": true,
+  "environment": "test",
+  "configuration": {
+    "api_key": "YOUR_KEY_HERE",
+    "password": "changeme",
+    "access_key_id": "AKIAIOSFODNN7EXAMPLE",
+    "token": "[REDACTED_TOKEN]"
+  },
+  "contact": {
+    "email": "test.user@example.com"
+  },
+  "notes": "Documentation placeholders only; none are operational credentials."
+}
