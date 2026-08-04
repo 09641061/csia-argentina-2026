@@ -17,16 +17,8 @@ class Settings(BaseSettings):
     cloudinary_api_secret: str = Field(default="", alias="CLOUDINARY_API_SECRET")
     ollama_base_url: str = Field(default="http://localhost:11434", alias="OLLAMA_BASE_URL")
     ollama_model: str = Field(default="llama3.2:3b", alias="OLLAMA_MODEL")
-    allowed_mime_types: str = Field(
-        default="application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/json",
-        alias="ALLOWED_MIME_TYPES",
-    )
 
     DEFAULT_MAX_DOCUMENT_SIZE_MB: ClassVar[int] = 20
-
-    @property
-    def allowed_mime_type_list(self) -> list[str]:
-        return [item.strip() for item in self.allowed_mime_types.split(",") if item.strip()]
 
     @property
     def max_document_size_bytes(self) -> int:

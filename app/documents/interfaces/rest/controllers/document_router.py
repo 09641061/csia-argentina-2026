@@ -10,8 +10,13 @@ from app.documents.application.internal.commandservices.document_command_service
 from app.documents.application.internal.queryservices.document_query_service_impl import (
     DocumentQueryServiceImpl,
 )
-from app.documents.domain.exceptions import DocumentFileTooLargeError, UnsupportedDocumentTypeError
+from app.documents.domain.exceptions import (
+    DocumentFileTooLargeError,
+    InvalidDocumentContentError,
+    UnsupportedDocumentTypeError,
+)
 from app.documents.domain.model.commands.create_document_command import CreateDocumentCommand
+from app.documents.domain.model.valueobjects.document_mime_type import DocumentMimeType
 from app.documents.domain.model.queries.get_document_by_id_query import GetDocumentByIdQuery
 from app.documents.domain.model.queries.list_documents_query import ListDocumentsQuery
 from app.documents.infrastructure.persistence.sqlalchemy.repositories.sqlalchemy_document_repository import (
@@ -41,7 +46,6 @@ async def get_document_command_service(
     return DocumentCommandServiceImpl(
         document_repository=repository,
         document_storage=storage,
-        allowed_mime_types=settings.allowed_mime_type_list,
         max_document_size_bytes=settings.max_document_size_bytes,
     )
 
@@ -72,34 +76,49 @@ def _to_document_resource(document) -> DocumentResource:
     "",
     response_model=CreateDocumentResponse,
     status_code=status.HTTP_201_CREATED,
-    summary="Upload a document",
-    description="Receives a document file, validates it, stores it in Cloudinary, and registers it in PostgreSQL.",
+    summary="Upload a JSON document",
+    description=(
+        "Receives a JSON document, verifies that its content really is a JSON object or array, "
+        "stores it in Cloudinary, and registers it in PostgreSQL. "
+        "JSON is the only supported document type."
+    ),
     responses={
         201: {"description": "Document uploaded successfully"},
-        400: {"description": "Invalid document or business rule violation"},
+        400: {"description": "Malformed JSON content or business rule violation"},
+        413: {"description": "Document exceeds the maximum allowed size"},
+        415: {"description": "Unsupported document type, only application/json is accepted"},
         502: {"description": "Cloud storage upload failed"},
     },
 )
 async def create_document(
     name: Annotated[str, Form(description="Business document name", min_length=1, max_length=255)],
     owner_user_id: Annotated[int, Form(description="Owner user identifier", gt=0)],
-    file: Annotated[UploadFile, File(description="Document file to upload")],
+    file: Annotated[UploadFile, File(description="JSON document to upload (application/json)")],
     command_service: Annotated[DocumentCommandServiceImpl, Depends(get_document_command_service)],
 ) -> CreateDocumentResponse:
     content = await file.read()
 
     try:
-        normalized_mime_type = (file.content_type or "application/octet-stream").split(";", maxsplit=1)[0].strip().lower()
         command = CreateDocumentCommand(
             owner_user_id=owner_user_id,
             name=name,
-            original_filename=file.filename or "document",
-            mime_type=normalized_mime_type,
+            original_filename=file.filename or "document.json",
+            mime_type=file.content_type or DocumentMimeType.JSON,
             size_bytes=len(content),
             content=content,
         )
         document = await command_service.handle_create_document(command)
-    except (ValueError, DocumentFileTooLargeError, UnsupportedDocumentTypeError) as error:
+    except UnsupportedDocumentTypeError as error:
+        raise HTTPException(
+            status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+            detail=str(error),
+        ) from error
+    except DocumentFileTooLargeError as error:
+        raise HTTPException(
+            status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+            detail=str(error),
+        ) from error
+    except (InvalidDocumentContentError, ValueError) as error:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)) from error
     except DocumentStorageUploadError as error:
         raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail=str(error)) from error

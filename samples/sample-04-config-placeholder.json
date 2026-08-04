@@ -1,6 +1,0 @@
-{
-  "service": "payments",
-  "api_key": "YOUR_KEY_HERE",
-  "secret": "changeme",
-  "notes": "sample config for testing only"
-}

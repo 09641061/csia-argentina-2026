@@ -28,8 +28,8 @@ from app.analysis.infrastructure.ollama.ollama_analysis_client_impl import Ollam
 from app.analysis.infrastructure.persistence.sqlalchemy.repositories.sqlalchemy_document_analysis_repository import (
     SqlAlchemyDocumentAnalysisRepository,
 )
-from app.analysis.infrastructure.text_extraction.default_document_text_extractor import (
-    DefaultDocumentTextExtractor,
+from app.analysis.infrastructure.text_extraction.json_document_text_extractor import (
+    JsonDocumentTextExtractor,
 )
 from app.analysis.interfaces.rest.resources.analyze_document_response import AnalyzeDocumentResponse
 from app.analysis.interfaces.rest.resources.analysis_finding_resource import AnalysisFindingResource
@@ -55,7 +55,7 @@ async def get_analysis_command_service(
     document_repository = SqlAlchemyDocumentRepository(session)
     document_source_service = DocumentSourceServiceImpl(document_repository=document_repository)
     content_downloader = UrlDocumentContentDownloader()
-    text_extractor = DefaultDocumentTextExtractor()
+    text_extractor = JsonDocumentTextExtractor()
     ollama_client = OllamaAnalysisClientImpl(
         base_url=settings.ollama_base_url,
         model_name=settings.ollama_model,

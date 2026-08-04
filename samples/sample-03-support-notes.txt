@@ -1,4 +1,0 @@
-Notas de soporte
-Cliente: Test Cliente
-Email: soporte@empresa.com
-Telefono: +51 999 111 222

@@ -1,2 +1,0 @@
-export const awsKey = 'AKIAIOSFODNN7EXAMPLE';
-export const token = 'sk-test-1234567890abcdef';
