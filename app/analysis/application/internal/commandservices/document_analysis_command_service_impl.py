@@ -106,9 +106,9 @@ class DocumentAnalysisCommandServiceImpl(AnalysisCommandService):
 
     def _detect_passwords(self, text: str) -> list[AnalysisFinding]:
         patterns = [
-            r"(?i)\bpassword\s*[:=]\s*([^\s,;]+)",
-            r"(?i)\bpasswd\s*[:=]\s*([^\s,;]+)",
-            r"(?i)\bcontrase[ñn]a\s*[:=]\s*([^\s,;]+)",
+            r"(?i)\bpassword\"?\s*[:=]\s*\"?([^\s,;\"]+)",
+            r"(?i)\bpasswd\"?\s*[:=]\s*\"?([^\s,;\"]+)",
+            r"(?i)\bcontrase[ñn]a\"?\s*[:=]\s*\"?([^\s,;\"]+)",
         ]
         findings: list[AnalysisFinding] = []
         for pattern in patterns:
@@ -127,7 +127,7 @@ class DocumentAnalysisCommandServiceImpl(AnalysisCommandService):
 
     def _detect_api_keys(self, text: str) -> list[AnalysisFinding]:
         patterns = [
-            r"(?i)\b(api[_-]?key|secret|token)\b\s*[:=]\s*([A-Za-z0-9_\-./+=]{8,})",
+            r"(?i)\b(api[_-]?key|secret|token)\b\"?\s*[:=]\s*\"?([A-Za-z0-9_\-./+=]{8,})",
             r"sk-[A-Za-z0-9]{16,}",
             r"AKIA[0-9A-Z]{16}",
         ]

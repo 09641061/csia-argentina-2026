@@ -1,6 +1,6 @@
 Documents: Este bounded context se encarga de recibir, guardar y registrar los archivos que
 
-  sube el usuario. Su función es aceptar documentos como PDF, DOCX o TXT, validar que el
+  sube el usuario. Su función es aceptar documentos JSON (único tipo soportado), validar que el
 
   archivo exista y que cumpla con reglas básicas como tipo permitido y tamaño máximo,
 

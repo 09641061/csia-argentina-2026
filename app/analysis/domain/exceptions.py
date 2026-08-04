@@ -13,3 +13,7 @@ class DocumentSourceNotFoundError(AnalysisDomainError):
 class DocumentContentExtractionError(AnalysisDomainError):
     pass
 
+
+class AnalysisModelUnavailableError(AnalysisDomainError):
+    pass
+

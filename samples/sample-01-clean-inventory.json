@@ -1,0 +1,56 @@
+{
+  "report": "Service inventory",
+  "generated_at": "2026-07-01T00:00:00Z",
+  "environment": "staging",
+  "services": [
+    {
+      "name": "auth-api",
+      "replicas": 6,
+      "cpu_limit": "500m",
+      "memory_limit": "512Mi",
+      "healthy": true,
+      "owner_team": "platform"
+    },
+    {
+      "name": "payments-api",
+      "replicas": 4,
+      "cpu_limit": "500m",
+      "memory_limit": "512Mi",
+      "healthy": true,
+      "owner_team": "platform"
+    },
+    {
+      "name": "gateway",
+      "replicas": 5,
+      "cpu_limit": "500m",
+      "memory_limit": "512Mi",
+      "healthy": true,
+      "owner_team": "platform"
+    },
+    {
+      "name": "reporting",
+      "replicas": 6,
+      "cpu_limit": "500m",
+      "memory_limit": "512Mi",
+      "healthy": true,
+      "owner_team": "platform"
+    },
+    {
+      "name": "notifications",
+      "replicas": 4,
+      "cpu_limit": "500m",
+      "memory_limit": "512Mi",
+      "healthy": true,
+      "owner_team": "platform"
+    },
+    {
+      "name": "ingest-worker",
+      "replicas": 1,
+      "cpu_limit": "500m",
+      "memory_limit": "512Mi",
+      "healthy": true,
+      "owner_team": "platform"
+    }
+  ],
+  "notes": "Reference document with no personal data or credentials."
+}

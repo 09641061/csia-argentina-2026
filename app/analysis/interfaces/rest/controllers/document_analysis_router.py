@@ -15,6 +15,7 @@ from app.analysis.application.internal.queryservices.document_analysis_query_ser
     DocumentAnalysisQueryServiceImpl,
 )
 from app.analysis.domain.exceptions import (
+    AnalysisModelUnavailableError,
     DocumentContentExtractionError,
     DocumentSourceNotFoundError,
 )
@@ -59,6 +60,9 @@ async def get_analysis_command_service(
     ollama_client = OllamaAnalysisClientImpl(
         base_url=settings.ollama_base_url,
         model_name=settings.ollama_model,
+        request_timeout_seconds=settings.ollama_request_timeout_seconds,
+        context_tokens=settings.ollama_context_tokens,
+        max_output_tokens=settings.ollama_max_output_tokens,
     )
     return DocumentAnalysisCommandServiceImpl(
         analysis_repository=analysis_repository,
@@ -110,7 +114,8 @@ def _to_resource(analysis) -> DocumentAnalysisResource:
     responses={
         201: {"description": "Document analyzed successfully"},
         404: {"description": "Document not found"},
-        502: {"description": "Document content could not be downloaded, extracted or analyzed"},
+        502: {"description": "Document content could not be downloaded or extracted"},
+        504: {"description": "The analysis model did not answer in time or is unreachable"},
     },
 )
 async def analyze_document(
@@ -122,6 +127,8 @@ async def analyze_document(
         analysis = await command_service.handle_analyze_document(command)
     except DocumentSourceNotFoundError as error:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(error)) from error
+    except AnalysisModelUnavailableError as error:
+        raise HTTPException(status_code=status.HTTP_504_GATEWAY_TIMEOUT, detail=str(error)) from error
     except DocumentContentExtractionError as error:
         raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail=str(error)) from error
     except ValueError as error:
