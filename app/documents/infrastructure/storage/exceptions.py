@@ -1,0 +1,2 @@
+class DocumentStorageUploadError(RuntimeError):
+    pass
