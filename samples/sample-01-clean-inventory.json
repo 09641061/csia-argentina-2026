@@ -50,6 +50,54 @@
       "memory_limit": "512Mi",
       "healthy": true,
       "owner_team": "platform"
+    },
+    {
+      "name": "search-api",
+      "replicas": 3,
+      "cpu_limit": "300m",
+      "memory_limit": "384Mi",
+      "healthy": true,
+      "owner_team": "platform"
+    },
+    {
+      "name": "catalog",
+      "replicas": 2,
+      "cpu_limit": "250m",
+      "memory_limit": "256Mi",
+      "healthy": true,
+      "owner_team": "product"
+    },
+    {
+      "name": "billing-reconciler",
+      "replicas": 1,
+      "cpu_limit": "200m",
+      "memory_limit": "256Mi",
+      "healthy": true,
+      "owner_team": "finance"
+    },
+    {
+      "name": "audit-log",
+      "replicas": 2,
+      "cpu_limit": "200m",
+      "memory_limit": "256Mi",
+      "healthy": true,
+      "owner_team": "security"
+    },
+    {
+      "name": "scheduler",
+      "replicas": 1,
+      "cpu_limit": "150m",
+      "memory_limit": "192Mi",
+      "healthy": true,
+      "owner_team": "platform"
+    },
+    {
+      "name": "webhook-relay",
+      "replicas": 2,
+      "cpu_limit": "200m",
+      "memory_limit": "256Mi",
+      "healthy": true,
+      "owner_team": "platform"
     }
   ],
   "notes": "Reference document with no personal data or credentials."
