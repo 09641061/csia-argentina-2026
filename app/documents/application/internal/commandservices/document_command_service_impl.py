@@ -5,18 +5,18 @@ from app.documents.domain.model.commands.create_document_command import CreateDo
 from app.documents.domain.model.commands.update_document_status_command import UpdateDocumentStatusCommand
 from app.documents.domain.model.events.document_status_changed_event import DocumentStatusChangedEvent
 from app.documents.domain.model.events.document_uploaded_event import DocumentUploadedEvent
+from app.documents.domain.model.entities.document import Document
 from app.documents.domain.model.valueobjects.document_status import DocumentStatus
 from app.documents.domain.repositories.document_repository import DocumentRepository
 from app.documents.domain.services.document_command_service import DocumentCommandService
-from app.documents.infrastructure.storage.local_document_storage import LocalDocumentStorage
-from app.documents.domain.model.entities.document import Document
+from app.documents.infrastructure.storage.cloudinary_document_storage import CloudinaryDocumentStorage
 
 
 class DocumentCommandServiceImpl(DocumentCommandService):
     def __init__(
         self,
         document_repository: DocumentRepository,
-        document_storage: LocalDocumentStorage,
+        document_storage: CloudinaryDocumentStorage,
         allowed_mime_types: list[str],
         max_document_size_bytes: int,
     ) -> None:
@@ -33,6 +33,7 @@ class DocumentCommandServiceImpl(DocumentCommandService):
         storage_path = await self._document_storage.store(
             command.original_filename,
             command.content,
+            command.mime_type,
         )
 
         document = Document.create(

@@ -17,7 +17,8 @@ from app.documents.domain.model.queries.list_documents_query import ListDocument
 from app.documents.infrastructure.persistence.sqlalchemy.repositories.sqlalchemy_document_repository import (
     SqlAlchemyDocumentRepository,
 )
-from app.documents.infrastructure.storage.local_document_storage import LocalDocumentStorage
+from app.documents.infrastructure.storage.cloudinary_document_storage import CloudinaryDocumentStorage
+from app.documents.infrastructure.storage.exceptions import DocumentStorageUploadError
 from app.documents.interfaces.rest.resources.create_document_response import CreateDocumentResponse
 from app.documents.interfaces.rest.resources.document_resource import DocumentResource
 from app.documents.interfaces.rest.resources.list_documents_response import ListDocumentsResponse, DocumentPageMetadataResponse
@@ -30,7 +31,7 @@ async def get_document_command_service(
 ) -> DocumentCommandServiceImpl:
     settings = get_settings()
     repository = SqlAlchemyDocumentRepository(session)
-    storage = LocalDocumentStorage()
+    storage = CloudinaryDocumentStorage()
     return DocumentCommandServiceImpl(
         document_repository=repository,
         document_storage=storage,
@@ -66,10 +67,11 @@ def _to_document_resource(document) -> DocumentResource:
     response_model=CreateDocumentResponse,
     status_code=status.HTTP_201_CREATED,
     summary="Upload a document",
-    description="Receives a document file, validates it, stores it locally, and registers it in PostgreSQL.",
+    description="Receives a document file, validates it, stores it in Cloudinary, and registers it in PostgreSQL.",
     responses={
         201: {"description": "Document uploaded successfully"},
         400: {"description": "Invalid document or business rule violation"},
+        502: {"description": "Cloud storage upload failed"},
     },
 )
 async def create_document(
@@ -92,6 +94,8 @@ async def create_document(
         document = await command_service.handle_create_document(command)
     except (ValueError, DocumentFileTooLargeError, UnsupportedDocumentTypeError) as error:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)) from error
+    except DocumentStorageUploadError as error:
+        raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail=str(error)) from error
 
     return _to_document_resource(document)
 
