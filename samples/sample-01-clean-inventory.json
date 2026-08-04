@@ -1,104 +1,105 @@
 {
+  "synthetic_fixture": true,
   "report": "Service inventory",
   "generated_at": "2026-07-01T00:00:00Z",
   "environment": "staging",
   "services": [
     {
       "name": "auth-api",
-      "replicas": 6,
-      "cpu_limit": "500m",
-      "memory_limit": "512Mi",
+      "replicas": 1,
+      "cpu_limit": "200m",
+      "memory_limit": "256Mi",
       "healthy": true,
       "owner_team": "platform"
     },
     {
       "name": "payments-api",
-      "replicas": 4,
-      "cpu_limit": "500m",
-      "memory_limit": "512Mi",
+      "replicas": 2,
+      "cpu_limit": "300m",
+      "memory_limit": "384Mi",
       "healthy": true,
-      "owner_team": "platform"
+      "owner_team": "product"
     },
     {
       "name": "gateway",
-      "replicas": 5,
-      "cpu_limit": "500m",
+      "replicas": 3,
+      "cpu_limit": "400m",
       "memory_limit": "512Mi",
       "healthy": true,
-      "owner_team": "platform"
+      "owner_team": "security"
     },
     {
       "name": "reporting",
-      "replicas": 6,
+      "replicas": 4,
       "cpu_limit": "500m",
-      "memory_limit": "512Mi",
+      "memory_limit": "256Mi",
       "healthy": true,
       "owner_team": "platform"
     },
     {
       "name": "notifications",
-      "replicas": 4,
-      "cpu_limit": "500m",
-      "memory_limit": "512Mi",
+      "replicas": 5,
+      "cpu_limit": "200m",
+      "memory_limit": "384Mi",
       "healthy": true,
-      "owner_team": "platform"
+      "owner_team": "product"
     },
     {
       "name": "ingest-worker",
       "replicas": 1,
-      "cpu_limit": "500m",
+      "cpu_limit": "300m",
       "memory_limit": "512Mi",
       "healthy": true,
-      "owner_team": "platform"
+      "owner_team": "security"
     },
     {
       "name": "search-api",
-      "replicas": 3,
-      "cpu_limit": "300m",
-      "memory_limit": "384Mi",
+      "replicas": 2,
+      "cpu_limit": "400m",
+      "memory_limit": "256Mi",
       "healthy": true,
       "owner_team": "platform"
     },
     {
       "name": "catalog",
-      "replicas": 2,
-      "cpu_limit": "250m",
-      "memory_limit": "256Mi",
+      "replicas": 3,
+      "cpu_limit": "500m",
+      "memory_limit": "384Mi",
       "healthy": true,
       "owner_team": "product"
     },
     {
       "name": "billing-reconciler",
-      "replicas": 1,
+      "replicas": 4,
       "cpu_limit": "200m",
-      "memory_limit": "256Mi",
-      "healthy": true,
-      "owner_team": "finance"
-    },
-    {
-      "name": "audit-log",
-      "replicas": 2,
-      "cpu_limit": "200m",
-      "memory_limit": "256Mi",
+      "memory_limit": "512Mi",
       "healthy": true,
       "owner_team": "security"
     },
     {
-      "name": "scheduler",
-      "replicas": 1,
-      "cpu_limit": "150m",
-      "memory_limit": "192Mi",
+      "name": "audit-log",
+      "replicas": 5,
+      "cpu_limit": "300m",
+      "memory_limit": "256Mi",
       "healthy": true,
       "owner_team": "platform"
     },
     {
+      "name": "scheduler",
+      "replicas": 1,
+      "cpu_limit": "400m",
+      "memory_limit": "384Mi",
+      "healthy": true,
+      "owner_team": "product"
+    },
+    {
       "name": "webhook-relay",
       "replicas": 2,
-      "cpu_limit": "200m",
-      "memory_limit": "256Mi",
+      "cpu_limit": "500m",
+      "memory_limit": "512Mi",
       "healthy": true,
-      "owner_team": "platform"
+      "owner_team": "security"
     }
   ],
-  "notes": "Reference document with no personal data or credentials."
+  "notes": "Synthetic service metadata without personal data or credentials."
 }
