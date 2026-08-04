@@ -15,6 +15,8 @@ class Settings(BaseSettings):
     cloudinary_cloud_name: str = Field(default="", alias="CLOUDINARY_CLOUD_NAME")
     cloudinary_api_key: str = Field(default="", alias="CLOUDINARY_API_KEY")
     cloudinary_api_secret: str = Field(default="", alias="CLOUDINARY_API_SECRET")
+    ollama_base_url: str = Field(default="http://localhost:11434", alias="OLLAMA_BASE_URL")
+    ollama_model: str = Field(default="llama3.2:3b", alias="OLLAMA_MODEL")
     allowed_mime_types: str = Field(
         default="application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/json",
         alias="ALLOWED_MIME_TYPES",
