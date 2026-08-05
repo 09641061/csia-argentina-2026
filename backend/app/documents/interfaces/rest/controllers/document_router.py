@@ -80,7 +80,10 @@ async def get_document_command_service(
 async def get_document_query_service(
     session: Annotated[AsyncSession, Depends(get_session)],
 ) -> DocumentQueryServiceImpl:
-    return DocumentQueryServiceImpl(document_repository=SqlAlchemyDocumentRepository(session))
+    return DocumentQueryServiceImpl(
+        document_repository=SqlAlchemyDocumentRepository(session),
+        document_storage=get_document_storage(),
+    )
 
 
 def to_document_resource(document: Document) -> DocumentResource:

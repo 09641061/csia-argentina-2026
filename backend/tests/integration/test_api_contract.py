@@ -120,6 +120,18 @@ def test_public_schema_never_declares_internal_storage_fields() -> None:
 
 
 @pytest.mark.asyncio
+async def test_real_document_query_dependency_includes_readable_storage(
+    context: SentinelTestContext,
+    monkeypatch,
+) -> None:
+    monkeypatch.setattr(document_router, "get_document_storage", lambda: context.storage)
+
+    service = await document_router.get_document_query_service(context.session)
+
+    assert service._document_storage is context.storage
+
+
+@pytest.mark.asyncio
 async def test_iam_login_accepts_only_configured_credentials() -> None:
     app = FastAPI()
     app.include_router(authentication_router.router)
