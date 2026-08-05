@@ -8,7 +8,7 @@ import {
 import { ApiError } from './api-error'
 
 interface RequestOptions {
-  readonly method?: 'GET' | 'POST'
+  readonly method?: 'GET' | 'POST' | 'PUT'
   readonly body?: FormData | Record<string, unknown>
   readonly signal?: AbortSignal
   readonly timeoutMs?: number

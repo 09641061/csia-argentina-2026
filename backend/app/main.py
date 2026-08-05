@@ -21,6 +21,7 @@ from app.iam.interfaces.rest.controllers.authentication_router import (
     router as authentication_router,
 )
 from app.shared.interfaces.rest.health_router import router as health_router
+from app.platform.router import router as platform_router
 
 logger = logging.getLogger(__name__)
 
@@ -70,8 +71,8 @@ def create_app() -> FastAPI:
         CORSMiddleware,
         allow_origins=settings.allowed_origins,
         allow_credentials=False,
-        allow_methods=["GET", "POST", "OPTIONS"],
-        allow_headers=["Content-Type", "Accept", "Authorization"],
+        allow_methods=["GET", "POST", "PUT", "OPTIONS"],
+        allow_headers=["Content-Type", "Accept", "Authorization", "X-Sentinel-User"],
     )
 
     app.include_router(health_router)
@@ -80,6 +81,7 @@ def create_app() -> FastAPI:
     app.include_router(documents_router)
     app.include_router(analysis_router)
     app.include_router(secure_query_router)
+    app.include_router(platform_router)
 
     @app.exception_handler(Exception)
     async def handle_unexpected_error(request: Request, error: Exception) -> JSONResponse:

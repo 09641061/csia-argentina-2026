@@ -36,13 +36,20 @@ afterEach(() => {
 })
 
 describe('Navegación', () => {
-  it('offers only Consultar and Historial', async () => {
+  it('offers the security workspace sections', async () => {
     renderApp()
 
     const navigation = await screen.findByRole('navigation', { name: 'Navegación principal' })
     const links = Array.from(navigation.querySelectorAll('a')).map((link) => link.textContent)
 
-    expect(links).toEqual(['Consultar', 'Historial'])
+    expect(links).toEqual([
+      'Consultar',
+      'Historial',
+      'Seguridad',
+      'Aprobaciones',
+      'Políticas',
+      'Laboratorio',
+    ])
     expect(screen.queryByRole('link', { name: /dashboard/i })).not.toBeInTheDocument()
     expect(screen.queryByRole('link', { name: /panel/i })).not.toBeInTheDocument()
     expect(screen.queryByRole('link', { name: /conversacion/i })).not.toBeInTheDocument()

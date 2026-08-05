@@ -106,6 +106,14 @@ def test_routes_are_unambiguous_and_documented() -> None:
         "/api/v1/secure-queries",
         "/api/v1/interactions",
         "/api/v1/interactions/{interaction_id}",
+        "/api/v1/platform/overview",
+        "/api/v1/platform/policies/current",
+        "/api/v1/platform/sanitize",
+        "/api/v1/platform/interactions/{interaction_id}/trace",
+        "/api/v1/platform/approvals",
+        "/api/v1/platform/approvals/{approval_id}/resolve",
+        "/api/v1/platform/lab/scenarios",
+        "/api/v1/platform/reports/{interaction_id}.pdf",
     }
     # A static segment and a path parameter must never compete for the same slot.
     assert "/api/v1/analyses/runs" not in paths

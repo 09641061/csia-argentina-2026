@@ -7,6 +7,7 @@ import { RegisterPage } from '@/modules/auth/presentation/register-page'
 import { HistoryPage } from '@/modules/history/presentation/history-page'
 import { InteractionDetailPage } from '@/modules/history/presentation/interaction-detail-page'
 import { SecureQueryPage } from '@/modules/secure-query/presentation/secure-query-page'
+import { ApprovalsPage, PoliciesPage, SecurityCenterPage, SecurityLabPage } from '@/modules/platform/platform-pages'
 
 import { AppLayout } from './app-layout'
 
@@ -22,6 +23,10 @@ export function AppRoutes() {
           <Route index element={<SecureQueryPage />} />
           <Route path="historial" element={<HistoryPage />} />
           <Route path="historial/:interactionId" element={<InteractionDetailPage />} />
+          <Route path="seguridad" element={<SecurityCenterPage />} />
+          <Route path="aprobaciones" element={<ApprovalsPage />} />
+          <Route path="politicas" element={<PoliciesPage />} />
+          <Route path="laboratorio" element={<SecurityLabPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Route>

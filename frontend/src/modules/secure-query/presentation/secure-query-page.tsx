@@ -42,6 +42,7 @@ export function SecureQueryPage() {
         <SecureQueryResult
           interaction={state.interaction}
           answer={state.answer}
+          originalPrompt={state.draft.prompt}
           onNewQuery={reset}
         />
       )}

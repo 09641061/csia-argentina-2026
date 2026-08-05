@@ -23,3 +23,5 @@ build/
 .python-version
 .ipynb_checkpoints/
 /storage/
+/tmp/
+/output/

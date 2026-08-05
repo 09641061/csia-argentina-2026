@@ -78,7 +78,7 @@ describe('Consultar', () => {
     expect(screen.queryByText(/Respuesta del asistente local/)).not.toBeInTheDocument()
   })
 
-  it('never offers a sanitized version of the blocked content', async () => {
+  it('offers a safe remediation path for blocked content', async () => {
     vi.stubGlobal(
       'fetch',
       stubFetch({ '/api/v1/secure-queries': secureQueryResponse(blockedInteractionResource(), null) }),
@@ -90,8 +90,7 @@ describe('Consultar', () => {
     await user.click(screen.getByRole('button', { name: 'Analizar y consultar' }))
     await screen.findByText('Consulta bloqueada')
 
-    expect(screen.queryByText(/versión segura/i)).not.toBeInTheDocument()
-    expect(screen.queryByText(/sanitiz/i)).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /crear versión segura/i })).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /copiar/i })).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /descargar/i })).not.toBeInTheDocument()
   })

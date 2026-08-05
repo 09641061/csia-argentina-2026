@@ -1,4 +1,4 @@
-import { Clock3, LogOut, Menu, MessageSquareText, ShieldCheck, UserRound } from 'lucide-react'
+import { Clock3, FileCheck2, FlaskConical, LayoutDashboard, LogOut, Menu, MessageSquareText, Settings2, ShieldCheck, UserRound } from 'lucide-react'
 import { NavLink, Outlet } from 'react-router-dom'
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
@@ -20,6 +20,10 @@ import { useAuth } from '@/modules/auth/presentation/auth-provider'
 const NAVIGATION = [
   { to: '/', label: 'Consultar', end: true, icon: MessageSquareText },
   { to: '/historial', label: 'Historial', end: false, icon: Clock3 },
+  { to: '/seguridad', label: 'Seguridad', end: false, icon: LayoutDashboard },
+  { to: '/aprobaciones', label: 'Aprobaciones', end: false, icon: FileCheck2 },
+  { to: '/politicas', label: 'Políticas', end: false, icon: Settings2 },
+  { to: '/laboratorio', label: 'Laboratorio', end: false, icon: FlaskConical },
 ]
 
 export function AppLayout() {

@@ -140,3 +140,58 @@
     @apply mt-2 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base;
   }
 }
+
+@layer components {
+  .workspace-heading { @apply mb-6 flex items-start justify-between gap-4; }
+  .workspace-heading__eyebrow { @apply mb-1 text-xs font-semibold uppercase tracking-[0.18em] text-primary; }
+  .page-title { @apply text-3xl font-semibold tracking-tight; }
+  .page-lead { @apply mt-2 max-w-2xl text-sm leading-6 text-muted-foreground; }
+  .metric-grid { @apply mb-5 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4; }
+  .metric-card { @apply grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 p-5 shadow-none; }
+  .metric-card svg { @apply row-span-2 size-5 text-primary; }
+  .metric-card small { @apply text-xs uppercase tracking-wider text-muted-foreground; }
+  .metric-card strong { @apply text-2xl leading-none; }
+  .platform-grid { @apply grid grid-cols-1 gap-4 xl:grid-cols-[1.35fr_1fr]; }
+  .platform-card { @apply p-6 shadow-sm; }
+  .platform-card h2 { @apply mb-4 text-sm font-semibold; }
+  .platform-muted { @apply text-sm text-muted-foreground; }
+  .event-list > div { @apply grid grid-cols-[auto_1fr_auto] items-center gap-3 border-t py-3; }
+  .event-list strong, .event-list small { @apply block; }
+  .event-list strong { @apply text-sm; }
+  .event-list small { @apply text-xs text-muted-foreground; }
+  .event-list b { @apply text-xs uppercase text-muted-foreground; }
+  .event-dot { @apply size-2 rounded-full bg-amber-500; }
+  .event-dot--allowed { @apply bg-emerald-500; }
+  .event-dot--blocked { @apply bg-destructive; }
+  .category-bars > div { @apply my-3 grid grid-cols-[7rem_1fr_2rem] items-center gap-2 text-xs; }
+  .category-bars i { @apply h-2 overflow-hidden rounded-full bg-muted; }
+  .category-bars i b { @apply block h-full rounded-full bg-primary; }
+  .approval-list article { @apply flex flex-col justify-between gap-4 border-t py-5 first:border-t-0 sm:flex-row; }
+  .approval-list article > div:last-child { @apply flex items-center gap-2; }
+  .approval-list h3 { @apply mt-2 text-sm font-semibold; }
+  .approval-list p, .approval-list small { @apply text-xs text-muted-foreground; }
+  .approval-status { @apply rounded-full bg-amber-100 px-2 py-1 text-xs uppercase text-amber-800; }
+  .approval-status--approved { @apply bg-emerald-100 text-emerald-800; }
+  .approval-status--rejected { @apply bg-red-100 text-red-800; }
+  .policy-layout { @apply grid grid-cols-1 gap-4 xl:grid-cols-[1fr_1.2fr]; }
+  .policy-modes { @apply grid gap-2; }
+  .policy-modes button { @apply flex gap-3 rounded-xl border bg-background p-4 text-left transition-colors hover:bg-muted; }
+  .policy-modes button.active { @apply border-primary bg-primary/5; }
+  .policy-modes svg { @apply size-5 text-primary; }
+  .policy-modes span { @apply grid; }
+  .policy-modes strong { @apply text-sm; }
+  .policy-modes small { @apply text-xs text-muted-foreground; }
+  .policy-rules > div { @apply flex justify-between border-t py-3 text-sm capitalize; }
+  .policy-rules > div b, .saved-note { @apply text-primary; }
+  .policy-rules button { @apply mt-5; }
+  .saved-note { @apply ml-3 text-xs; }
+  .scenario-grid { @apply grid grid-cols-1 gap-4 lg:grid-cols-2; }
+  .scenario-card { @apply p-5 shadow-none; }
+  .scenario-card > div:first-child { @apply flex justify-between; }
+  .scenario-card svg { @apply size-5 text-primary; }
+  .scenario-card h2 { @apply my-3 font-semibold; }
+  .scenario-card code { @apply block min-h-16 rounded-lg bg-muted p-3 text-xs whitespace-normal; }
+  .scenario-card button { @apply mt-4; }
+  .scenario-risk { @apply rounded-full bg-emerald-100 px-2 py-1 text-xs uppercase text-emerald-800; }
+  .scenario-risk--critical, .scenario-risk--high { @apply bg-red-100 text-red-800; }
+}
