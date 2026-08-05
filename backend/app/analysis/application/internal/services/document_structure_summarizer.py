@@ -45,7 +45,13 @@ class DocumentStructureSummarizer:
     ) -> DocumentStructureSummary:
         key_counts: Counter[str] = Counter()
         safe_leaves: list[str] = []
-        counts = {"objects": 0, "arrays": 0, "scalars": 0, "records": 0}
+        counts = {
+            "objects": 0,
+            "arrays": 0,
+            "scalars": 0,
+            "records": 0,
+            "truncated_scalars": 0,
+        }
         self._collect_structure(sanitized_content, "$", key_counts, safe_leaves, counts)
         estimated_subjects = self._estimate_subjects(content, findings)
         finding_counts = Counter(finding.finding_type.value for finding in findings)
@@ -57,7 +63,7 @@ class DocumentStructureSummarizer:
             for finding in findings
             if finding.finding_type == AnalysisFindingType.PROMPT_INJECTION
         )
-        truncated = len(safe_leaves) > 50 or approximate_size_bytes > 6000
+        truncated = len(safe_leaves) > 12 or counts["truncated_scalars"] > 0
         return DocumentStructureSummary(
             root_type="object" if isinstance(content, dict) else "array",
             approximate_size_bytes=approximate_size_bytes,
@@ -105,6 +111,8 @@ class DocumentStructureSummarizer:
             return
         counts["scalars"] += 1
         rendered = json.dumps(value, ensure_ascii=False)
+        if len(rendered) > 180:
+            counts["truncated_scalars"] += 1
         safe_leaves.append(f"{path}={rendered[:180]}")
 
     def _estimate_subjects(

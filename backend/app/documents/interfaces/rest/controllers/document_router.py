@@ -1,6 +1,7 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
+from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile, status
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_session
 from app.core.settings import get_settings
@@ -15,55 +16,69 @@ from app.documents.domain.exceptions import (
     InvalidDocumentContentError,
     UnsupportedDocumentTypeError,
 )
-from app.documents.domain.model.commands.create_document_command import CreateDocumentCommand
-from app.documents.domain.model.valueobjects.document_mime_type import DocumentMimeType
-from app.documents.domain.model.queries.get_document_by_id_query import GetDocumentByIdQuery
+from app.documents.domain.model.commands.create_document_command import (
+    CreateDocumentCommand,
+)
+from app.documents.domain.model.entities.document import Document
+from app.documents.domain.model.queries.get_document_by_id_query import (
+    GetDocumentByIdQuery,
+)
 from app.documents.domain.model.queries.list_documents_query import ListDocumentsQuery
 from app.documents.infrastructure.persistence.sqlalchemy.repositories.sqlalchemy_document_repository import (
     SqlAlchemyDocumentRepository,
 )
-from app.documents.infrastructure.storage.cloudinary_document_storage import CloudinaryDocumentStorage
-from app.documents.infrastructure.storage.exceptions import DocumentStorageUploadError
-from app.documents.interfaces.rest.resources.create_document_response import CreateDocumentResponse
+from app.documents.infrastructure.storage.document_storage_provider import (
+    get_document_storage,
+)
+from app.documents.infrastructure.storage.exceptions import (
+    DocumentStorageNotConfiguredError,
+    DocumentStorageUploadError,
+)
+from app.documents.interfaces.rest.resources.create_document_response import (
+    CreateDocumentResponse,
+)
 from app.documents.interfaces.rest.resources.document_resource import DocumentResource
-from app.documents.interfaces.rest.resources.list_documents_response import ListDocumentsResponse, DocumentPageMetadataResponse
+from app.documents.interfaces.rest.resources.list_documents_response import (
+    DocumentPageMetadataResponse,
+    ListDocumentsResponse,
+)
+from app.shared.infrastructure.persistence.sqlalchemy.unit_of_work import (
+    SqlAlchemyUnitOfWork,
+)
 
 router = APIRouter(prefix="/api/v1/documents", tags=["Documents"])
 
 
 async def get_document_command_service(
-    session=Depends(get_session),
+    session: Annotated[AsyncSession, Depends(get_session)],
 ) -> DocumentCommandServiceImpl:
     settings = get_settings()
-    repository = SqlAlchemyDocumentRepository(session)
     try:
-        storage = CloudinaryDocumentStorage()
-    except DocumentStorageUploadError as error:
+        storage = get_document_storage()
+    except DocumentStorageNotConfiguredError as error:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail=str(error),
+            detail="Document storage is not configured",
         ) from error
     return DocumentCommandServiceImpl(
-        document_repository=repository,
+        document_repository=SqlAlchemyDocumentRepository(session),
         document_storage=storage,
         max_document_size_bytes=settings.max_document_size_bytes,
     )
 
 
-async def get_document_query_service(session=Depends(get_session)) -> DocumentQueryServiceImpl:
-    repository = SqlAlchemyDocumentRepository(session)
-    return DocumentQueryServiceImpl(document_repository=repository)
+async def get_document_query_service(
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> DocumentQueryServiceImpl:
+    return DocumentQueryServiceImpl(document_repository=SqlAlchemyDocumentRepository(session))
 
 
-def _to_document_resource(document) -> DocumentResource:
+def to_document_resource(document: Document) -> DocumentResource:
     return DocumentResource(
         id=document.id or 0,
-        owner_user_id=document.owner_user_id,
-        name=document.name.value,
-        original_filename=document.original_filename,
+        display_name=document.display_name.value,
         mime_type=document.mime_type.value,
         size_bytes=document.size_bytes.value,
-        storage_path=document.storage_path.value,
         status=document.status.value,
         created_at=document.created_at,
         updated_at=document.updated_at,
@@ -76,69 +91,102 @@ def _to_document_resource(document) -> DocumentResource:
     "",
     response_model=CreateDocumentResponse,
     status_code=status.HTTP_201_CREATED,
-    summary="Upload a JSON document",
+    summary="Register a supported document",
     description=(
-        "Receives a JSON document, verifies that its content really is a JSON object or array, "
-        "stores it in Cloudinary, and registers it in PostgreSQL. "
-        "JSON is the only supported document type."
+        "Receives a JSON, PDF, DOCX, XLSX, PNG or JPEG file, validates its real container, "
+        "stores it in the configured private storage and registers its metadata. "
+        "The declared MIME type is not trusted: the bytes themselves are inspected."
     ),
     responses={
-        201: {"description": "Document uploaded successfully"},
-        400: {"description": "Malformed JSON content or business rule violation"},
+        201: {"description": "Document registered successfully"},
+        400: {"description": "Empty, malformed or mismatched document content"},
         413: {"description": "Document exceeds the maximum allowed size"},
-        415: {"description": "Unsupported document type, only application/json is accepted"},
-        502: {"description": "Cloud storage upload failed"},
+        415: {"description": "Unsupported document type"},
+        503: {"description": "Document storage is unavailable"},
     },
 )
 async def create_document(
-    name: Annotated[str, Form(description="Business document name", min_length=1, max_length=255)],
-    owner_user_id: Annotated[int, Form(description="Owner user identifier", gt=0)],
-    file: Annotated[UploadFile, File(description="JSON document to upload (application/json)")],
+    file: Annotated[UploadFile, File(description="JSON, PDF, DOCX, XLSX, PNG or JPEG file")],
     command_service: Annotated[DocumentCommandServiceImpl, Depends(get_document_command_service)],
+    session: Annotated[AsyncSession, Depends(get_session)],
 ) -> CreateDocumentResponse:
+    settings = get_settings()
     content = await file.read()
-
-    try:
-        command = CreateDocumentCommand(
-            owner_user_id=owner_user_id,
-            name=name,
-            original_filename=file.filename or "document.json",
-            mime_type=file.content_type or DocumentMimeType.JSON,
-            size_bytes=len(content),
-            content=content,
-        )
-        document = await command_service.handle_create_document(command)
-    except UnsupportedDocumentTypeError as error:
-        raise HTTPException(
-            status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
-            detail=str(error),
-        ) from error
-    except DocumentFileTooLargeError as error:
+    if len(content) > settings.max_document_size_bytes:
         raise HTTPException(
             status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
-            detail=str(error),
+            detail=f"Document size exceeds the limit of {settings.max_document_size_mb} MB",
+        )
+
+    unit_of_work = SqlAlchemyUnitOfWork(session)
+    try:
+        document = await command_service.handle_create_document(
+            CreateDocumentCommand(
+                original_filename=file.filename or "document.json",
+                mime_type=file.content_type or "application/octet-stream",
+                content=content,
+            )
+        )
+        await unit_of_work.commit()
+    except UnsupportedDocumentTypeError as error:
+        await unit_of_work.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, detail=str(error)
+        ) from error
+    except DocumentFileTooLargeError as error:
+        await unit_of_work.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE, detail=str(error)
         ) from error
     except (InvalidDocumentContentError, ValueError) as error:
+        await unit_of_work.rollback()
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)) from error
     except DocumentStorageUploadError as error:
-        raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail=str(error)) from error
-    except Exception as error:
+        await unit_of_work.rollback()
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Unexpected error while uploading document",
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="The document could not be stored",
         ) from error
 
-    return _to_document_resource(document)
+    return CreateDocumentResponse(**to_document_resource(document).model_dump())
+
+
+@router.get(
+    "",
+    response_model=ListDocumentsResponse,
+    summary="List registered documents",
+    description="Returns registered documents in reverse creation order with bounded pagination.",
+    responses={
+        200: {"description": "Documents returned successfully"},
+        400: {"description": "Invalid pagination"},
+    },
+)
+async def list_documents(
+    query_service: Annotated[DocumentQueryServiceImpl, Depends(get_document_query_service)],
+    page: Annotated[int, Query(ge=1, description="Page number")] = 1,
+    page_size: Annotated[int, Query(ge=1, le=100, description="Documents per page")] = 20,
+) -> ListDocumentsResponse:
+    try:
+        documents, total = await query_service.handle_list_documents(
+            ListDocumentsQuery(page=page, page_size=page_size)
+        )
+    except ValueError as error:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)) from error
+
+    return ListDocumentsResponse(
+        items=[to_document_resource(document) for document in documents],
+        page=DocumentPageMetadataResponse(page=page, page_size=page_size, total=total),
+    )
 
 
 @router.get(
     "/{document_id}",
     response_model=DocumentResource,
-    status_code=status.HTTP_200_OK,
     summary="Get a document by ID",
-    description="Retrieves a registered document by its identifier.",
+    description="Retrieves the public metadata of a registered document.",
     responses={
         200: {"description": "Document found"},
+        400: {"description": "Invalid document identifier"},
         404: {"description": "Document not found"},
     },
 )
@@ -147,40 +195,13 @@ async def get_document_by_id(
     query_service: Annotated[DocumentQueryServiceImpl, Depends(get_document_query_service)],
 ) -> DocumentResource:
     try:
-        query = GetDocumentByIdQuery(document_id=document_id)
-        document = await query_service.handle_get_document_by_id(query)
+        document = await query_service.handle_get_document_by_id(
+            GetDocumentByIdQuery(document_id=document_id)
+        )
     except ValueError as error:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)) from error
 
     if document is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Document not found")
 
-    return _to_document_resource(document)
-
-
-@router.get(
-    "",
-    response_model=ListDocumentsResponse,
-    status_code=status.HTTP_200_OK,
-    summary="List documents",
-    description="Returns a paginated list of documents.",
-    responses={
-        200: {"description": "Documents returned successfully"},
-    },
-)
-async def list_documents(
-    query_service: Annotated[DocumentQueryServiceImpl, Depends(get_document_query_service)],
-    page: int = 1,
-    page_size: int = 20,
-    owner_user_id: int | None = None,
-) -> ListDocumentsResponse:
-    try:
-        query = ListDocumentsQuery(page=page, page_size=page_size, owner_user_id=owner_user_id)
-        documents, total = await query_service.handle_list_documents(query)
-    except ValueError as error:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)) from error
-
-    return ListDocumentsResponse(
-        items=[_to_document_resource(document) for document in documents],
-        page=DocumentPageMetadataResponse(page=page, page_size=page_size, total=total),
-    )
+    return to_document_resource(document)

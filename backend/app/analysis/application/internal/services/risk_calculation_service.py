@@ -13,14 +13,14 @@ from app.analysis.domain.model.valueobjects.analysis_finding_type import (
     AnalysisFindingType,
 )
 from app.analysis.domain.model.valueobjects.analysis_risk_level import AnalysisRiskLevel
-from app.analysis.domain.model.valueobjects.document_structure_summary import (
-    DocumentStructureSummary,
-)
 from app.analysis.domain.model.valueobjects.estimated_subjects import EstimatedSubjects
 from app.analysis.domain.model.valueobjects.ollama_analysis_interpretation import (
     OllamaAnalysisInterpretation,
 )
 from app.analysis.domain.model.valueobjects.secrets_risk_level import SecretsRiskLevel
+from app.analysis.domain.model.valueobjects.sensitive_content_discovery import (
+    SensitiveContentDiscovery,
+)
 
 _RISK_ORDER = {
     AnalysisRiskLevel.LOW: 0,
@@ -73,6 +73,32 @@ _FINANCIAL_TYPES = {
     AnalysisFindingType.BANK_ACCOUNT,
     AnalysisFindingType.FINANCIAL_DATA,
 }
+_DISCOVERY_SECRET_CATEGORIES = {
+    "api_key",
+    "connection_string",
+    "credentials",
+    "password",
+    "private_key",
+    "session_id",
+    "token",
+}
+_DISCOVERY_PERSONAL_CATEGORIES = {
+    "address",
+    "bank_account",
+    "biometric_data",
+    "contact_data",
+    "cvv",
+    "email",
+    "financial_data",
+    "full_name",
+    "health_data",
+    "ip_address",
+    "location",
+    "passport",
+    "payment_card",
+    "personal_id",
+    "phone",
+}
 
 
 @dataclass(frozen=True, slots=True)
@@ -84,6 +110,7 @@ class FinalRiskAssessment:
     tampering_suspected: bool
     data_categories: tuple[str, ...]
     estimated_subjects: EstimatedSubjects
+    discovery_confirmed: bool
 
 
 class RiskCalculationService:
@@ -91,13 +118,20 @@ class RiskCalculationService:
         self,
         *,
         findings: list[AnalysisFinding],
-        structure: DocumentStructureSummary,
+        estimated_subjects: EstimatedSubjects,
         interpretation: OllamaAnalysisInterpretation,
+        discovery: SensitiveContentDiscovery | None = None,
     ) -> FinalRiskAssessment:
+        """
+        Combine the deterministic evidence with the model interpretation.
+
+        Every combination is a maximum, never an average: the model can raise a
+        risk but it can never lower what the deterministic rules already
+        confirmed.
+        """
+
         deterministic_secrets = self._deterministic_secrets_risk(findings)
-        deterministic_personal = self._deterministic_personal_risk(
-            findings, structure.estimated_subjects
-        )
+        deterministic_personal = self._deterministic_personal_risk(findings, estimated_subjects)
         secrets_risk = max(
             deterministic_secrets, interpretation.secrets_risk, key=_SECRET_ORDER.get
         )
@@ -106,6 +140,29 @@ class RiskCalculationService:
             interpretation.personal_data_risk,
             key=_RISK_ORDER.get,
         )
+        discovery_confirmed = self._discovery_is_confirmed(
+            discovery=discovery,
+            findings=findings,
+            interpretation=interpretation,
+        )
+        effective_discovery = discovery if discovery_confirmed else None
+        if effective_discovery is not None:
+            discovered_categories = set(effective_discovery.data_categories)
+            if discovered_categories & _DISCOVERY_SECRET_CATEGORIES:
+                discovered_secret_risk = SecretsRiskLevel(
+                    effective_discovery.risk_level.value
+                )
+                secrets_risk = max(
+                    secrets_risk,
+                    discovered_secret_risk,
+                    key=_SECRET_ORDER.get,
+                )
+            if discovered_categories & _DISCOVERY_PERSONAL_CATEGORIES:
+                personal_risk = max(
+                    personal_risk,
+                    effective_discovery.risk_level,
+                    key=_RISK_ORDER.get,
+                )
         secrets_as_risk = (
             AnalysisRiskLevel(secrets_risk.value)
             if secrets_risk != SecretsRiskLevel.NONE
@@ -115,23 +172,45 @@ class RiskCalculationService:
             secrets_as_risk,
             personal_risk,
             interpretation.risk_level,
+            (
+                effective_discovery.risk_level
+                if effective_discovery is not None
+                else AnalysisRiskLevel.LOW
+            ),
             key=_RISK_ORDER.get,
         )
-        tampering = interpretation.tampering_suspected or any(
-            finding.finding_type == AnalysisFindingType.PROMPT_INJECTION
-            for finding in findings
+        tampering = (
+            interpretation.tampering_suspected
+            or any(
+                finding.finding_type == AnalysisFindingType.PROMPT_INJECTION
+                for finding in findings
+            )
+            or (
+                effective_discovery is not None
+                and "prompt_injection" in effective_discovery.data_categories
+            )
         )
         if tampering:
             risk_level = max(risk_level, AnalysisRiskLevel.HIGH, key=_RISK_ORDER.get)
         confidence = min(
             interpretation.confidence,
             self._deterministic_confidence(findings),
+            (
+                effective_discovery.confidence
+                if effective_discovery is not None
+                else AnalysisConfidence.HIGH
+            ),
             key=_CONFIDENCE_ORDER.get,
         )
         categories = tuple(
             sorted(
                 {
                     *interpretation.data_categories,
+                    *(
+                        effective_discovery.data_categories
+                        if effective_discovery is not None
+                        else ()
+                    ),
                     *(
                         finding.data_category
                         for finding in findings
@@ -140,8 +219,8 @@ class RiskCalculationService:
                 }
             )
         )
-        estimated_subjects = max(
-            structure.estimated_subjects,
+        final_subjects = max(
+            estimated_subjects,
             interpretation.estimated_subjects,
             key=_SUBJECT_ORDER.get,
         )
@@ -152,8 +231,24 @@ class RiskCalculationService:
             confidence=confidence,
             tampering_suspected=tampering,
             data_categories=categories,
-            estimated_subjects=estimated_subjects,
+            estimated_subjects=final_subjects,
+            discovery_confirmed=discovery_confirmed,
         )
+
+    def _discovery_is_confirmed(
+        self,
+        *,
+        discovery: SensitiveContentDiscovery | None,
+        findings: list[AnalysisFinding],
+        interpretation: OllamaAnalysisInterpretation,
+    ) -> bool:
+        if discovery is None or not discovery.contains_sensitive_data:
+            return False
+        if discovery.confidence == AnalysisConfidence.HIGH:
+            return True
+        if any(not finding.is_placeholder for finding in findings):
+            return True
+        return interpretation.risk_level != AnalysisRiskLevel.LOW
 
     def _deterministic_secrets_risk(
         self, findings: list[AnalysisFinding]

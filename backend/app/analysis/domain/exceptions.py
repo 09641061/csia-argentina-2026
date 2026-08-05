@@ -14,11 +14,11 @@ class DocumentContentExtractionError(AnalysisDomainError):
     pass
 
 
-class DocumentContentDownloadError(AnalysisDomainError):
+class DocumentContentReadError(AnalysisDomainError):
     pass
 
 
-class AnalysisConflictError(AnalysisDomainError):
+class InvalidPromptError(AnalysisDomainError):
     pass
 
 
@@ -36,3 +36,7 @@ class AnalysisModelTimeoutError(AnalysisModelError):
 
 class AnalysisModelInvalidResponseError(AnalysisModelError):
     pass
+
+
+class AnalysisExecutionError(AnalysisDomainError):
+    """An unexpected failure that was already recorded as a failed execution."""

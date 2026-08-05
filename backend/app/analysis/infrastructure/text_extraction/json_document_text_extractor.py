@@ -49,6 +49,11 @@ class JsonDocumentTextExtractor(DocumentTextExtractor):
 
         return parsed
 
+    async def extract_content(
+        self, content: bytes, mime_type: str, original_filename: str
+    ) -> JsonContainer:
+        return self.extract_json(content, mime_type, original_filename)
+
     def extract_text(
         self, content: bytes, mime_type: str, original_filename: str
     ) -> str:

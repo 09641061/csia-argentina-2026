@@ -1,31 +1,59 @@
 from collections.abc import AsyncIterator
 import logging
 
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
-from app.analysis.infrastructure.persistence.sqlalchemy.analysis_schema_migration import (
-    migrate_analysis_schema,
-)
 from app.core.settings import get_settings
-from app.documents.infrastructure.persistence.sqlalchemy.models.base import Base
+from app.shared.infrastructure.persistence.sqlalchemy.base import Base
 
 logger = logging.getLogger(__name__)
 
 settings = get_settings()
 
-engine = create_async_engine(settings.database_url, future=True, echo=False)
+engine = create_async_engine(settings.database_url, future=True, echo=False, pool_pre_ping=True)
 async_session_factory = async_sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 
 
 async def get_session() -> AsyncIterator[AsyncSession]:
     async with async_session_factory() as session:
-        yield session
+        try:
+            yield session
+        except Exception:
+            await session.rollback()
+            raise
 
 
 async def initialize_database() -> None:
+    """
+    Create the schema before serving traffic.
+
+    A database problem is a hard failure: the API must never start looking
+    healthy while it cannot store an audit trail of the security decisions.
+    """
+
+    # Imported for their side effect: every table must be registered on Base
+    # before create_all runs.
+    from app.analysis.infrastructure.persistence.sqlalchemy.models import (  # noqa: F401
+        security_analysis_model,
+    )
+    from app.decision.infrastructure.persistence.sqlalchemy.models import (  # noqa: F401
+        secure_interaction_model,
+    )
+    from app.documents.infrastructure.persistence.sqlalchemy.models import (  # noqa: F401
+        document_model,
+    )
+
+    async with engine.begin() as connection:
+        await connection.run_sync(Base.metadata.create_all)
+    logger.info("Database schema is ready")
+
+
+async def check_database_connection() -> bool:
     try:
-        async with engine.begin() as connection:
-            await connection.run_sync(Base.metadata.create_all)
-            await migrate_analysis_schema(connection)
-    except Exception as error:
-        logger.warning("Database initialization skipped: %s", error)
+        async with engine.connect() as connection:
+            await connection.execute(text("SELECT 1"))
+        return True
+    except Exception as error:  # noqa: BLE001 - health probe must never raise
+        logger.warning("Database health check failed: %s", type(error).__name__)
+        return False

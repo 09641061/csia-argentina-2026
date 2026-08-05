@@ -1,23 +1,88 @@
-from fastapi import FastAPI
+import logging
+from contextlib import asynccontextmanager
 
+from fastapi import FastAPI, Request, status
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+
+from app.analysis.interfaces.rest.controllers.security_analysis_router import (
+    router as analysis_router,
+)
 from app.core.database import initialize_database
-from app.analysis.interfaces.rest.controllers.document_analysis_router import router as analysis_router
-from app.documents.interfaces.rest.controllers.document_router import router as documents_router
+from app.core.settings import get_settings
+from app.decision.interfaces.rest.controllers.secure_query_router import (
+    router as secure_query_router,
+)
+from app.documents.interfaces.rest.controllers.document_router import (
+    router as documents_router,
+)
+from app.shared.interfaces.rest.health_router import router as health_router
+
+logger = logging.getLogger(__name__)
+
+DESCRIPTION = """
+Sentinel AI Guard es un portal seguro de acceso a una IA local.
+
+Una consulta y un archivo opcional se revisan antes de que el modelo pueda responder.
+Solo el contenido permitido llega al generador de respuestas.
+
+Contextos delimitados:
+
+* **Documents** recibe, valida y almacena JSON, PDF, DOCX, XLSX e imágenes en privado.
+* **Analysis** usa visión local cuando hace falta, detecta datos sensibles, enmascara la
+  evidencia y exige una evaluación contextual al modelo local de seguridad.
+* **Decision & Audit** aplica la política ALLOWED/BLOCKED, ejecuta la generación solo si
+  el contenido fue permitido y conserva el historial explicable.
+"""
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """
+    Prepare the schema before serving.
+
+    A database failure here stops the process on purpose: an API that answers
+    while it cannot write the audit trail would be worse than one that is down.
+    """
+
+    del app
+    await initialize_database()
+    yield
 
 
 def create_app() -> FastAPI:
+    settings = get_settings()
+
     app = FastAPI(
         title="Sentinel AI Guard",
-        version="0.1.0",
-        description="Document intake and document analysis bounded contexts for Sentinel AI Guard.",
+        version="1.0.0",
+        description=DESCRIPTION,
+        lifespan=lifespan,
     )
 
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=settings.allowed_origins,
+        allow_credentials=False,
+        allow_methods=["GET", "POST", "OPTIONS"],
+        allow_headers=["Content-Type", "Accept"],
+    )
+
+    app.include_router(health_router)
     app.include_router(documents_router)
     app.include_router(analysis_router)
+    app.include_router(secure_query_router)
 
-    @app.on_event("startup")
-    async def on_startup() -> None:
-        await initialize_database()
+    @app.exception_handler(Exception)
+    async def handle_unexpected_error(request: Request, error: Exception) -> JSONResponse:
+        """Never let an internal message, path or stack trace reach a client."""
+
+        logger.exception("Unhandled error on %s %s", request.method, request.url.path)
+        del error
+        return JSONResponse(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            content={"detail": "Ocurrió un error inesperado en el servidor."},
+        )
 
     return app
 

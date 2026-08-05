@@ -16,4 +16,3 @@ class ListDocumentsResponse(BaseModel):
 
     items: list[DocumentResource] = Field(description="Documents in the current page")
     page: DocumentPageMetadataResponse
-

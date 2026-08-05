@@ -1,0 +1,13 @@
+from typing import Protocol
+
+from app.analysis.domain.model.entities.security_analysis import SecurityAnalysis
+
+
+class SecurityAnalysisRepository(Protocol):
+    async def save(self, analysis: SecurityAnalysis) -> SecurityAnalysis: ...
+
+    async def find_by_id(self, analysis_id: int) -> SecurityAnalysis | None: ...
+
+    async def find_latest_by_document_id(self, document_id: int) -> SecurityAnalysis | None: ...
+
+    async def list(self, page: int, page_size: int) -> tuple[list[SecurityAnalysis], int]: ...

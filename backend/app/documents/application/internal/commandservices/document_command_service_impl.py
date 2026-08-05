@@ -1,24 +1,36 @@
-from datetime import UTC, datetime
-
+from app.documents.application.internal.outboundservices.document_storage import (
+    DocumentStorage,
+)
 from app.documents.domain.exceptions import DocumentFileTooLargeError
-from app.documents.domain.model.commands.create_document_command import CreateDocumentCommand
-from app.documents.domain.model.commands.update_document_status_command import UpdateDocumentStatusCommand
-from app.documents.domain.model.events.document_status_changed_event import DocumentStatusChangedEvent
-from app.documents.domain.model.events.document_uploaded_event import DocumentUploadedEvent
+from app.documents.domain.model.commands.create_document_command import (
+    CreateDocumentCommand,
+)
+from app.documents.domain.model.commands.record_document_review_outcome_command import (
+    RecordDocumentReviewOutcomeCommand,
+)
 from app.documents.domain.model.entities.document import Document
+from app.documents.domain.model.events.document_status_changed_event import (
+    DocumentStatusChangedEvent,
+)
+from app.documents.domain.model.events.document_uploaded_event import (
+    DocumentUploadedEvent,
+)
 from app.documents.domain.model.valueobjects.document_mime_type import DocumentMimeType
 from app.documents.domain.model.valueobjects.document_status import DocumentStatus
-from app.documents.domain.model.valueobjects.json_document_content import JsonDocumentContent
+from app.documents.domain.model.valueobjects.supported_document_content import (
+    SupportedDocumentContent,
+)
 from app.documents.domain.repositories.document_repository import DocumentRepository
-from app.documents.domain.services.document_command_service import DocumentCommandService
-from app.documents.infrastructure.storage.cloudinary_document_storage import CloudinaryDocumentStorage
+from app.documents.domain.services.document_command_service import (
+    DocumentCommandService,
+)
 
 
 class DocumentCommandServiceImpl(DocumentCommandService):
     def __init__(
         self,
         document_repository: DocumentRepository,
-        document_storage: CloudinaryDocumentStorage,
+        document_storage: DocumentStorage,
         max_document_size_bytes: int,
     ) -> None:
         self._document_repository = document_repository
@@ -28,47 +40,40 @@ class DocumentCommandServiceImpl(DocumentCommandService):
 
     async def handle_create_document(self, command: CreateDocumentCommand) -> Document:
         self._validate_document_size(command.size_bytes)
-        mime_type = DocumentMimeType(command.mime_type)
-        content = JsonDocumentContent(command.content)
-
-        storage_path = await self._document_storage.store(
-            command.original_filename,
-            content.value,
-            mime_type.value,
+        mime_type = DocumentMimeType.from_upload(
+            command.mime_type, command.original_filename
         )
+        content = SupportedDocumentContent(command.content, mime_type)
 
-        document = Document.create(
-            owner_user_id=command.owner_user_id,
-            name=command.name,
+        storage_reference = await self._document_storage.store(content.value, mime_type.value)
+
+        document = Document.register(
             original_filename=command.original_filename,
             mime_type=mime_type.value,
             size_bytes=content.size_bytes,
-            storage_path=storage_path,
+            storage_reference=storage_reference,
         )
 
         saved_document = await self._document_repository.save(document)
-        self.published_events.append(
-            DocumentUploadedEvent(
-                document_id=saved_document.id or 0,
-                owner_user_id=saved_document.owner_user_id,
-            )
-        )
+        self.published_events.append(DocumentUploadedEvent(document_id=saved_document.id or 0))
         return saved_document
 
-    async def handle_update_document_status(
+    async def handle_record_document_review_outcome(
         self,
-        document_id: int,
-        status: str,
+        command: RecordDocumentReviewOutcomeCommand,
     ) -> Document | None:
-        document = await self._document_repository.find_by_id(document_id)
+        document = await self._document_repository.find_by_id(command.document_id)
         if document is None:
             return None
 
-        document.status = DocumentStatus(status)
-        document.updated_at = datetime.now(UTC)
-
-        if document.status == DocumentStatus.BLOCKED and document.blocked_reason is None:
-            document.blocked_reason = "Document blocked by policy"
+        if command.status == DocumentStatus.BLOCKED:
+            document.mark_blocked(command.blocked_reason or "Document blocked by policy")
+        elif command.status == DocumentStatus.ANALYZED:
+            document.mark_analyzed()
+        elif command.status == DocumentStatus.PROCESSING:
+            document.mark_processing()
+        else:
+            raise ValueError("Unsupported document review outcome")
 
         saved_document = await self._document_repository.save(document)
         self.published_events.append(
@@ -84,4 +89,3 @@ class DocumentCommandServiceImpl(DocumentCommandService):
             raise DocumentFileTooLargeError(
                 f"Document size exceeds the limit of {self._max_document_size_bytes} bytes"
             )
-

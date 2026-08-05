@@ -3,4 +3,3 @@ from app.documents.interfaces.rest.resources.document_resource import DocumentRe
 
 class CreateDocumentResponse(DocumentResource):
     pass
-
