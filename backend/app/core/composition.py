@@ -9,9 +9,16 @@ steps — in one auditable place.
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.chat.application.internal.commandservices.chat_command_service_impl import (
+    ChatCommandServiceImpl,
+)
+from app.chat.application.internal.outboundservices.acl.decision_context_response_service import (
+    DecisionContextResponseService,
+)
 from app.analysis.application.internal.commandservices.security_analysis_command_service_impl import (
     SecurityAnalysisCommandServiceImpl,
 )
+from app.analysis.application.acl.analysis_context_facade_impl import AnalysisContextFacadeImpl
 from app.analysis.application.internal.outboundservices.documents.document_source_service_impl import (
     DocumentSourceServiceImpl,
 )
@@ -37,6 +44,9 @@ from app.core.settings import get_settings
 from app.decision.application.internal.commandservices.submit_secure_query_command_service_impl import (
     SubmitSecureQueryCommandServiceImpl,
 )
+from app.decision.application.acl.decision_context_facade_impl import (
+    DecisionContextFacadeImpl,
+)
 from app.decision.application.internal.outboundservices.analysis.content_review_service_impl import (
     ContentReviewServiceImpl,
 )
@@ -54,6 +64,9 @@ from app.decision.infrastructure.persistence.sqlalchemy.repositories.sqlalchemy_
 )
 from app.documents.application.internal.commandservices.document_command_service_impl import (
     DocumentCommandServiceImpl,
+)
+from app.documents.application.acl.documents_context_facade_impl import (
+    DocumentsContextFacadeImpl,
 )
 from app.documents.application.internal.queryservices.document_query_service_impl import (
     DocumentQueryServiceImpl,
@@ -132,6 +145,13 @@ def build_document_command_service(session: AsyncSession) -> DocumentCommandServ
     )
 
 
+def build_documents_context_facade(session: AsyncSession) -> DocumentsContextFacadeImpl:
+    return DocumentsContextFacadeImpl(
+        command_service=build_document_command_service(session),
+        query_service=build_document_query_service(session),
+    )
+
+
 def build_security_analysis_command_service(
     session: AsyncSession,
 ) -> SecurityAnalysisCommandServiceImpl:
@@ -143,7 +163,7 @@ def build_security_analysis_command_service(
             build_sensitive_content_discovery_client()
         ),
         security_model_name=settings.ollama_security_model,
-        document_source_service=DocumentSourceServiceImpl(build_document_query_service(session)),
+        document_source_service=DocumentSourceServiceImpl(build_documents_context_facade(session)),
         document_text_extractor=build_document_text_extractor(),
         prompt_max_length=settings.prompt_max_length,
         prompt_min_length=settings.prompt_min_length,
@@ -162,13 +182,14 @@ def build_secure_query_command_service(
     return SubmitSecureQueryCommandServiceImpl(
         interaction_repository=SqlAlchemySecureInteractionRepository(session),
         content_review_service=ContentReviewServiceImpl(
-            analysis_command_service=build_security_analysis_command_service(session),
-            analysis_query_service=build_security_analysis_query_service(session),
+            AnalysisContextFacadeImpl(
+                build_security_analysis_command_service(session),
+                build_security_analysis_query_service(session),
+            )
         ),
         answer_generation_client=build_answer_generation_client(),
         document_intake_service=DocumentIntakeServiceImpl(
-            document_command_service=build_document_command_service(session),
-            document_query_service=build_document_query_service(session),
+            documents_facade=build_documents_context_facade(session),
             document_content_extractor=build_document_text_extractor(),
         ),
     )
@@ -178,3 +199,8 @@ def build_secure_interaction_query_service(
     session: AsyncSession,
 ) -> SecureInteractionQueryServiceImpl:
     return SecureInteractionQueryServiceImpl(SqlAlchemySecureInteractionRepository(session))
+
+
+def build_chat_command_service(session: AsyncSession) -> ChatCommandServiceImpl:
+    decision_facade = DecisionContextFacadeImpl(build_secure_query_command_service(session))
+    return ChatCommandServiceImpl(DecisionContextResponseService(decision_facade))

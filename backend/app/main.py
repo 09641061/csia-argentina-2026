@@ -5,6 +5,7 @@ from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
+from app.chat.interfaces.rest.controllers.chat_router import router as chat_router
 from app.analysis.interfaces.rest.controllers.security_analysis_router import (
     router as analysis_router,
 )
@@ -15,6 +16,9 @@ from app.decision.interfaces.rest.controllers.secure_query_router import (
 )
 from app.documents.interfaces.rest.controllers.document_router import (
     router as documents_router,
+)
+from app.iam.interfaces.rest.controllers.authentication_router import (
+    router as authentication_router,
 )
 from app.shared.interfaces.rest.health_router import router as health_router
 
@@ -33,6 +37,8 @@ Contextos delimitados:
   evidencia y exige una evaluación contextual al modelo local de seguridad.
 * **Decision & Audit** aplica la política ALLOWED/BLOCKED, ejecuta la generación solo si
   el contenido fue permitido y conserva el historial explicable.
+* **IAM** autentica al usuario configurado y protege las operaciones funcionales.
+* **Chat** recibe preguntas y recursos y consume capacidades externas mediante ACL.
 """
 
 
@@ -65,10 +71,12 @@ def create_app() -> FastAPI:
         allow_origins=settings.allowed_origins,
         allow_credentials=False,
         allow_methods=["GET", "POST", "OPTIONS"],
-        allow_headers=["Content-Type", "Accept"],
+        allow_headers=["Content-Type", "Accept", "Authorization"],
     )
 
     app.include_router(health_router)
+    app.include_router(authentication_router)
+    app.include_router(chat_router)
     app.include_router(documents_router)
     app.include_router(analysis_router)
     app.include_router(secure_query_router)

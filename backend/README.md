@@ -5,6 +5,8 @@ antes de que el modelo pueda responder. Solo el contenido permitido llega al gen
 
 ```text
 prompt + archivo opcional
+  -> IAM autentica al usuario antes de permitir operaciones funcionales
+  -> Chat recibe la pregunta y obtiene capacidades externas mediante ACL
   -> Documents valida el formato real y sube los bytes a Cloudinary (se guarda la URL)
   -> Analysis extrae una estructura acotada (Ollama Vision para las imágenes)
   -> Ollama clasifica obligatoriamente el contenido local completo sin devolver valores
@@ -20,7 +22,7 @@ prompt + archivo opcional
 - Formatos: JSON, PNG y JPEG, con máximo 5 MB.
 - Decisiones `ALLOWED` y `BLOCKED`. No hay WARN, SANITIZE ni aprobaciones.
 - No se entrega al usuario ninguna versión sanitizada del contenido bloqueado.
-- Sin autenticación, sin conversaciones, sin RAG, sin dashboard.
+- Autenticación local inicial con credenciales configuradas en Python; sin conversaciones, RAG ni dashboard.
 - Ollama tiene cuatro usos separados: descubrimiento de datos sensibles, visión documental,
   evaluación contextual y generación.
 - La IA es una dependencia funcional: sin una evaluación válida no existe `ALLOWED`; sin visión no
@@ -33,10 +35,13 @@ prompt + archivo opcional
 | **Documents** | Recibe archivos admitidos, valida tipo/tamaño/contenedor, los guarda con nombre interno opaco y expone metadatos seguros | No decide el riesgo ni llama al generador |
 | **Analysis** | Extracción local acotada, visión Ollama cuando corresponde, escaneo determinista, enmascarado, evaluación contextual obligatoria y cálculo de riesgo | No genera la respuesta ni decide si Ollama puede responder |
 | **Decision & Audit** | Política ALLOWED/BLOCKED, autorización de generación, ejecución del generador, historial explicable | No analiza contenido por su cuenta |
+| **IAM** | Autentica al usuario local y valida tokens Bearer firmados | No persiste usuarios ni credenciales |
+| **Chat** | Recibe preguntas y recursos y consume la capacidad segura mediante ACL | No importa modelos internos de otros contextos |
 
-La comunicación entre contextos es interna, mediante contratos y ACL
-(`DocumentSourceService`, `ContentReviewService`, `DocumentIntakeService`). Ningún contexto importa
-los modelos SQLAlchemy de otro. No hay Kafka ni RabbitMQ.
+La comunicación entre contextos pasa por fachadas ACL públicas
+(`DocumentsContextFacade`, `AnalysisContextFacade`, `DecisionContextFacade`) y adaptadores del
+consumidor. Ningún contexto importa los modelos SQLAlchemy ni las entidades internas de otro. No
+hay Kafka ni RabbitMQ.
 
 ## Regla principal
 
@@ -146,9 +151,12 @@ uv run uvicorn app.main:app --reload
 | Método | Ruta | Descripción |
 | --- | --- | --- |
 | `GET` | `/api/v1/health` | Estado de PostgreSQL y de los modelos locales |
+| `POST` | `/api/v1/auth/login` | Autentica con usuario y contraseña y entrega un Bearer token |
+| `POST` | `/api/v1/chat/messages` | Consulta autenticada con JSON o imagen opcional mediante ACL |
 | `POST` | `/api/v1/documents` | Registra un archivo admitido (multipart `file`) |
 | `GET` | `/api/v1/documents` | Lista paginada de documentos |
 | `GET` | `/api/v1/documents/{document_id}` | Metadatos públicos de un documento |
+| `GET` | `/api/v1/documents/{document_id}/table` | JSON normalizado como columnas, filas y metadatos |
 | `POST` | `/api/v1/documents/{document_id}/analyses` | Revisa un documento registrado |
 | `POST` | `/api/v1/prompts/analyses` | Revisa un prompt de texto libre |
 | `GET` | `/api/v1/analyses` | Historial paginado de revisiones |
@@ -158,15 +166,24 @@ uv run uvicorn app.main:app --reload
 | `GET` | `/api/v1/interactions` | Historial paginado de interacciones |
 | `GET` | `/api/v1/interactions/{interaction_id}` | Detalle explicable de una interacción |
 
-Todas las rutas son inequívocas: ningún segmento estático compite con un parámetro de ruta.
+Salvo `/api/v1/health` y `/api/v1/auth/login`, las rutas requieren
+`Authorization: Bearer <access_token>`. Todas las rutas son inequívocas: ningún segmento estático
+compite con un parámetro de ruta.
 
 Ejemplo:
 
 ```powershell
-curl -X POST http://127.0.0.1:8000/api/v1/secure-queries `
+$login = Invoke-RestMethod -Method Post `
+  -Uri http://127.0.0.1:8000/api/v1/auth/login `
+  -ContentType "application/json" `
+  -Body '{"username":"admin","password":"admin"}'
+
+curl -X POST http://127.0.0.1:8000/api/v1/chat/messages `
+  -H "Authorization: Bearer $($login.access_token)" `
   -F "prompt=Explica las ventajas de una arquitectura orientada a eventos."
 
-curl -X POST http://127.0.0.1:8000/api/v1/secure-queries `
+curl -X POST http://127.0.0.1:8000/api/v1/chat/messages `
+  -H "Authorization: Bearer $($login.access_token)" `
   -F "prompt=Segun este inventario, que servicios pertenecen al equipo security?" `
   -F "file=@samples/sample-01-clean-inventory.json;type=application/json"
 ```

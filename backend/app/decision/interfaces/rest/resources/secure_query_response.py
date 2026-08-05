@@ -25,7 +25,9 @@ class SecureQueryResponse(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    interaction: SecureInteractionResource
+    interaction: SecureInteractionResource = Field(
+        description="Audited authorization decision and masked evidence"
+    )
     answer: AssistantAnswerResource | None = Field(
         default=None,
         description="Present only when the content was allowed and a question was submitted",

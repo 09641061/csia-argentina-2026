@@ -5,14 +5,16 @@ from io import BytesIO
 import pytest
 from PIL import Image
 
-from app.analysis.domain.exceptions import AnalysisModelUnavailableError
+from app.analysis.domain.exceptions import (
+    AnalysisModelUnavailableError,
+    DocumentContentExtractionError,
+)
 from app.analysis.domain.model.valueobjects.vision_extraction_result import (
     VisionExtractionResult,
 )
 from app.analysis.infrastructure.text_extraction.multi_format_document_text_extractor import (
     MultiFormatDocumentTextExtractor,
 )
-from app.documents.domain.exceptions import UnsupportedDocumentTypeError
 
 
 class RecordingVisionClient:
@@ -83,5 +85,5 @@ async def test_image_is_not_analyzable_when_local_vision_is_unavailable() -> Non
 async def test_formats_beyond_json_and_images_are_rejected() -> None:
     extractor = MultiFormatDocumentTextExtractor(RecordingVisionClient())
 
-    with pytest.raises(UnsupportedDocumentTypeError):
+    with pytest.raises(DocumentContentExtractionError):
         await extractor.extract_content(b"%PDF-1.4", "application/pdf", "report.pdf")

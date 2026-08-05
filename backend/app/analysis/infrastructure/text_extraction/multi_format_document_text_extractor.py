@@ -11,9 +11,9 @@ from app.analysis.domain.model.valueobjects.json_types import JsonContainer, Jso
 from app.analysis.infrastructure.text_extraction.json_document_text_extractor import (
     JsonDocumentTextExtractor,
 )
-from app.documents.domain.model.valueobjects.document_mime_type import DocumentMimeType
-
 _MAX_EXTRACTED_CHARACTERS = 200_000
+_JSON_MIME_TYPE = "application/json"
+_IMAGE_MIME_TYPES = frozenset({"image/png", "image/jpeg"})
 
 
 class MultiFormatDocumentTextExtractor(DocumentTextExtractor):
@@ -26,17 +26,17 @@ class MultiFormatDocumentTextExtractor(DocumentTextExtractor):
     async def extract_content(
         self, content: bytes, mime_type: str, original_filename: str
     ) -> JsonContainer:
-        normalized_mime_type = DocumentMimeType(mime_type).value
+        normalized_mime_type = mime_type.split(";", maxsplit=1)[0].strip().lower()
 
-        if normalized_mime_type == DocumentMimeType.JSON:
+        if normalized_mime_type == _JSON_MIME_TYPE:
             extracted = await self._json_extractor.extract_content(
                 content, normalized_mime_type, original_filename
             )
-        elif normalized_mime_type in {DocumentMimeType.PNG, DocumentMimeType.JPEG}:
+        elif normalized_mime_type in _IMAGE_MIME_TYPES:
             extracted = await self._extract_image(
                 content, normalized_mime_type, original_filename
             )
-        else:  # pragma: no cover - DocumentMimeType rejects this first
+        else:
             raise DocumentContentExtractionError(
                 f"Unsupported document type for {original_filename}"
             )

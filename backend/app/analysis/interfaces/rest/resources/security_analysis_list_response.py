@@ -16,5 +16,5 @@ class SecurityAnalysisPageMetadataResponse(BaseModel):
 class SecurityAnalysisListResponse(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    items: list[SecurityAnalysisResource]
-    page: SecurityAnalysisPageMetadataResponse
+    items: list[SecurityAnalysisResource] = Field(description="Analyses in the current page")
+    page: SecurityAnalysisPageMetadataResponse = Field(description="Pagination metadata")

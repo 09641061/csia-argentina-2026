@@ -7,25 +7,12 @@ from app.decision.application.internal.outboundservices.document_intake_service 
 )
 from app.decision.domain.exceptions import SecureQueryValidationError
 from app.decision.domain.model.valueobjects.security_decision import SecurityDecision
-from app.documents.domain.exceptions import (
-    DocumentFileTooLargeError,
-    InvalidDocumentContentError,
-    UnsupportedDocumentTypeError,
+from app.documents.interfaces.acl.documents_context_facade import (
+    DocumentContextTooLargeError,
+    DocumentsContextFacade,
+    InvalidDocumentContextContentError,
+    UnsupportedDocumentContextTypeError,
 )
-from app.documents.domain.model.commands.create_document_command import (
-    CreateDocumentCommand,
-)
-from app.documents.domain.model.commands.record_document_review_outcome_command import (
-    RecordDocumentReviewOutcomeCommand,
-)
-from app.documents.domain.model.queries.get_document_by_id_query import (
-    GetDocumentByIdQuery,
-)
-from app.documents.domain.model.valueobjects.document_status import DocumentStatus
-from app.documents.domain.services.document_command_service import (
-    DocumentCommandService,
-)
-from app.documents.domain.services.document_query_service import DocumentQueryService
 
 
 class DocumentIntakeServiceImpl(DocumentIntakeService):
@@ -38,12 +25,10 @@ class DocumentIntakeServiceImpl(DocumentIntakeService):
 
     def __init__(
         self,
-        document_command_service: DocumentCommandService,
-        document_query_service: DocumentQueryService,
+        documents_facade: DocumentsContextFacade,
         document_content_extractor: DocumentContentExtractor,
     ) -> None:
-        self._document_command_service = document_command_service
-        self._document_query_service = document_query_service
+        self._documents_facade = documents_facade
         self._document_content_extractor = document_content_extractor
 
     async def register_document(
@@ -54,46 +39,41 @@ class DocumentIntakeServiceImpl(DocumentIntakeService):
         content: bytes,
     ) -> RegisteredDocument:
         try:
-            document = await self._document_command_service.handle_create_document(
-                CreateDocumentCommand(
-                    original_filename=filename,
-                    mime_type=mime_type,
-                    content=content,
-                )
+            document = await self._documents_facade.register_document(
+                filename=filename,
+                mime_type=mime_type,
+                content=content,
             )
-        except UnsupportedDocumentTypeError as error:
+        except UnsupportedDocumentContextTypeError as error:
             raise SecureQueryValidationError(
                 "Solo se admiten archivos JSON, PNG y JPEG."
             ) from error
-        except DocumentFileTooLargeError as error:
+        except DocumentContextTooLargeError as error:
             raise SecureQueryValidationError(
                 "El documento supera el tamaño máximo permitido."
             ) from error
-        except InvalidDocumentContentError as error:
+        except InvalidDocumentContextContentError as error:
             raise SecureQueryValidationError(
                 "El archivo está vacío, dañado o no coincide con su formato declarado."
             ) from error
 
         return RegisteredDocument(
-            document_id=document.id or 0,
-            display_name=document.display_name.value,
+            document_id=int(document["document_id"]),
+            display_name=str(document["display_name"]),
         )
 
     async def read_allowed_document_content(
         self,
         document_id: int,
     ) -> dict[str, object] | list[object]:
-        query = GetDocumentByIdQuery(document_id=document_id)
-        document = await self._document_query_service.handle_get_document_by_id(query)
+        document = await self._documents_facade.find_document(document_id)
         if document is None:
             raise SecureQueryValidationError("El documento permitido ya no está disponible.")
-        raw = await self._document_query_service.handle_read_document_content(
-            query
-        )
+        raw = await self._documents_facade.read_document_content(document_id)
         return await self._document_content_extractor.extract_content(
             raw,
-            document.mime_type.value,
-            document.display_name.value,
+            str(document["mime_type"]),
+            str(document["display_name"]),
         )
 
     async def record_review_outcome(
@@ -104,14 +84,12 @@ class DocumentIntakeServiceImpl(DocumentIntakeService):
         reason: str,
     ) -> None:
         status = (
-            DocumentStatus.ANALYZED
+            "analyzed"
             if decision == SecurityDecision.ALLOWED
-            else DocumentStatus.BLOCKED
+            else "blocked"
         )
-        await self._document_command_service.handle_record_document_review_outcome(
-            RecordDocumentReviewOutcomeCommand(
-                document_id=document_id,
-                status=status,
-                blocked_reason=None if status == DocumentStatus.ANALYZED else reason,
-            )
+        await self._documents_facade.record_review_outcome(
+            document_id=document_id,
+            status=status,
+            blocked_reason=None if status == "analyzed" else reason,
         )

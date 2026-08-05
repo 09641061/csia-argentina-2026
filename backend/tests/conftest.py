@@ -18,6 +18,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 from app.analysis.application.internal.commandservices.security_analysis_command_service_impl import (
     SecurityAnalysisCommandServiceImpl,
 )
+from app.analysis.application.acl.analysis_context_facade_impl import AnalysisContextFacadeImpl
 from app.analysis.application.internal.outboundservices.documents.document_source_service_impl import (
     DocumentSourceServiceImpl,
 )
@@ -73,6 +74,9 @@ from app.decision.infrastructure.persistence.sqlalchemy.repositories.sqlalchemy_
 )
 from app.documents.application.internal.commandservices.document_command_service_impl import (
     DocumentCommandServiceImpl,
+)
+from app.documents.application.acl.documents_context_facade_impl import (
+    DocumentsContextFacadeImpl,
 )
 from app.documents.application.internal.queryservices.document_query_service_impl import (
     DocumentQueryServiceImpl,
@@ -280,7 +284,11 @@ class SentinelTestContext:
             ollama_security_analysis_client=self.security_client,
             ollama_sensitive_content_discovery_client=self.discovery_client,
             security_model_name=SECURITY_MODEL,
-            document_source_service=DocumentSourceServiceImpl(self.document_query_service()),
+            document_source_service=DocumentSourceServiceImpl(
+                DocumentsContextFacadeImpl(
+                    self.document_command_service(), self.document_query_service()
+                )
+            ),
             document_text_extractor=JsonDocumentTextExtractor(),
         )
 
@@ -301,13 +309,15 @@ class SentinelTestContext:
         return SubmitSecureQueryCommandServiceImpl(
             interaction_repository=SqlAlchemySecureInteractionRepository(self.session),
             content_review_service=ContentReviewServiceImpl(
-                analysis_command_service=self.analysis_command_service(),
-                analysis_query_service=self.analysis_query_service(),
+                AnalysisContextFacadeImpl(
+                    self.analysis_command_service(), self.analysis_query_service()
+                )
             ),
             answer_generation_client=self.generation_client,
             document_intake_service=DocumentIntakeServiceImpl(
-                document_command_service=self.document_command_service(),
-                document_query_service=self.document_query_service(),
+                documents_facade=DocumentsContextFacadeImpl(
+                    self.document_command_service(), self.document_query_service()
+                ),
                 document_content_extractor=JsonDocumentTextExtractor(),
             ),
         )

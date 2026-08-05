@@ -55,8 +55,16 @@ from app.core.database import get_session
 from app.shared.infrastructure.persistence.sqlalchemy.unit_of_work import (
     SqlAlchemyUnitOfWork,
 )
+from app.iam.interfaces.rest.controllers.authentication_router import (
+    require_authenticated_user,
+)
 
-router = APIRouter(prefix="/api/v1", tags=["Analysis"])
+router = APIRouter(
+    prefix="/api/v1",
+    tags=["Analysis"],
+    dependencies=[Depends(require_authenticated_user)],
+    responses={401: {"description": "Authentication required"}},
+)
 
 
 async def get_analysis_command_service(
