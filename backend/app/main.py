@@ -14,9 +14,6 @@ from app.core.settings import get_settings
 from app.decision.interfaces.rest.controllers.secure_query_router import (
     router as secure_query_router,
 )
-from app.documents.interfaces.rest.controllers.document_router import (
-    router as documents_router,
-)
 from app.iam.interfaces.rest.controllers.authentication_router import (
     router as authentication_router,
 )
@@ -27,18 +24,18 @@ logger = logging.getLogger(__name__)
 DESCRIPTION = """
 Sentinel AI Guard es un portal seguro de acceso a una IA local.
 
-Una consulta y un archivo opcional se revisan antes de que el modelo pueda responder.
-Solo el contenido permitido llega al generador de respuestas.
+Cada mensaje de una conversación se revisa antes de que el modelo pueda responder.
+Solo los mensajes permitidos llegan al generador de respuestas.
 
 Contextos delimitados:
 
-* **Documents** recibe, valida y almacena JSON e imágenes (PNG/JPEG) en privado.
-* **Analysis** usa visión local cuando hace falta, detecta datos sensibles, enmascara la
-  evidencia y exige una evaluación contextual al modelo local de seguridad.
+* **Analysis** detecta datos sensibles en cada mensaje y exige una evaluación contextual
+  al modelo local de seguridad.
 * **Decision & Audit** aplica la política ALLOWED/BLOCKED, ejecuta la generación solo si
   el contenido fue permitido y conserva el historial explicable.
 * **IAM** registra usuarios locales, protege contraseñas con Argon2 y valida JWT Bearer.
-* **Chat** recibe preguntas y recursos y consume capacidades externas mediante ACL.
+* **Chat** administra conversaciones y mensajes, y consume las capacidades de seguridad
+  mediante ACL.
 """
 
 
@@ -77,7 +74,6 @@ def create_app() -> FastAPI:
     app.include_router(health_router)
     app.include_router(authentication_router)
     app.include_router(chat_router)
-    app.include_router(documents_router)
     app.include_router(analysis_router)
     app.include_router(secure_query_router)
 
