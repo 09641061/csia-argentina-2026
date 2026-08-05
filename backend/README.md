@@ -1,215 +1,260 @@
-# Sentinel AI Guard
+# Sentinel AI Guard — Backend
 
-Backend FastAPI para registrar documentos JSON y analizarlos localmente antes de utilizarlos con una IA. El bounded context **Documents** conserva la carga y referencia del archivo; **Analytics** obtiene esa referencia mediante el contrato de consulta existente, detecta datos sensibles, consulta Ollama con contexto sanitizado, calcula el riesgo y conserva un historial seguro.
-
-## Alcance actual
-
-- Solo documentos con MIME `application/json` y raiz objeto o arreglo.
-- Deteccion determinista estructural con JSONPath.
-- Interpretacion contextual mediante Ollama local.
-- Riesgos `low`, `medium`, `high` y `critical`.
-- Historial de ejecuciones y estados `running`, `completed` y `failed`.
-- Hallazgos enmascarados y una copia JSON sanitizada independiente.
-- API REST documentada en Swagger.
-- No incluye autenticacion, frontend, PDF, DOCX, OCR, Audit ni decisiones `ALLOW/WARN/SANITIZE/BLOCK`.
-
-## Flujo de Analytics
+Portal seguro de acceso a una IA local. Una consulta y un archivo opcional se revisan
+antes de que el modelo pueda responder. Solo el contenido permitido llega al generador.
 
 ```text
-document_id
-  -> contrato de consulta de Documents
-  -> descarga del JSON registrado
-  -> parseo y recorrido estructural
-  -> deteccion determinista + JSONPath
-  -> enmascarado y JSON sanitizado
-  -> resumen estructural (inicio, centro y final)
-  -> Ollama con contexto seguro
-  -> validacion estricta de la respuesta
-  -> calculo final de riesgo
-  -> persistencia historica + evento de dominio
+prompt + archivo opcional
+  -> Documents valida el formato real y almacena los bytes en privado
+  -> Analysis extrae una estructura acotada (Ollama Vision para imágenes o PDF escaneado)
+  -> Gemma clasifica obligatoriamente el contenido local completo sin devolver valores
+  -> Analysis detecta y enmascara datos sensibles
+  -> Ollama clasifica obligatoriamente el riesgo contextual
+  -> Decision & Audit aplica ALLOWED/BLOCKED
+  -> si es ALLOWED y hay pregunta: Ollama genera la respuesta
+  -> la interacción queda auditada con evidencia enmascarada
 ```
 
-El JSON original no se envia completo a Ollama. El modelo recibe nombre, MIME, tamano, estructura, claves principales, conteos, categorias, JSONPaths, evidencias enmascaradas y muestras tomadas de una version ya sanitizada.
+## Alcance del MVP
+
+- Formatos: JSON, PDF, DOCX, XLSX, PNG y JPEG, con máximo 5 MB.
+- Decisiones `ALLOWED` y `BLOCKED`. No hay WARN, SANITIZE ni aprobaciones.
+- No se entrega al usuario ninguna versión sanitizada del contenido bloqueado.
+- Sin autenticación, sin conversaciones, sin RAG, sin dashboard.
+- Ollama tiene cuatro usos separados: descubrimiento de datos sensibles, visión documental,
+  evaluación contextual y generación.
+- La IA es una dependencia funcional: sin una evaluación válida no existe `ALLOWED`; sin visión no
+  se pueden analizar imágenes ni páginas escaneadas; sin generación no existe respuesta.
+
+## Contextos delimitados
+
+| Contexto | Responsabilidad | No hace |
+| --- | --- | --- |
+| **Documents** | Recibe archivos admitidos, valida tipo/tamaño/contenedor, los guarda con nombre interno opaco y expone metadatos seguros | No decide el riesgo ni llama al generador |
+| **Analysis** | Extracción local acotada, visión Ollama cuando corresponde, escaneo determinista, enmascarado, evaluación contextual obligatoria y cálculo de riesgo | No genera la respuesta ni decide si Ollama puede responder |
+| **Decision & Audit** | Política ALLOWED/BLOCKED, autorización de generación, ejecución del generador, historial explicable | No analiza contenido por su cuenta |
+
+La comunicación entre contextos es interna, mediante contratos y ACL
+(`DocumentSourceService`, `ContentReviewService`, `DocumentIntakeService`). Ningún contexto importa
+los modelos SQLAlchemy de otro. No hay Kafka ni RabbitMQ.
+
+## Regla principal
+
+El contenido solo queda `ALLOWED` cuando **todas** estas condiciones se cumplen:
+
+- Cada revisión enviada terminó en estado `completed`.
+- El riesgo final es `low`.
+- No hay hallazgos sensibles confirmados (los placeholders no cuentan).
+- No hay prompt injection ni manipulación sospechosa.
+- La evaluación de seguridad de Ollama devolvió una respuesta válida.
+
+En cualquier otro caso la decisión es `BLOCKED`. El sistema es *fail-closed*: un error, un timeout
+o una respuesta inválida nunca se convierten en riesgo bajo, y la IA nunca puede reducir un riesgo
+que las reglas deterministas ya confirmaron.
+
+La garantía "una consulta bloqueada nunca llega al generador" está codificada en el tipo
+`GenerationAuthorization`: solo puede construirse a partir de una decisión `ALLOWED`, y el cliente
+generador la exige como argumento.
 
 ## Requisitos
 
-- Windows PowerShell, Linux o macOS.
-- `uv`.
-- Python 3.11, administrado por `uv`.
-- PostgreSQL para ejecutar la API principal.
-- Ollama y el modelo configurado.
-- Credenciales de Cloudinary solo para subir documentos mediante Documents.
+- Python 3.11 o superior, administrado por `uv` (verificado con 3.13.7).
+- PostgreSQL (verificado con 18.1).
+- Ollama con `llama3.2:3b` y `gemma3:4b`.
+- No se necesita cuenta de Cloudinary.
 
-## Instalacion
+## Instalación
 
 ```powershell
-uv python install 3.11
-uv python pin 3.11
 uv sync --extra dev
 ```
 
-Si PowerShell no reconoce `uv` despues de instalarlo con `pip`, cierra y abre la terminal o agrega la carpeta `Scripts` de Python al `PATH`. En este repositorio tambien se puede invocar temporalmente con la ruta completa de `uv.exe`.
+Copia [.env.example](.env.example) a `.env` y ajusta `DATABASE_URL`.
 
-Crea un `.env` usando [.env.example](.env.example) como referencia. No subas `.env` al repositorio.
+### Base de datos
 
-## Variables de entorno
+El backend crea el esquema al arrancar. La base debe existir:
 
-| Variable | Uso | Valor de desarrollo sugerido |
-| --- | --- | --- |
-| `DATABASE_URL` | Conexion SQLAlchemy asincrona | `postgresql+asyncpg://postgres:change-me@localhost:5432/sentinel_ai_guard` |
-| `CLOUDINARY_CLOUD_NAME` | Cuenta para Documents | Valor de tu cuenta |
-| `CLOUDINARY_API_KEY` | API key para Documents | Valor de tu cuenta |
-| `CLOUDINARY_API_SECRET` | Secreto para Documents | Valor de tu cuenta |
-| `OLLAMA_BASE_URL` | API HTTP local de Ollama | `http://localhost:11434` |
-| `OLLAMA_MODEL` | Modelo contextual | `llama3.2:3b` |
-| `OLLAMA_REQUEST_TIMEOUT_SECONDS` | Timeout total | `180` |
-| `OLLAMA_CONTEXT_TOKENS` | Ventana de contexto | `8192` |
-| `OLLAMA_MAX_OUTPUT_TOKENS` | Limite de respuesta | `300` |
+```powershell
+psql -U postgres -c "CREATE DATABASE sentinel_ai_guard;"
+```
 
-## Ollama
+Si prefieres una instancia aislada con Docker, sin tocar otras bases:
 
-Instala Ollama desde su instalador oficial y descarga el modelo:
+```powershell
+docker run -d --name sentinel-postgres `
+  -e POSTGRES_PASSWORD=sentinel-dev `
+  -e POSTGRES_DB=sentinel_ai_guard `
+  -p 5433:5432 postgres:18
+```
+
+y usa `DATABASE_URL=postgresql+asyncpg://postgres:sentinel-dev@localhost:5433/sentinel_ai_guard`.
+
+Si la base no está disponible, **el backend falla al arrancar**. Es intencional: una API que
+responde sin poder escribir su auditoría es peor que una API caída.
+
+### Ollama
 
 ```powershell
 ollama pull llama3.2:3b
-ollama serve
-```
-
-En algunas instalaciones de Windows, Ollama ya se ejecuta en segundo plano y `ollama serve` indicara que el puerto esta ocupado; eso significa que el servicio ya esta disponible. Ejecutar solamente `ollama` abre el selector interactivo de modelos, no es un error.
-
-Puedes verificar el modelo con:
-
-```powershell
+ollama pull gemma3:4b
 ollama list
-ollama run llama3.2:3b
 ```
 
-## Ejecutar el backend
-
-Con PostgreSQL, Ollama y la configuracion disponibles:
+## Ejecutar
 
 ```powershell
+uv sync --extra dev
 uv run uvicorn app.main:app --reload
 ```
 
 - API: `http://127.0.0.1:8000`
 - Swagger: `http://127.0.0.1:8000/docs`
 - OpenAPI: `http://127.0.0.1:8000/openapi.json`
+- Salud: `http://127.0.0.1:8000/api/v1/health`
 
-El arranque ejecuta una migracion idempotente limitada a la tabla de Analytics. Si existe la tabla parcial anterior, conserva sus filas, habilita historial y elimina evidencia heredada sin enmascarar.
+## Variables de entorno
+
+| Variable | Uso | Valor sugerido |
+| --- | --- | --- |
+| `DATABASE_URL` | Conexión SQLAlchemy asíncrona | `postgresql+asyncpg://postgres:admin@localhost:5432/sentinel_ai_guard` |
+| `FRONTEND_ORIGIN` | Orígenes permitidos por CORS, separados por comas | `http://localhost:5173,http://127.0.0.1:5173` |
+| `DOCUMENT_STORAGE_BACKEND` | `local` o `cloudinary` | `local` |
+| `DOCUMENT_STORAGE_DIR` | Carpeta privada del adaptador local | `storage/documents` |
+| `MAX_DOCUMENT_SIZE_MB` | Tamaño máximo del archivo | `5` |
+| `CLOUDINARY_*` | Solo si el backend es `cloudinary` | vacío |
+| `OLLAMA_BASE_URL` | API HTTP local de Ollama | `http://localhost:11434` |
+| `OLLAMA_SECURITY_MODEL` | Modelo de evaluación de seguridad | `llama3.2:3b` |
+| `OLLAMA_SECURITY_TIMEOUT_SECONDS` | Timeout de la evaluación | `120` |
+| `OLLAMA_SECURITY_CONTEXT_TOKENS` | Ventana de contexto de la evaluación | `8192` |
+| `OLLAMA_SECURITY_MAX_OUTPUT_TOKENS` | Límite de salida de la evaluación | `300` |
+| `OLLAMA_DISCOVERY_MODEL` | Clasificación local del contenido extraído completo | `gemma3:4b` |
+| `OLLAMA_DISCOVERY_MAX_INPUT_CHARS` | Máximo que puede inspeccionarse completamente | `24000` |
+| `OLLAMA_VISION_MODEL` | Modelo para imágenes y PDF escaneado | `gemma3:4b` |
+| `OLLAMA_VISION_TIMEOUT_SECONDS` | Timeout de la extracción visual | `180` |
+| `OLLAMA_VISION_CONTEXT_TOKENS` | Ventana de contexto visual | `8192` |
+| `OLLAMA_VISION_MAX_OUTPUT_TOKENS` | Límite de la transcripción visual | `1200` |
+| `OLLAMA_GENERATION_MODEL` | Modelo de generación de la respuesta | `llama3.2:3b` |
+| `OLLAMA_GENERATION_TIMEOUT_SECONDS` | Timeout de la generación | `180` |
+| `OLLAMA_GENERATION_CONTEXT_TOKENS` | Ventana de contexto de la generación | `8192` |
+| `OLLAMA_GENERATION_MAX_OUTPUT_TOKENS` | Límite de salida de la generación | `800` |
+| `OLLAMA_GENERATION_MAX_DOCUMENT_CHARS` | Caracteres máximos del documento permitido | `24000` |
+| `PROMPT_MIN_LENGTH` / `PROMPT_MAX_LENGTH` | Límites del prompt | `3` / `8000` |
 
 ## Endpoints
 
-| Metodo | Ruta | Descripcion |
+| Método | Ruta | Descripción |
 | --- | --- | --- |
-| `POST` | `/api/v1/analysis/{document_id}` | Ejecuta y persiste un analisis (`201`) |
-| `GET` | `/api/v1/analysis/{document_id}` | Obtiene la ejecucion mas reciente del documento |
-| `GET` | `/api/v1/analysis/runs/{analysis_id}` | Obtiene una ejecucion historica |
-| `GET` | `/api/v1/analysis/runs/{analysis_id}/findings` | Devuelve hallazgos enmascarados |
-| `GET` | `/api/v1/analysis/runs/{analysis_id}/sanitized` | Devuelve la representacion JSON sanitizada |
-| `GET` | `/api/v1/analysis?page=1&page_size=20` | Lista el historial paginado |
+| `GET` | `/api/v1/health` | Estado de PostgreSQL y de los modelos locales |
+| `POST` | `/api/v1/documents` | Registra un archivo admitido (multipart `file`) |
+| `GET` | `/api/v1/documents` | Lista paginada de documentos |
+| `GET` | `/api/v1/documents/{document_id}` | Metadatos públicos de un documento |
+| `POST` | `/api/v1/documents/{document_id}/analyses` | Revisa un documento registrado |
+| `POST` | `/api/v1/prompts/analyses` | Revisa un prompt de texto libre |
+| `GET` | `/api/v1/analyses` | Historial paginado de revisiones |
+| `GET` | `/api/v1/analyses/{analysis_id}` | Una revisión |
+| `GET` | `/api/v1/analyses/{analysis_id}/findings` | Hallazgos enmascarados |
+| `POST` | `/api/v1/secure-queries` | **Caso de uso principal**: analizar y consultar |
+| `GET` | `/api/v1/interactions` | Historial paginado de interacciones |
+| `GET` | `/api/v1/interactions/{interaction_id}` | Detalle explicable de una interacción |
 
-Ejecutar un analisis registrado:
+Todas las rutas son inequívocas: ningún segmento estático compite con un parámetro de ruta.
 
-```powershell
-Invoke-RestMethod -Method Post -Uri http://127.0.0.1:8000/api/v1/analysis/1
-```
-
-Consultar el resultado:
-
-```powershell
-Invoke-RestMethod -Method Get -Uri http://127.0.0.1:8000/api/v1/analysis/1
-Invoke-RestMethod -Method Get -Uri http://127.0.0.1:8000/api/v1/analysis/runs/1/findings
-Invoke-RestMethod -Method Get -Uri http://127.0.0.1:8000/api/v1/analysis/runs/1/sanitized
-```
-
-Respuesta abreviada:
-
-```json
-{
-  "id": 3,
-  "document_id": 8,
-  "status": "completed",
-  "risk_level": "high",
-  "secrets_risk": "high",
-  "personal_data_risk": "medium",
-  "confidence": "high",
-  "tampering_suspected": false,
-  "data_categories": ["api_key", "email"],
-  "estimated_subjects": "1-5",
-  "findings": [
-    {
-      "finding_id": "f1",
-      "finding_type": "api_key",
-      "json_path": "$.integration.api_key",
-      "evidence": "sk-p*******************************f5Ja",
-      "detection_method": "recognized_credential_pattern",
-      "confidence": "high",
-      "occurrences": 1,
-      "is_placeholder": false
-    }
-  ]
-}
-```
-
-La API no devuelve `source_document_url`, contrasenas, tarjetas, CVV, tokens ni claves completas.
-
-## Datasets sinteticos
-
-`samples/` contiene diez escenarios y [expected-results.json](samples/expected-results.json) define riesgos, tipos, categorias y conteos minimos esperados.
+Ejemplo:
 
 ```powershell
-uv run python scripts/generate_analytics_samples.py
+curl -X POST http://127.0.0.1:8000/api/v1/secure-queries `
+  -F "prompt=Explica las ventajas de una arquitectura orientada a eventos."
+
+curl -X POST http://127.0.0.1:8000/api/v1/secure-queries `
+  -F "prompt=Segun este inventario, que servicios pertenecen al equipo security?" `
+  -F "file=@samples/sample-01-clean-inventory.json;type=application/json"
 ```
 
-Los escenarios son: inventario limpio, exportacion de clientes, volcado de credenciales, logs de autenticacion, logs de API Gateway, logs de pagos, datos personales incidentales, placeholders, prompt injection y hallazgo ubicado al final de un JSON grande.
+## Qué nunca devuelve la API
 
-Todos los nombres, identificadores, tarjetas y credenciales con forma realista son datos sinteticos de prueba y no son operativos.
+`storage_reference`, rutas locales, URLs de almacenamiento, prompts originales, contenido de
+documentos, copias sanitizadas, credenciales, tarjetas completas, CVV, evidencia sin enmascarar,
+secretos de configuración, stack traces ni mensajes internos.
 
-## Seed local
+De un prompt bloqueado se conserva únicamente el *fingerprint* SHA-256, una vista previa
+enmascarada, la longitud, los hallazgos enmascarados, el riesgo, la decisión y la fecha.
 
-El seed permite demostrar Analytics sin Cloudinary, PostgreSQL ni Ollama real. Crea `storage/analytics-demo.db`, registra los diez documentos directamente y ejecuta para cada uno:
+## Almacenamiento
 
-```text
-extraccion -> deteccion -> Ollama falso -> riesgo -> persistencia
-```
+El adaptador por defecto es `LocalDocumentStorage`: escribe en una carpeta privada del proyecto
+(`storage/`, ignorada por Git) con nombres generados (`<uuid4>.bin`). El nombre original nunca se
+usa como ruta y toda lectura se confina a la raíz configurada, de modo que un *path traversal* es
+imposible incluso con una referencia hostil.
+
+Cloudinary se conserva pero **desactivado por defecto**: enviar un documento a un tercero antes de
+revisarlo contradice el producto. Cuando se activa, su lectura pasa por `SafeUrlContentReader`, que
+solo admite HTTPS hacia hosts permitidos, rechaza redirecciones y bloquea loopback, redes privadas
+y endpoints de metadatos de nube.
+
+## Datos sintéticos
+
+`samples/` contiene los diez documentos originales, el manifiesto ejecutable
+[expected-results.json](samples/expected-results.json) y once escenarios de consulta en
+[prompt-scenarios.json](samples/prompt-scenarios.json): prompt limpio, correo, contraseña, API key,
+tarjeta, prompt injection, consulta permitida con documento, bloqueo por documento, bloqueo por
+prompt, fallo de análisis y fallo de generación.
+
+Todos los valores son ficticios y no operativos.
 
 ```powershell
-uv run --extra dev python scripts/seed_analytics_samples.py
+uv run python scripts/generate_sample_documents.py   # regenera los diez JSON
+uv run --extra dev python scripts/seed_demo_history.py   # historial de demo sin Ollama
 ```
 
-El script es idempotente para los nombres de archivo ya registrados. Tambien acepta otra conexion asincrona:
-
-```powershell
-uv run --extra dev python scripts/seed_analytics_samples.py --database-url "postgresql+asyncpg://postgres:change-me@localhost:5432/sentinel_ai_guard"
-```
+El seed ejecuta el flujo real con clientes de Ollama falsos, por lo que la demo del historial
+funciona en un equipo sin el modelo instalado.
 
 ## Pruebas
 
-Las pruebas automatizadas nunca llaman a Ollama real.
+Las pruebas automáticas nunca llaman a Ollama real, a Cloudinary ni a internet.
 
 ```powershell
-uv run --extra dev pytest -q
+uv run pytest -q
 ```
 
-La suite cubre recorrido recursivo, JSONPath, email, nombre, telefono, identificadores, contrasenas, API keys, AWS keys, tokens, Luhn, CVV, claves privadas, placeholders, prompt injection, enmascarado, sanitizacion, resumen distribuido, riesgo, contrato estricto y timeout de Ollama, persistencia historica, paginacion, API y controles de fuga.
+Cubren, entre otras cosas: extracción de PDF, DOCX, XLSX e imágenes, recorrido recursivo con
+JSONPath, detección determinista, enmascarado, cálculo de riesgo, contratos estrictos y timeouts,
+política
+ALLOWED/BLOCKED, que un prompt bloqueado nunca llega al generador, que el generador exige una
+autorización válida, que un fallo inesperado nunca deja una ejecución en `RUNNING`, path traversal,
+SSRF, MIME y JSON inválidos, paginación, ausencia de conflictos de rutas y ausencia de secretos en
+el esquema público.
 
 ## Arquitectura
 
 ```text
-app/analysis/
-  domain/                         entidades, value objects, eventos y contratos
-  application/internal/          orquestacion, deteccion, resumen, riesgo y sanitizacion
-  infrastructure/                HTTP/Ollama, descarga y SQLAlchemy asincrono
-  interfaces/rest/               recursos Pydantic y rutas FastAPI
+app/
+  core/            settings, base de datos, composition root
+  shared/          masking de texto, base SQLAlchemy, unit of work, transporte Ollama, prompts
+  documents/       domain / application / infrastructure / interfaces
+  analysis/        domain / application / infrastructure / interfaces
+  decision/        domain / application / infrastructure / interfaces
 ```
 
-La integracion con Documents usa `DocumentQueryService` y transforma solo los datos requeridos a `SourceDocumentReference`. Analytics no importa modelos SQLAlchemy internos de Documents para su logica de aplicacion y no modifica el documento original.
+Los cuatro usos de Ollama están separados en clientes, contratos y prompts de sistema distintos:
+`OllamaSensitiveContentDiscoveryClientImpl` (clasifica contenido local sin devolver valores),
+`OllamaVisionExtractionClientImpl` (transcripción visual JSON),
+`OllamaSecurityAnalysisClientImpl` (clasificación JSON estricta, temperature 0) y
+`OllamaAnswerGenerationClientImpl` (respuesta en prosa, exige `GenerationAuthorization`).
 
-## Limitaciones y pendientes
+## Limitaciones
 
-- Audit debe consumir posteriormente `DocumentAnalysisStartedEvent`, `DocumentAnalysisCompletedEvent` y `DocumentAnalysisFailedEvent`.
-- Los eventos se publican actualmente en memoria, siguiendo la convencion existente; no hay Kafka ni RabbitMQ.
-- La decision final de permitir, advertir, sanitizar o bloquear pertenece a otro bounded context.
-- La precision contextual depende del modelo local configurado, pero ningun fallo del modelo se convierte en riesgo bajo.
-- La deteccion determinista reduce falsos positivos con contexto, Luhn y placeholders, pero debe evolucionar con nuevas familias de secretos y normativas.
+- La precisión contextual depende de `llama3.2:3b`. El evaluador de seguridad admite un reintento
+  correctivo ante una respuesta que no cumple el contrato; si sigue siendo inválida, la ejecución
+  falla y la consulta queda bloqueada.
+- `llama3.2:3b` extrae correctamente los datos del documento permitido, pero **no cuenta ni suma de
+  forma fiable**. Una pregunta de tipo "cuántos elementos hay" puede devolver una cifra incorrecta.
+  Un modelo mayor corrige esto sin tocar el código.
+- Los eventos de dominio se publican en memoria, siguiendo la convención existente.
+- Los PDF con texto usan su capa textual; solo las páginas sin texto se renderizan para visión.
+  El MVP limita los PDF a 50 páginas y las páginas visuales a 10 para mantener una demo predecible.
+- DOCX y XLSX se leen sin ejecutar macros ni fórmulas. No se admiten los formatos heredados `.doc`
+  y `.xls`, archivos con contraseña, OCR masivo ni análisis forense de archivos.
+- La transcripción visual es una interpretación del modelo local, no OCR certificado; después se
+  somete igualmente al detector determinista y al clasificador de seguridad obligatorio.

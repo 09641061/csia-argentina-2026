@@ -2,18 +2,40 @@ from __future__ import annotations
 
 import asyncio
 from io import BytesIO
-from pathlib import PurePath
-
-import cloudinary
-import cloudinary.uploader
+from uuid import uuid4
 
 from app.core.settings import get_settings
-from app.documents.application.internal.outboundservices.document_storage import DocumentStorage
-from app.documents.infrastructure.storage.exceptions import DocumentStorageUploadError
+from app.documents.application.internal.outboundservices.document_storage import (
+    DocumentStorage,
+)
+from app.documents.domain.model.valueobjects.document_storage_reference import (
+    CLOUDINARY_BACKEND,
+    DocumentStorageReference,
+)
+from app.documents.infrastructure.storage.exceptions import (
+    DocumentStorageNotConfiguredError,
+    DocumentStorageReadError,
+    DocumentStorageUploadError,
+)
+from app.documents.infrastructure.storage.safe_url_content_reader import (
+    SafeUrlContentReader,
+)
+
+CLOUDINARY_ALLOWED_HOSTS = frozenset({"res.cloudinary.com"})
 
 
 class CloudinaryDocumentStorage(DocumentStorage):
-    def __init__(self, folder: str = "sentinel-ai-guard/documents") -> None:
+    """
+    Optional remote storage, disabled by default.
+
+    Kept because it is part of the existing deployment, but it is never the
+    default: uploading a document to a third party before Sentinel has reviewed
+    it would defeat the purpose of the product. Enable it only with
+    DOCUMENT_STORAGE_BACKEND=cloudinary and only for content you accept sending
+    outside the organization.
+    """
+
+    def __init__(self, folder: str = "sentinel-ai-guard/documents", max_content_bytes: int | None = None) -> None:
         settings = get_settings()
         missing_settings = [
             name
@@ -25,9 +47,11 @@ class CloudinaryDocumentStorage(DocumentStorage):
             if not value.strip()
         ]
         if missing_settings:
-            raise DocumentStorageUploadError(
+            raise DocumentStorageNotConfiguredError(
                 f"Cloudinary is not configured. Missing: {', '.join(missing_settings)}"
             )
+
+        import cloudinary
 
         cloudinary.config(
             cloud_name=settings.cloudinary_cloud_name,
@@ -36,18 +60,34 @@ class CloudinaryDocumentStorage(DocumentStorage):
             secure=True,
         )
         self._folder = folder.strip("/")
-
-    async def store(self, original_filename: str, content: bytes, content_type: str) -> str:
-        return await asyncio.to_thread(
-            self._store_sync,
-            original_filename,
-            content,
-            content_type,
+        self._max_content_bytes = max_content_bytes or settings.max_document_size_bytes
+        self._reader = SafeUrlContentReader(
+            allowed_hosts=CLOUDINARY_ALLOWED_HOSTS,
+            max_content_bytes=self._max_content_bytes,
         )
 
-    def _store_sync(self, original_filename: str, content: bytes, content_type: str) -> str:
+    @property
+    def backend_name(self) -> str:
+        return CLOUDINARY_BACKEND
+
+    async def store(self, content: bytes, content_type: str) -> DocumentStorageReference:
+        if not content:
+            raise DocumentStorageUploadError("Document content is required")
+        if len(content) > self._max_content_bytes:
+            raise DocumentStorageUploadError("Document exceeds the maximum allowed size")
+        url = await asyncio.to_thread(self._store_sync, content, content_type)
+        return DocumentStorageReference.for_cloudinary(url)
+
+    async def read(self, reference: DocumentStorageReference) -> bytes:
+        if reference.backend != CLOUDINARY_BACKEND:
+            raise DocumentStorageReadError("This reference does not belong to Cloudinary storage")
+        return await self._reader.read(reference.key)
+
+    def _store_sync(self, content: bytes, content_type: str) -> str:
+        import cloudinary.uploader
+
         upload_file = BytesIO(content)
-        upload_file.name = self._safe_filename(original_filename)
+        upload_file.name = f"{uuid4().hex}.bin"
 
         try:
             result = cloudinary.uploader.upload(
@@ -63,11 +103,6 @@ class CloudinaryDocumentStorage(DocumentStorage):
             raise DocumentStorageUploadError("Cloudinary document upload failed") from error
 
         document_url = result.get("secure_url") or result.get("url")
-        if not isinstance(document_url, str) or not document_url.strip():
-            raise DocumentStorageUploadError("Cloudinary upload did not return a document URL")
-
+        if not isinstance(document_url, str) or not document_url.startswith("https://"):
+            raise DocumentStorageUploadError("Cloudinary upload did not return a secure URL")
         return document_url
-
-    def _safe_filename(self, original_filename: str) -> str:
-        filename = PurePath(original_filename).name.strip()
-        return filename or "document.json"
