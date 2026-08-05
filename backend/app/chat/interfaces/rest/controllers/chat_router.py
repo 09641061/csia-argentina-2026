@@ -29,13 +29,14 @@ async def get_chat_command_service(
 @router.post(
     "/messages",
     response_model=ChatMessageResponse,
-    status_code=status.HTTP_201_CREATED,
-    summary="Send an authorized chat message",
-    description="Uses ACL-provided document or image context, applies security permissions and generates an answer only when authorized.",
+    status_code=status.HTTP_200_OK,
+    summary="Ask the assistant",
+    description="Answers a general question using optional JSON or image context. Security review, authorization and auditing remain internal.",
     responses={
-        201: {"description": "Message audited and processed"},
+        200: {"description": "Assistant answer generated"},
         400: {"description": "Missing message or invalid resource"},
         401: {"description": "Authentication required"},
+        403: {"description": "The security policy blocked the submitted content"},
         413: {"description": "Resource exceeds the configured size limit"},
         415: {"description": "Unsupported resource type"},
     },
@@ -64,12 +65,15 @@ async def send_chat_message(
     except (DecisionContextValidationError, ValueError) as error:
         await unit_of_work.rollback()
         raise HTTPException(status.HTTP_400_BAD_REQUEST, str(error)) from error
+    if result.decision == "blocked":
+        raise HTTPException(status.HTTP_403_FORBIDDEN, result.reason)
+    if result.answer is None or result.answer_model is None or result.generated_at is None:
+        raise HTTPException(
+            status.HTTP_503_SERVICE_UNAVAILABLE,
+            "The assistant could not generate a response",
+        )
     return ChatMessageResponse(
-        interaction_id=result.interaction_id,
-        decision=result.decision,
-        reason=result.reason,
-        document_id=result.document_id,
         answer=result.answer,
-        answer_model=result.answer_model,
+        model_name=result.answer_model,
         generated_at=result.generated_at,
     )

@@ -152,7 +152,7 @@ uv run uvicorn app.main:app --reload
 | --- | --- | --- |
 | `GET` | `/api/v1/health` | Estado de PostgreSQL y de los modelos locales |
 | `POST` | `/api/v1/auth/login` | Autentica con usuario y contraseña y entrega un Bearer token |
-| `POST` | `/api/v1/chat/messages` | Consulta autenticada con JSON o imagen opcional mediante ACL |
+| `POST` | `/api/v1/chat/messages` | Asistente general con JSON o imagen opcional mediante ACL |
 | `POST` | `/api/v1/documents` | Registra un archivo admitido (multipart `file`) |
 | `GET` | `/api/v1/documents` | Lista paginada de documentos |
 | `GET` | `/api/v1/documents/{document_id}` | Metadatos públicos de un documento |

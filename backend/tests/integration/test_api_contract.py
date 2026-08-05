@@ -230,9 +230,26 @@ async def test_chat_uses_the_acl_backed_secure_query_flow(
             data={"prompt": "Explica qué es una arquitectura orientada a eventos."},
         )
 
-    assert response.status_code == 201
-    assert response.json()["decision"] == "allowed"
+    assert response.status_code == 200
     assert response.json()["answer"]
+    assert set(response.json()) == {"answer", "model_name", "generated_at"}
+
+
+@pytest.mark.asyncio
+async def test_chat_hides_auditing_details_and_returns_forbidden_when_blocked(
+    context: SentinelTestContext,
+) -> None:
+    app = build_test_app(context)
+    async with client_for(app) as client:
+        response = await client.post(
+            "/api/v1/chat/messages",
+            data={"prompt": "La contraseña del cliente es SuperSecret123, resúmelo."},
+        )
+
+    assert response.status_code == 403
+    assert "SuperSecret123" not in response.text
+    assert "interaction_id" not in response.text
+    assert "decision" not in response.text
 
 
 @pytest.mark.asyncio
