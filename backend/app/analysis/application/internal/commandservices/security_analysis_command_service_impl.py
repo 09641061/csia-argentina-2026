@@ -84,6 +84,11 @@ from app.shared.domain.text_masking import mask_free_text
 logger = logging.getLogger(__name__)
 
 MASKED_PREVIEW_MAX_CHARACTERS = 280
+# The filename is chosen by whoever uploads the file, so it is untrusted metadata
+# with no evidentiary value: renaming a document changes nothing about what is
+# inside it. The masked name stays in the audit trail, but the models are given a
+# fixed label instead, so a verdict can never depend on how a file was called.
+DOCUMENT_EVALUATION_LABEL = "Documento adjunto"
 
 
 class SecurityAnalysisCommandServiceImpl(SecurityAnalysisCommandService):
@@ -222,7 +227,7 @@ class SecurityAnalysisCommandServiceImpl(SecurityAnalysisCommandService):
             analysis.content_fingerprint = self._fingerprint(content)
             discovery = await self._discovery_client.inspect(
                 content=extracted_document,
-                reference_label=source.display_name,
+                reference_label=DOCUMENT_EVALUATION_LABEL,
             )
             findings = self._merge_findings(
                 self._detector.scan(extracted_document),
@@ -237,7 +242,7 @@ class SecurityAnalysisCommandServiceImpl(SecurityAnalysisCommandService):
             )
             context = SecurityEvaluationContext(
                 content_type=AnalyzedContentType.DOCUMENT,
-                reference_label=analysis.content_reference,
+                reference_label=DOCUMENT_EVALUATION_LABEL,
                 approximate_size=structure.approximate_size_bytes,
                 estimated_subjects=structure.estimated_subjects,
                 truncated=structure.truncated,

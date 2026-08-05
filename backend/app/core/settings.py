@@ -70,8 +70,11 @@ class Settings(BaseSettings):
     cloudinary_api_key: str = Field(default="", alias="CLOUDINARY_API_KEY")
     cloudinary_api_secret: str = Field(default="", alias="CLOUDINARY_API_SECRET")
 
+    # 127.0.0.1, never "localhost": on Windows that name resolves to ::1 first, and
+    # a WSL or Docker port forward on the same port answers there. Pointing at the
+    # wrong Ollama makes every review fail, and a failed review is BLOCKED content.
     ollama_base_url: str = Field(
-        default="http://localhost:11434", alias="OLLAMA_BASE_URL"
+        default="http://127.0.0.1:11434", alias="OLLAMA_BASE_URL"
     )
 
     ollama_security_model: str = Field(

@@ -21,9 +21,17 @@ class VisionExtractionResult:
             raise ValueError("The visual document type is too long")
 
     def to_document_payload(self) -> dict[str, object]:
+        """
+        What the image *contains*, and nothing else.
+
+        The model name is pipeline metadata, not something the picture shows. It
+        used to travel inside this payload and the reviewers treated it as part of
+        the document, reporting `vision_model` as a data category and citing the
+        model name as evidence. The analysis record already stores it.
+        """
+
         return {
             "document_type": self.document_type.strip() or "unknown",
             "visible_text": self.visible_text.strip(),
             "visual_summary": self.visual_summary.strip(),
-            "vision_model": self.model_name,
         }

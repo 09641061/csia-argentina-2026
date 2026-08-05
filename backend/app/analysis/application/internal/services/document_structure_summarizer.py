@@ -32,6 +32,13 @@ _SUBJECT_FIELDS = {
     "full_name",
     "customer_name",
 }
+# How much of one scalar the sample may show. A transcribed image is prose, not a
+# JSON export, so the budget has to fit a normal visual description whole.
+_SAMPLE_VALUE_MAX_CHARACTERS = 600
+_CLIPPED_VALUE_MARKER = "…[valor recortado en la muestra]"
+# Above this many leaves the sample stops being complete and starts being a
+# selection, which is the only truncation that can hide the real scale.
+_SAMPLE_MAX_LEAVES = 12
 
 
 class DocumentStructureSummarizer:
@@ -50,7 +57,6 @@ class DocumentStructureSummarizer:
             "arrays": 0,
             "scalars": 0,
             "records": 0,
-            "truncated_scalars": 0,
         }
         self._collect_structure(sanitized_content, "$", key_counts, safe_leaves, counts)
         estimated_subjects = self._estimate_subjects(content, findings)
@@ -63,7 +69,12 @@ class DocumentStructureSummarizer:
             for finding in findings
             if finding.finding_type == AnalysisFindingType.PROMPT_INJECTION
         )
-        truncated = len(safe_leaves) > 12 or counts["truncated_scalars"] > 0
+        # Truncated means "the evaluator is not seeing every leaf", because that is
+        # the only case that can hide the real scale of the document. Clipping one
+        # long prose value inside the sample hides nothing: the deterministic
+        # scanner and the local discovery pass both read the complete content, and
+        # every count below is computed over it.
+        truncated = len(safe_leaves) > _SAMPLE_MAX_LEAVES
         return DocumentStructureSummary(
             root_type="object" if isinstance(content, dict) else "array",
             approximate_size_bytes=approximate_size_bytes,
@@ -111,9 +122,11 @@ class DocumentStructureSummarizer:
             return
         counts["scalars"] += 1
         rendered = json.dumps(value, ensure_ascii=False)
-        if len(rendered) > 180:
-            counts["truncated_scalars"] += 1
-        safe_leaves.append(f"{path}={rendered[:180]}")
+        if len(rendered) > _SAMPLE_VALUE_MAX_CHARACTERS:
+            # An explicit marker, so a clipped value never reads as a sentence that
+            # ended abruptly or as evidence that content was hidden.
+            rendered = rendered[:_SAMPLE_VALUE_MAX_CHARACTERS] + _CLIPPED_VALUE_MARKER
+        safe_leaves.append(f"{path}={rendered}")
 
     def _estimate_subjects(
         self,

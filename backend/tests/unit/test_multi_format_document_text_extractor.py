@@ -69,7 +69,11 @@ async def test_image_content_comes_from_mandatory_local_vision() -> None:
     result = await extractor.extract_content(_png_bytes(), "image/png", "contact.png")
 
     assert result["visible_text"] == "Correo visible: demo@example.com"
-    assert result["vision_model"] == "fake-vision"
+    assert result["visual_summary"] == "Captura de una ficha de contacto."
+    assert result["document_type"] == "contact_card"
+    # Pipeline metadata never travels as document content: the reviewers would
+    # read the model name as something the image shows.
+    assert "vision_model" not in result
     assert vision.calls == [("image/png", "contact.png")]
 
 

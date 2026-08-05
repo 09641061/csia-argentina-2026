@@ -31,6 +31,28 @@ _LABELED_SECRET_PATTERN = re.compile(
     r"(?i)\b(?:password|passwd|api[_-]?key|access[_-]?token|refresh[_-]?token|secret)\b\s*[:=]\s*\S+"
 )
 _LONG_NUMBER_PATTERN = re.compile(r"(?<!\d)(?:\d[ -]?){7,19}(?!\d)")
+SUMMARY_MAX_CHARACTERS = 140
+RATIONALE_MAX_CHARACTERS = 300
+
+
+def _clamp(value: str, limit: int) -> str:
+    """
+    Cut an over-long explanation down to its limit instead of rejecting it.
+
+    Length is presentation, not evidence. A small local model sometimes writes
+    145 characters where 140 were asked for, and refusing the whole answer over
+    that failed the review — which the policy reads as BLOCKED. The content
+    checks below are what actually keep the text safe, and they run on the full
+    string before anything is cut.
+    """
+
+    if len(value) <= limit:
+        return value
+    head = value[: limit - 1].rstrip()
+    last_space = head.rfind(" ")
+    if last_space > limit // 2:
+        head = head[:last_space]
+    return f"{head}…"
 
 
 @dataclass(frozen=True, slots=True)
@@ -50,10 +72,6 @@ class OllamaAnalysisInterpretation:
         rationale = self.rationale.strip()
         if not summary or not rationale:
             raise ValueError("Ollama summary and rationale are required")
-        if len(summary) > 140:
-            raise ValueError("Ollama summary cannot exceed 140 characters")
-        if len(rationale) > 300:
-            raise ValueError("Ollama rationale cannot exceed 300 characters")
         if type(self.tampering_suspected) is not bool:
             raise ValueError("Ollama tampering_suspected must be a boolean")
         if not all(
@@ -66,8 +84,8 @@ class OllamaAnalysisInterpretation:
         self._validate_risk_consistency()
         self._validate_safe_text(summary)
         self._validate_safe_text(rationale)
-        object.__setattr__(self, "summary", summary)
-        object.__setattr__(self, "rationale", rationale)
+        object.__setattr__(self, "summary", _clamp(summary, SUMMARY_MAX_CHARACTERS))
+        object.__setattr__(self, "rationale", _clamp(rationale, RATIONALE_MAX_CHARACTERS))
 
     @classmethod
     def from_payload(cls, payload: object) -> OllamaAnalysisInterpretation:
@@ -111,7 +129,9 @@ class OllamaAnalysisInterpretation:
                 confidence=AnalysisConfidence(payload["confidence"]),
                 tampering_suspected=payload["tampering_suspected"],
                 data_categories=tuple(categories),
-                estimated_subjects=EstimatedSubjects(payload["estimated_subjects"]),
+                estimated_subjects=EstimatedSubjects.from_model_answer(
+                    payload["estimated_subjects"]
+                ),
                 summary=payload["summary"],
                 rationale=payload["rationale"],
             )

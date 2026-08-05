@@ -8,13 +8,19 @@ from app.analysis.domain.exceptions import (
     AnalysisModelUnavailableError,
 )
 from app.analysis.domain.model.entities.analysis_finding import AnalysisFinding
-from app.analysis.domain.model.valueobjects.analysis_confidence import AnalysisConfidence
+from app.analysis.domain.model.valueobjects.analysis_confidence import (
+    AnalysisConfidence,
+)
 from app.analysis.domain.model.valueobjects.analysis_finding_severity import (
     AnalysisFindingSeverity,
 )
-from app.analysis.domain.model.valueobjects.analysis_finding_type import AnalysisFindingType
+from app.analysis.domain.model.valueobjects.analysis_finding_type import (
+    AnalysisFindingType,
+)
 from app.analysis.domain.model.valueobjects.analysis_risk_level import AnalysisRiskLevel
-from app.analysis.domain.model.valueobjects.analyzed_content_type import AnalyzedContentType
+from app.analysis.domain.model.valueobjects.analyzed_content_type import (
+    AnalyzedContentType,
+)
 from app.analysis.domain.model.valueobjects.estimated_subjects import EstimatedSubjects
 from app.analysis.domain.model.valueobjects.ollama_analysis_interpretation import (
     OllamaAnalysisInterpretation,
@@ -74,7 +80,9 @@ def masked_finding() -> AnalysisFinding:
 
 
 def client() -> OllamaSecurityAnalysisClientImpl:
-    return OllamaSecurityAnalysisClientImpl("http://localhost:11434", "llama3.2:3b", 1, 2048, 300)
+    return OllamaSecurityAnalysisClientImpl(
+        "http://localhost:11434", "llama3.2:3b", 1, 2048, 300
+    )
 
 
 class _Response:
@@ -115,12 +123,35 @@ def test_rejects_low_risk_model_text_that_claims_sensitive_data() -> None:
         client()._validate_against_supplied_findings(interpretation, [])
 
 
-def test_rejects_model_references_to_findings_that_were_not_supplied() -> None:
+def test_invented_finding_references_are_struck_out_not_raised() -> None:
+    """
+    An invented citation loses the citation, not the review.
+
+    The model writes "Finding f1 …" with no finding supplied. Failing over that
+    blocked benign content — a rude but harmless question was rejected for a
+    footnote — and an invented reference can only push a verdict up, never down.
+    """
+
     payload = valid_payload()
     interpretation = OllamaAnalysisInterpretation.from_payload(payload)
 
-    with pytest.raises(ValueError, match="not supplied"):
-        client()._validate_against_supplied_findings(interpretation, [])
+    scrubbed = client()._scrub_invented_references(interpretation, [])
+
+    assert "f1" not in f"{scrubbed.summary} {scrubbed.rationale}"
+    assert "[referencia no suministrada]" in scrubbed.rationale
+    # The verdict itself is untouched.
+    assert scrubbed.risk_level == interpretation.risk_level
+    assert scrubbed.secrets_risk == interpretation.secrets_risk
+
+
+def test_a_reference_to_a_supplied_finding_is_preserved() -> None:
+    payload = valid_payload()
+    interpretation = OllamaAnalysisInterpretation.from_payload(payload)
+
+    scrubbed = client()._scrub_invented_references(interpretation, [masked_finding()])
+
+    assert scrubbed is interpretation
+    assert "f1" in scrubbed.rationale
 
 
 @pytest.mark.parametrize(
@@ -143,6 +174,74 @@ def test_rejects_invalid_contract(mutation) -> None:
 def test_rejects_sensitive_values_in_model_text() -> None:
     payload = valid_payload()
     payload["summary"] = "Contact ana.gomez@example.com immediately."
+    with pytest.raises(ValueError, match="email"):
+        OllamaAnalysisInterpretation.from_payload(payload)
+
+
+def test_an_overlong_explanation_is_clamped_instead_of_failing_the_review() -> None:
+    """
+    Verbosity is not a security event.
+
+    A summary of 150 characters used to sink the whole evaluation, and a failed
+    evaluation is BLOCKED content. The text is cut to fit; the checks that matter
+    still run over the full string.
+    """
+
+    payload = valid_payload()
+    payload["summary"] = "La imagen es una fotografia sin datos sensibles. " * 5
+    payload["rationale"] = (
+        "El analisis no encontro credenciales ni identificadores. " * 10
+    )
+
+    interpretation = OllamaAnalysisInterpretation.from_payload(payload)
+
+    assert len(interpretation.summary) <= 140
+    assert len(interpretation.rationale) <= 300
+    assert interpretation.summary.startswith("La imagen es una fotografia")
+
+
+@pytest.mark.parametrize(
+    ("answer", "expected"),
+    [
+        ("1", EstimatedSubjects.ONE_TO_FIVE),
+        ("0", EstimatedSubjects.ZERO),
+        ("4", EstimatedSubjects.ONE_TO_FIVE),
+        ("40", EstimatedSubjects.SIX_TO_ONE_HUNDRED),
+        ("400", EstimatedSubjects.OVER_ONE_HUNDRED),
+        ("6-100", EstimatedSubjects.SIX_TO_ONE_HUNDRED),
+    ],
+)
+def test_a_plain_subject_count_lands_in_its_bucket(answer, expected) -> None:
+    """
+    "1" instead of "1-5" must not fail the review.
+
+    The local model writes the count often enough to matter, and a rejected
+    evaluation is BLOCKED content — a benign photograph was lost this way.
+    """
+
+    payload = valid_payload()
+    payload["estimated_subjects"] = answer
+
+    assert (
+        OllamaAnalysisInterpretation.from_payload(payload).estimated_subjects
+        == expected
+    )
+
+
+def test_a_meaningless_subject_answer_is_still_rejected() -> None:
+    payload = valid_payload()
+    payload["estimated_subjects"] = "muchos"
+
+    with pytest.raises(ValueError):
+        OllamaAnalysisInterpretation.from_payload(payload)
+
+
+def test_clamping_never_lets_a_sensitive_value_through() -> None:
+    payload = valid_payload()
+    payload["rationale"] = (
+        "Relleno. " * 40 + "Escribir a ana.gomez@example.com para rotarla."
+    )
+
     with pytest.raises(ValueError, match="email"):
         OllamaAnalysisInterpretation.from_payload(payload)
 
@@ -198,6 +297,8 @@ async def test_valid_response_is_parsed(monkeypatch) -> None:
     body = json.dumps({"message": {"content": json.dumps(valid_payload())}}).encode()
     monkeypatch.setattr(f"{TRANSPORT_MODULE}.urlopen", lambda *a, **k: _Response(body))
 
-    interpretation = await client().evaluate(context=context(), findings=[masked_finding()])
+    interpretation = await client().evaluate(
+        context=context(), findings=[masked_finding()]
+    )
 
     assert interpretation.risk_level == AnalysisRiskLevel.HIGH

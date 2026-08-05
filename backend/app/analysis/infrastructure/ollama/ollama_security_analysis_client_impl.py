@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import re
+from dataclasses import replace
 from pathlib import Path
 
 from app.analysis.application.internal.outboundservices.ollama_security_analysis_client import (
@@ -116,7 +117,7 @@ class OllamaSecurityAnalysisClientImpl(OllamaSecurityAnalysisClient):
                     json.loads(raw_content)
                 )
                 self._validate_against_supplied_findings(interpretation, findings)
-                return interpretation
+                return self._scrub_invented_references(interpretation, findings)
             except (json.JSONDecodeError, ValueError, TypeError) as error:
                 if attempt == MAX_CONTRACT_ATTEMPTS - 1:
                     raise AnalysisModelInvalidResponseError(
@@ -132,18 +133,15 @@ class OllamaSecurityAnalysisClientImpl(OllamaSecurityAnalysisClient):
         interpretation: OllamaAnalysisInterpretation,
         findings: list[AnalysisFinding],
     ) -> None:
-        allowed_finding_ids = {
-            finding.finding_id.lower() for finding in findings[:MAX_PROMPT_FINDINGS]
-        }
-        referenced_ids = {
-            match.group(0).lower()
-            for match in _FINDING_REFERENCE_PATTERN.finditer(
-                f"{interpretation.summary} {interpretation.rationale}"
-            )
-        }
-        if referenced_ids - allowed_finding_ids:
-            raise ValueError("Ollama referenced a finding that was not supplied")
+        """
+        Reject an answer that is dangerous in the permissive direction.
 
+        Only that direction is worth failing over. A "low" verdict whose own
+        explanation describes sensitive data is a contradiction that could let
+        content through, so it is a hard failure and the review is blocked.
+        """
+
+        del findings
         if interpretation.risk_level != AnalysisRiskLevel.LOW:
             return
         explanation = f"{interpretation.summary} {interpretation.rationale}"
@@ -152,6 +150,41 @@ class OllamaSecurityAnalysisClientImpl(OllamaSecurityAnalysisClient):
             raise ValueError(
                 "Ollama described sensitive data while returning a low-risk verdict"
             )
+
+    def _scrub_invented_references(
+        self,
+        interpretation: OllamaAnalysisInterpretation,
+        findings: list[AnalysisFinding],
+    ) -> OllamaAnalysisInterpretation:
+        """
+        Strike out evidence the model cited but was never given.
+
+        The model writes "Finding f1 at $.masked_excerpt contains profanity" when
+        no finding was supplied at all. Failing over that used to sink the whole
+        review — and a failed review is BLOCKED content, so a rude but harmless
+        question was rejected for a footnote. An invented citation can only push
+        the verdict up, never down, so the safe repair is to drop the citation and
+        keep the verdict: the audit trail must not quote evidence that does not
+        exist, and the risk calculator ignores an escalation nothing supports.
+        """
+
+        allowed = {finding.finding_id.lower() for finding in findings[:MAX_PROMPT_FINDINGS]}
+
+        def strike(text: str) -> str:
+            return _FINDING_REFERENCE_PATTERN.sub(
+                lambda match: (
+                    match.group(0)
+                    if match.group(0).lower() in allowed
+                    else "[referencia no suministrada]"
+                ),
+                text,
+            )
+
+        summary = strike(interpretation.summary)
+        rationale = strike(interpretation.rationale)
+        if summary == interpretation.summary and rationale == interpretation.rationale:
+            return interpretation
+        return replace(interpretation, summary=summary, rationale=rationale)
 
     async def _chat(self, user_prompt: str) -> str:
         try:

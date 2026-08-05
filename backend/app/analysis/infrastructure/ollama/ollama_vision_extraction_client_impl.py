@@ -15,7 +15,6 @@ from app.analysis.domain.exceptions import (
 from app.analysis.domain.model.valueobjects.vision_extraction_result import (
     VisionExtractionResult,
 )
-from app.shared.domain.text_masking import mask_free_text
 from app.shared.infrastructure.ollama.ollama_chat_transport import (
     OllamaChatTransport,
     OllamaMalformedResponseError,
@@ -61,6 +60,10 @@ class OllamaVisionExtractionClientImpl(OllamaVisionExtractionClient):
         reference_label: str,
     ) -> VisionExtractionResult:
         del mime_type
+        # The filename is never shown to the model. It is chosen by the uploader,
+        # it describes nothing that the pixels do not already show, and a suggestive
+        # name measurably drags the transcription towards what the name claims.
+        del reference_label
         if not image_content:
             raise AnalysisModelInvalidResponseError("The image is empty")
         encoded_image = base64.b64encode(image_content).decode("ascii")
@@ -69,10 +72,11 @@ class OllamaVisionExtractionClientImpl(OllamaVisionExtractionClient):
                 model_name=self._model_name,
                 system_prompt=self._system_prompt,
                 user_prompt=(
-                    "Perform exhaustive document OCR. visible_text must be one complete string "
-                    "preserving every line, including emails, identifiers, numbers and "
-                    f"punctuation. Masked reference: {mask_free_text(reference_label)}. "
-                    "Return exactly the required JSON."
+                    "Transcribe and describe the attached image. visible_text must be one "
+                    "complete string preserving every readable line, including emails, "
+                    "identifiers, numbers and punctuation, and must be an empty string when "
+                    "the image contains no readable text. visual_summary must always describe "
+                    "what the image shows. Return exactly the required JSON."
                 ),
                 timeout_seconds=self._request_timeout_seconds,
                 options={

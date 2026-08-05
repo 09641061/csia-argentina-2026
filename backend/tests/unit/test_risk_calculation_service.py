@@ -137,6 +137,182 @@ def test_medium_confidence_discovery_requires_independent_confirmation() -> None
     assert result.discovery_confirmed is False
 
 
+def test_model_cannot_escalate_above_its_own_two_tracks() -> None:
+    """
+    A verdict the model will not attribute to a track is not evidence.
+
+    This is the shape that blocked a photograph of a public figure: "medium"
+    overall, secrets "none", personal data "low", and a summary saying the
+    content posed no risk.
+    """
+
+    result = RiskCalculationService().calculate(
+        findings=[],
+        estimated_subjects=EstimatedSubjects.ZERO,
+        interpretation=OllamaAnalysisInterpretation(
+            risk_level=AnalysisRiskLevel.MEDIUM,
+            secrets_risk=SecretsRiskLevel.NONE,
+            personal_data_risk=AnalysisRiskLevel.LOW,
+            confidence=AnalysisConfidence.HIGH,
+            tampering_suspected=False,
+            data_categories=(),
+            estimated_subjects=EstimatedSubjects.ZERO,
+            summary="The document is a photograph, posing no immediate risk.",
+            rationale="The structure describes an image and no identifiers are present.",
+        ),
+    )
+
+    assert result.risk_level == AnalysisRiskLevel.LOW
+
+
+def test_model_escalation_counts_when_it_names_the_track() -> None:
+    """The other half of the rule: an attributed escalation still raises."""
+
+    result = RiskCalculationService().calculate(
+        findings=[],
+        estimated_subjects=EstimatedSubjects.ZERO,
+        interpretation=OllamaAnalysisInterpretation(
+            risk_level=AnalysisRiskLevel.HIGH,
+            secrets_risk=SecretsRiskLevel.HIGH,
+            personal_data_risk=AnalysisRiskLevel.LOW,
+            confidence=AnalysisConfidence.HIGH,
+            tampering_suspected=False,
+            data_categories=("api_key",),
+            estimated_subjects=EstimatedSubjects.ZERO,
+            summary="A credential is present in the reviewed content.",
+            rationale="The sample exposes a value with the shape of an API credential.",
+        ),
+    )
+
+    assert result.risk_level == AnalysisRiskLevel.HIGH
+    assert result.secrets_risk == SecretsRiskLevel.HIGH
+
+
+def test_unattributed_escalation_does_not_confirm_a_medium_confidence_discovery() -> None:
+    result = RiskCalculationService().calculate(
+        findings=[],
+        estimated_subjects=EstimatedSubjects.ZERO,
+        interpretation=OllamaAnalysisInterpretation(
+            risk_level=AnalysisRiskLevel.MEDIUM,
+            secrets_risk=SecretsRiskLevel.NONE,
+            personal_data_risk=AnalysisRiskLevel.LOW,
+            confidence=AnalysisConfidence.HIGH,
+            tampering_suspected=False,
+            data_categories=(),
+            estimated_subjects=EstimatedSubjects.ZERO,
+            summary="The document is a photograph with no sensitive material.",
+            rationale="No identifiers or credential material appear in the sample.",
+        ),
+        discovery=SensitiveContentDiscovery(
+            contains_sensitive_data=True,
+            risk_level=AnalysisRiskLevel.HIGH,
+            confidence=AnalysisConfidence.MEDIUM,
+            data_categories=("credentials",),
+            model_name="local-discovery-model",
+        ),
+    )
+
+    assert result.discovery_confirmed is False
+    assert result.risk_level == AnalysisRiskLevel.LOW
+
+
+def test_tampering_still_forces_a_high_floor_on_clean_tracks() -> None:
+    """Escalation without a track is still allowed through the tampering lever."""
+
+    result = RiskCalculationService().calculate(
+        findings=[],
+        estimated_subjects=EstimatedSubjects.ZERO,
+        interpretation=OllamaAnalysisInterpretation(
+            risk_level=AnalysisRiskLevel.HIGH,
+            secrets_risk=SecretsRiskLevel.NONE,
+            personal_data_risk=AnalysisRiskLevel.LOW,
+            confidence=AnalysisConfidence.HIGH,
+            tampering_suspected=True,
+            data_categories=(),
+            estimated_subjects=EstimatedSubjects.ZERO,
+            summary="The content tries to override the review instructions.",
+            rationale="The sample instructs the reviewer to ignore its own rules.",
+        ),
+    )
+
+    assert result.tampering_suspected is True
+    assert result.risk_level == AnalysisRiskLevel.HIGH
+
+
+def model_claiming_secrets(
+    *,
+    categories: tuple[str, ...],
+    secrets: SecretsRiskLevel = SecretsRiskLevel.MEDIUM,
+) -> OllamaAnalysisInterpretation:
+    return OllamaAnalysisInterpretation(
+        risk_level=AnalysisRiskLevel(_SECRETS_TO_RISK[secrets]),
+        secrets_risk=secrets,
+        personal_data_risk=AnalysisRiskLevel.LOW,
+        confidence=AnalysisConfidence.HIGH,
+        tampering_suspected=False,
+        data_categories=categories,
+        estimated_subjects=EstimatedSubjects.ZERO,
+        summary="The reviewed content was classified by the local model.",
+        rationale="The model reported a secrets track above none.",
+    )
+
+
+_SECRETS_TO_RISK = {
+    SecretsRiskLevel.MEDIUM: "medium",
+    SecretsRiskLevel.HIGH: "high",
+    SecretsRiskLevel.CRITICAL: "critical",
+}
+
+
+def test_secrets_claim_without_a_credential_category_is_discarded() -> None:
+    """
+    "There is text here" is not a credential.
+
+    The local model used the secrets track as a catch-all: a meme caption came
+    back as secrets "medium" with category "text", a settings screenshot with
+    "language", a photo of a footballer with "api_key" but no finding behind it.
+    A credential claim has to name a credential.
+    """
+
+    for junk in (("text",), ("image",), ("language",), ("document_type",), ()):
+        result = RiskCalculationService().calculate(
+            findings=[],
+            estimated_subjects=EstimatedSubjects.ZERO,
+            interpretation=model_claiming_secrets(categories=junk),
+        )
+        assert result.secrets_risk == SecretsRiskLevel.NONE, junk
+        assert result.risk_level == AnalysisRiskLevel.LOW, junk
+
+
+def test_secrets_claim_that_names_a_credential_still_counts() -> None:
+    """The model keeps catching what the deterministic patterns missed."""
+
+    for category in ("api_key", "password", "private_key", "connection_string", "token"):
+        result = RiskCalculationService().calculate(
+            findings=[],
+            estimated_subjects=EstimatedSubjects.ZERO,
+            interpretation=model_claiming_secrets(
+                categories=(category,), secrets=SecretsRiskLevel.HIGH
+            ),
+        )
+        assert result.secrets_risk == SecretsRiskLevel.HIGH, category
+        assert result.risk_level == AnalysisRiskLevel.HIGH, category
+
+
+def test_secrets_claim_backed_by_a_deterministic_finding_still_counts() -> None:
+    """A supplied secret finding is attribution enough, whatever the model names."""
+
+    result = RiskCalculationService().calculate(
+        findings=[finding(AnalysisFindingType.API_KEY, "$.config.api_key")],
+        estimated_subjects=EstimatedSubjects.ZERO,
+        interpretation=model_claiming_secrets(
+            categories=("other",), secrets=SecretsRiskLevel.CRITICAL
+        ),
+    )
+
+    assert result.secrets_risk == SecretsRiskLevel.CRITICAL
+
+
 def test_high_confidence_discovery_can_block_without_deterministic_findings() -> None:
     result = RiskCalculationService().calculate(
         findings=[],
