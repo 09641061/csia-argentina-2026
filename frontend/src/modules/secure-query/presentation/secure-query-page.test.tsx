@@ -178,7 +178,7 @@ describe('Consultar', () => {
     await user.type(screen.getByLabelText('Consulta'), 'Una consulta cualquiera')
     await user.click(screen.getByRole('button', { name: 'Analizar y consultar' }))
 
-    expect(await screen.findByText('Analizando el contenido con IA local…')).toBeInTheDocument()
+    expect(await screen.findByText('Analizando el contenido…')).toBeInTheDocument()
 
     release(
       new Response(JSON.stringify(secureQueryResponse(allowedInteractionResource())), {
