@@ -15,6 +15,7 @@ from app.chat.application.internal.commandservices.chat_command_service_impl imp
 from app.chat.application.internal.outboundservices.acl.decision_context_response_service import (
     DecisionContextResponseService,
 )
+from app.chat.infrastructure.ollama.conversation_title_generator import ConversationTitleGenerator
 from app.analysis.application.internal.commandservices.security_analysis_command_service_impl import (
     SecurityAnalysisCommandServiceImpl,
 )
@@ -133,3 +134,12 @@ def build_secure_interaction_query_service(
 def build_chat_command_service(session: AsyncSession) -> ChatCommandServiceImpl:
     decision_facade = DecisionContextFacadeImpl(build_secure_query_command_service(session))
     return ChatCommandServiceImpl(DecisionContextResponseService(decision_facade))
+
+
+def build_conversation_title_generator() -> ConversationTitleGenerator:
+    settings = get_settings()
+    return ConversationTitleGenerator(
+        base_url=settings.ollama_base_url,
+        model_name=settings.ollama_generation_model,
+        timeout_seconds=settings.ollama_generation_timeout_seconds,
+    )
