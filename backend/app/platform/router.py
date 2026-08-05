@@ -16,7 +16,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_session
 from app.decision.infrastructure.persistence.sqlalchemy.models.secure_interaction_model import SecureInteractionModel
-from app.platform.models import ApprovalRequestModel, SanitizationRecordModel, SecurityPolicyModel
+from app.platform.models import (
+    ApprovalRequestModel,
+    SanitizationRecordModel,
+    SecurityEventModel,
+    SecurityIncidentModel,
+    SecurityPolicyModel,
+)
+from app.platform.soc import run_scenario, sync_interaction_events
 
 router = APIRouter(prefix="/api/v1/platform", tags=["Security platform"])
 
@@ -46,6 +53,12 @@ class ResolutionPayload(BaseModel):
     comment: str = "Revisado por el equipo de seguridad."
 
 
+class IncidentResolutionPayload(BaseModel):
+    status: Literal["open", "investigating", "contained", "closed"]
+    assignee: str = "Analista SOC"
+    response_action: str = "Evidencia revisada y operación contenida."
+
+
 PATTERNS = [
     ("EMAIL", re.compile(r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b")),
     ("CARD", re.compile(r"\b(?:\d[ -]*?){13,19}\b")),
@@ -56,18 +69,68 @@ PATTERNS = [
 
 @router.get("/overview", summary="Security overview", description="Aggregated, privacy-safe security metrics and recent audited activity.")
 async def overview(session: Annotated[AsyncSession, Depends(get_session)]) -> dict[str, object]:
+    await sync_interaction_events(session)
     rows = (await session.execute(select(SecureInteractionModel))).scalars().all()
     decisions = Counter(row.decision for row in rows)
     risks = Counter((row.risk_level or "unknown") for row in rows)
     categories = Counter(category for row in rows for category in row.data_categories)
     recent = sorted(rows, key=lambda row: row.created_at, reverse=True)[:6]
+    incidents = (await session.execute(select(SecurityIncidentModel).order_by(SecurityIncidentModel.created_at.desc()))).scalars().all()
+    events = (await session.execute(select(SecurityEventModel))).scalars().all()
     return {
         "total": len(rows), "blocked": decisions["blocked"], "allowed": decisions["allowed"],
         "pending_approvals": await session.scalar(select(func.count()).select_from(ApprovalRequestModel).where(ApprovalRequestModel.status == "pending")) or 0,
         "risks": dict(risks), "categories": dict(categories.most_common(6)),
         "recent": [{"id": row.id, "reference": row.content_reference, "decision": row.decision,
                     "risk": row.risk_level, "created_at": row.created_at.isoformat()} for row in recent],
+        "event_count": len(events),
+        "open_incidents": sum(item.status in {"open", "investigating"} for item in incidents),
+        "critical_incidents": sum(item.severity == "critical" and item.status != "closed" for item in incidents),
+        "contained_incidents": sum(item.status == "contained" for item in incidents),
+        "top_rules": dict(Counter(item.rule_id for item in events).most_common(5)),
+        "incidents": [serialize_incident(item) for item in incidents[:6]],
     }
+
+
+def serialize_event(row: SecurityEventModel) -> dict[str, object]:
+    return {"id": row.id, "source": row.source, "category": row.category, "severity": row.severity,
+            "status": row.status, "actor": row.actor, "reference": row.reference, "rule_id": row.rule_id,
+            "interaction_id": row.interaction_id, "evidence": row.evidence, "created_at": row.created_at}
+
+
+def serialize_incident(row: SecurityIncidentModel) -> dict[str, object]:
+    return {"id": row.id, "code": row.code, "title": row.title, "severity": row.severity,
+            "status": row.status, "actor": row.actor, "summary": row.summary, "rule_id": row.rule_id,
+            "event_ids": row.event_ids, "event_count": len(row.event_ids), "assignee": row.assignee,
+            "response_action": row.response_action, "created_at": row.created_at, "updated_at": row.updated_at}
+
+
+@router.get("/events", summary="List SOC events", description="Returns normalized, privacy-safe events for investigation and correlation.")
+async def security_events(session: Annotated[AsyncSession, Depends(get_session)]) -> list[dict[str, object]]:
+    await sync_interaction_events(session)
+    rows = (await session.execute(select(SecurityEventModel).order_by(SecurityEventModel.created_at.desc()).limit(100))).scalars().all()
+    return [serialize_event(row) for row in rows]
+
+
+@router.get("/incidents", summary="List security incidents", description="Returns correlated incidents and their current response status.")
+async def security_incidents(session: Annotated[AsyncSession, Depends(get_session)]) -> list[dict[str, object]]:
+    await sync_interaction_events(session)
+    rows = (await session.execute(select(SecurityIncidentModel).order_by(SecurityIncidentModel.created_at.desc()))).scalars().all()
+    return [serialize_incident(row) for row in rows]
+
+
+@router.put("/incidents/{incident_id}", summary="Update security incident", description="Assigns an analyst and records containment or closure actions.")
+async def update_incident(incident_id: int, payload: IncidentResolutionPayload, session: Annotated[AsyncSession, Depends(get_session)]) -> dict[str, object]:
+    row = await session.get(SecurityIncidentModel, incident_id)
+    if row is None:
+        raise HTTPException(404, "Incidente no encontrado.")
+    row.status = payload.status
+    row.assignee = payload.assignee
+    row.response_action = payload.response_action
+    row.updated_at = datetime.now(timezone.utc)
+    await session.commit()
+    await session.refresh(row)
+    return serialize_incident(row)
 
 
 @router.get("/policies/current", summary="Get active policy", description="Returns the latest version of the organization's security policy.")
@@ -150,6 +213,15 @@ async def lab_scenarios() -> list[dict[str, str]]:
         {"id": "personal-data", "name": "Datos personales", "risk": "high", "sample": "Contactá a ana@example.com, DNI 30123456."},
         {"id": "safe", "name": "Contenido seguro", "risk": "low", "sample": "Resumí las ventajas de documentar procesos internos."},
     ]
+
+
+@router.post("/lab/scenarios/{scenario_id}/run", status_code=status.HTTP_201_CREATED, summary="Run SOC simulation", description="Creates a safe event sequence, correlates it and records the resulting incident.")
+async def execute_lab_scenario(scenario_id: str, session: Annotated[AsyncSession, Depends(get_session)]) -> dict[str, object]:
+    try:
+        incident = await run_scenario(session, scenario_id)
+    except KeyError:
+        raise HTTPException(404, "Escenario no encontrado.") from None
+    return serialize_incident(incident)
 
 
 @router.get("/reports/{interaction_id}.pdf", summary="Download audit report", description="Generates a PDF audit report containing only safe, masked evidence.")

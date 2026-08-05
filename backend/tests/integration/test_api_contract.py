@@ -30,6 +30,7 @@ from app.iam.infrastructure.persistence.sqlalchemy.models.user_account_model imp
 )
 from app.iam.interfaces.rest.controllers import authentication_router
 from app.main import create_app
+from app.platform import router as platform_router
 from tests.conftest import SentinelTestContext
 
 
@@ -85,6 +86,33 @@ def client_for(app: FastAPI) -> httpx.AsyncClient:
     )
 
 
+@pytest.mark.asyncio
+async def test_soc_lab_correlates_events_into_an_incident(
+    context: SentinelTestContext,
+) -> None:
+    app = FastAPI()
+    app.include_router(platform_router.router)
+
+    async def session_override():
+        yield context.session
+
+    app.dependency_overrides[get_session] = session_override
+    async with client_for(app) as client:
+        simulation = await client.post(
+            "/api/v1/platform/lab/scenarios/api-key/run"
+        )
+        incidents = await client.get("/api/v1/platform/incidents")
+        events = await client.get("/api/v1/platform/events")
+
+    assert simulation.status_code == 201
+    assert simulation.json()["severity"] == "critical"
+    assert simulation.json()["status"] == "contained"
+    assert simulation.json()["event_count"] == 3
+    assert incidents.json()[0]["code"].startswith("INC-LAB-")
+    assert len(events.json()) == 3
+    assert {event["rule_id"] for event in events.json()} == {"CRED-001"}
+
+
 def test_routes_are_unambiguous_and_documented() -> None:
     schema = create_app().openapi()
     paths = schema["paths"]
@@ -107,12 +135,16 @@ def test_routes_are_unambiguous_and_documented() -> None:
         "/api/v1/interactions",
         "/api/v1/interactions/{interaction_id}",
         "/api/v1/platform/overview",
+        "/api/v1/platform/events",
+        "/api/v1/platform/incidents",
+        "/api/v1/platform/incidents/{incident_id}",
         "/api/v1/platform/policies/current",
         "/api/v1/platform/sanitize",
         "/api/v1/platform/interactions/{interaction_id}/trace",
         "/api/v1/platform/approvals",
         "/api/v1/platform/approvals/{approval_id}/resolve",
         "/api/v1/platform/lab/scenarios",
+        "/api/v1/platform/lab/scenarios/{scenario_id}/run",
         "/api/v1/platform/reports/{interaction_id}.pdf",
     }
     # A static segment and a path parameter must never compete for the same slot.

@@ -41,9 +41,10 @@ export function HistoryPage() {
     <div className="flex flex-col gap-8">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="page-heading">Historial</h1>
+          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-primary">Event explorer</p>
+          <h1 className="page-heading">Historial de eventos</h1>
           <p className="page-description">
-            Cada consulta revisada conserva su decisión, riesgo y explicación enmascarada.
+            Investigá la evidencia enmascarada, la severidad y la decisión aplicada a cada operación.
           </p>
         </div>
         {page && (
@@ -65,13 +66,13 @@ export function HistoryPage() {
       {page && !isLoading && page.items.length > 0 && (
         <Card className="overflow-hidden">
           <CardHeader>
-            <CardTitle className="text-base">Interacciones revisadas</CardTitle>
+            <CardTitle className="text-base">Eventos normalizados</CardTitle>
           </CardHeader>
           <CardContent className="p-0">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Tipo</TableHead>
+                  <TableHead>Evento</TableHead>
                   <TableHead>Referencia</TableHead>
                   <TableHead>Fecha</TableHead>
                   <TableHead>Riesgo</TableHead>
@@ -86,7 +87,8 @@ export function HistoryPage() {
                 {page.items.map((interaction) => (
                   <TableRow key={interaction.id}>
                     <TableCell className="font-medium">
-                      {contentTypeLabel(interaction.contentType)}
+                      <span className="block">EVT-{String(interaction.id).padStart(5, '0')}</span>
+                      <span className="text-xs font-normal text-muted-foreground">{contentTypeLabel(interaction.contentType)}</span>
                     </TableCell>
                     <TableCell className="max-w-64 truncate text-muted-foreground">
                       {interaction.contentReference}

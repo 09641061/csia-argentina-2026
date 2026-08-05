@@ -42,7 +42,7 @@ export function InteractionDetailPage() {
         <>
           <header>
             <p className="mb-2 text-sm font-medium text-muted-foreground">
-              Interacción #{detail.interaction.id}
+              Evidencia SOC · EVT-{String(detail.interaction.id).padStart(5, '0')}
             </p>
             <h1 className="page-heading">{decisionLabel(detail.interaction.decision)}</h1>
             <p className="page-description">{detail.interaction.reason}</p>
@@ -50,7 +50,7 @@ export function InteractionDetailPage() {
 
           <section aria-labelledby="audit-summary-title" className="flex flex-col gap-5">
             <h2 id="audit-summary-title" className="text-base font-semibold">
-              Resumen de auditoría
+              Resumen del evento
             </h2>
             <dl className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               <Detail label="Tipo" value={contentTypeLabel(detail.interaction.contentType)} />

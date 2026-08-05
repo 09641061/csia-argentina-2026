@@ -68,7 +68,7 @@ describe('Navegación', () => {
 
     await user.click(screen.getByRole('link', { name: 'Historial' }))
 
-    expect(await screen.findByRole('heading', { name: 'Historial', level: 1 })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Historial de eventos', level: 1 })).toBeInTheDocument()
   })
 
   it('shows a friendly page for an unknown route', async () => {
