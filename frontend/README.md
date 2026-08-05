@@ -70,32 +70,28 @@ asociadas (consulta y documento), su vista previa enmascarada y sus hallazgos.
 
 ## Arquitectura
 
-DDD pragmático. Cada módulo contiene solo las capas que realmente usa; no hay carpetas vacías ni
-clases ceremoniales.
+DDD pragmático alineado con los bounded contexts públicos del backend. Los componentes React viven
+exclusivamente en capas `interfaces`; `application` coordina casos de uso, `domain` conserva las
+reglas y contratos, e `infrastructure` implementa HTTP, almacenamiento y mapeadores.
 
 ```text
 src/
-  app/                          layout, rutas y estilos
-  modules/
-    analysis/
-      domain/                   RiskLevel, Decision, AnalysisStatus, GenerationStatus,
-                                ContentType, Finding, SecurityAnalysis
-      infrastructure/           mapeadores de recursos REST a dominio
-    secure-query/
-      domain/                   SecureInteraction, AssistantResponse, SecureQueryDraft, contrato
-      application/              SubmitSecureQuery
-      infrastructure/           HttpSecureQueryRepository, mapeadores
-      presentation/             página, formulario, resultado y hook
-    history/
-      domain/                   InteractionRepository, InteractionPage
-      application/              GetInteractionHistory, GetInteraction
-      infrastructure/           HttpInteractionRepository
-      presentation/             historial, detalle y hooks
+  app/                          composición, rutas, interfaces del shell y estilos
+  contexts/
+    iam/
+      domain/                   AuthSession
+      application/              coordinación de identidad dentro del provider
+      infrastructure/           repositorio HTTP y persistencia local del token
+      interfaces/               acceso, registro, guardas, perfil y sesión
+    analysis-and-decision/
+      domain/                   análisis, decisiones, consulta segura e historial
+      application/              SubmitSecureQuery, GetInteractionHistory, GetInteraction
+      infrastructure/           repositorios HTTP y mapeadores REST
+      interfaces/               compositor, resultado, historial, detalle y sidebar
   shared/
-    api/                        cliente HTTP, ApiError, tipos de los recursos REST
-    config/                     variables de entorno
+    infrastructure/             cliente HTTP, recursos REST y configuración
+    interfaces/                 primitivas y componentes visuales compartidos
     lib/                        formato de fechas y tamaños
-    ui/                         componentes de presentación reutilizables
 ```
 
 No hay módulo `documents`: en el MVP el documento se envía dentro de la consulta segura y no existe
@@ -103,7 +99,7 @@ una pantalla propia de documentos. Crear ese módulo sería una carpeta sin func
 
 ## Integración
 
-Un único punto de entrada (`shared/api/http-client.ts`) hacia el backend. Traduce cada resultado de
+Un único punto de entrada (`shared/infrastructure/api/http-client.ts`) hacia el backend. Traduce cada resultado de
 red a un `ApiError` con mensaje para personas, aplica timeout, cancela con `AbortController` al
 desmontar y evita solicitudes duplicadas mientras una consulta está en curso.
 

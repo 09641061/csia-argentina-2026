@@ -1,14 +1,14 @@
-import { Link, Route, Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 
-import { Button } from '@/components/ui/button'
-import { LoginPage } from '@/modules/auth/presentation/login-page'
-import { ProtectedRoute, PublicOnlyRoute } from '@/modules/auth/presentation/protected-route'
-import { RegisterPage } from '@/modules/auth/presentation/register-page'
-import { HistoryPage } from '@/modules/history/presentation/history-page'
-import { InteractionDetailPage } from '@/modules/history/presentation/interaction-detail-page'
-import { SecureQueryPage } from '@/modules/secure-query/presentation/secure-query-page'
+import { LoginPage } from '@/contexts/iam/interfaces/login-page'
+import { ProtectedRoute, PublicOnlyRoute } from '@/contexts/iam/interfaces/protected-route'
+import { RegisterPage } from '@/contexts/iam/interfaces/register-page'
+import { HistoryPage } from '@/contexts/analysis-and-decision/interfaces/history/history-page'
+import { InteractionDetailPage } from '@/contexts/analysis-and-decision/interfaces/history/interaction-detail-page'
+import { SecureQueryPage } from '@/contexts/analysis-and-decision/interfaces/secure-query/secure-query-page'
 
-import { AppLayout } from './app-layout'
+import { AppLayout } from './interfaces/app-layout'
+import { NotFoundPage } from './interfaces/not-found-page'
 
 export function AppRoutes() {
   return (
@@ -26,20 +26,5 @@ export function AppRoutes() {
         </Route>
       </Route>
     </Routes>
-  )
-}
-
-function NotFoundPage() {
-  return (
-    <section className="mx-auto flex min-h-[60vh] max-w-lg flex-col items-center justify-center text-center">
-      <span className="text-sm font-medium text-muted-foreground">404</span>
-      <h1 className="mt-2 text-3xl font-semibold tracking-tight">Página no encontrada</h1>
-      <p className="mt-3 text-muted-foreground">
-        La dirección que abriste no existe en Sentinel AI Guard.
-      </p>
-      <Button asChild className="mt-6">
-        <Link to="/">Ir a Consultar</Link>
-      </Button>
-    </section>
   )
 }
