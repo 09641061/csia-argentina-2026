@@ -15,7 +15,13 @@ class Settings(BaseSettings):
     running the project without an external account.
     """
 
-    model_config = SettingsConfigDict(env_file=PROJECT_ROOT / ".env", extra="ignore")
+    # Accept the backend-local file first, with the repository-level file as a
+    # convenient fallback for local development. The backend-local settings
+    # win when both files define the same variable.
+    model_config = SettingsConfigDict(
+        env_file=(PROJECT_ROOT.parent / ".env", PROJECT_ROOT / ".env"),
+        extra="ignore",
+    )
 
     database_url: str = Field(
         default="postgresql+asyncpg://postgres:postgres@localhost:5432/sentinel_ai_guard",
