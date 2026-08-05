@@ -2,7 +2,7 @@ import type {
   SecureInteractionResource,
   SecureQueryResponseResource,
   SecurityAnalysisResource,
-} from '@/shared/api/resources'
+} from '@/shared/infrastructure/api/resources'
 
 export function allowedInteractionResource(
   overrides: Partial<SecureInteractionResource> = {},

@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { AuthProvider } from '@/modules/auth/presentation/auth-provider'
+import { AuthProvider } from '@/contexts/iam/interfaces/auth-provider'
 import { allowedInteractionResource, stubFetch } from '@/test/builders'
 
 import { AppRoutes } from './app-routes'

@@ -1,7 +1,7 @@
 import { BrowserRouter } from 'react-router-dom'
 
-import { TooltipProvider } from '@/components/ui/tooltip'
-import { AuthProvider } from '@/modules/auth/presentation/auth-provider'
+import { TooltipProvider } from '@/shared/interfaces/ui/tooltip'
+import { AuthProvider } from '@/contexts/iam/interfaces/auth-provider'
 
 import { AppRoutes } from './app-routes'
 
