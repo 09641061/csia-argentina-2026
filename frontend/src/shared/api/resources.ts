@@ -1,5 +1,16 @@
 /** Shape of the REST resources exactly as the backend documents them in OpenAPI. */
 
+export interface AuthTokenResource {
+  access_token: string
+  token_type: 'bearer'
+  expires_at: string
+  username: string
+}
+
+export interface AuthenticatedUserResource {
+  username: string
+}
+
 export interface MaskedFindingResource {
   origin: string
   finding_type: string

@@ -1,6 +1,11 @@
+import { ArrowLeft, FileSearch, ShieldAlert } from 'lucide-react'
 import { useMemo } from 'react'
 import { Link, useParams } from 'react-router-dom'
 
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Separator } from '@/components/ui/separator'
 import { analysisStatusLabel } from '@/modules/analysis/domain/analysis-status'
 import { contentTypeLabel } from '@/modules/analysis/domain/content-type'
 import { decisionLabel } from '@/modules/analysis/domain/decision'
@@ -23,70 +28,91 @@ export function InteractionDetailPage() {
   const { detail, isLoading, errorMessage, retry } = useInteractionDetail(repository, parsedId)
 
   return (
-    <>
-      <Link className="back-link" to="/historial">
-        ← Volver al historial
-      </Link>
+    <div className="mx-auto flex max-w-5xl flex-col gap-6">
+      <Button asChild variant="ghost" className="-ml-2 self-start">
+        <Link to="/historial">
+          <ArrowLeft data-icon="inline-start" /> Volver al historial
+        </Link>
+      </Button>
 
       {isLoading && <LoadingStatus message="Cargando la consulta…" />}
       {errorMessage && !isLoading && <ErrorNotice message={errorMessage} onRetry={retry} />}
 
       {detail && !isLoading && (
         <>
-          <h1 className="page-title">{decisionLabel(detail.interaction.decision)}</h1>
-          <p className="page-lead">{detail.interaction.reason}</p>
+          <header>
+            <p className="mb-2 text-sm font-medium text-muted-foreground">
+              Interacción #{detail.interaction.id}
+            </p>
+            <h1 className="page-heading">{decisionLabel(detail.interaction.decision)}</h1>
+            <p className="page-description">{detail.interaction.reason}</p>
+          </header>
 
-          <dl className="detail-list">
-            <dt>Identificador</dt>
-            <dd>#{detail.interaction.id}</dd>
-            <dt>Tipo</dt>
-            <dd>{contentTypeLabel(detail.interaction.contentType)}</dd>
-            <dt>Referencia</dt>
-            <dd>{detail.interaction.contentReference}</dd>
-            <dt>Fecha</dt>
-            <dd>{formatDateTime(detail.interaction.createdAt)}</dd>
-            <dt>Riesgo</dt>
-            <dd>
-              <RiskLabel risk={detail.interaction.riskLevel} />
-            </dd>
-            <dt>Generación</dt>
-            <dd>
-              {generationStatusLabel(detail.interaction.generationStatus)}
-              {detail.interaction.generationModel ? ` · ${detail.interaction.generationModel}` : ''}
-              {detail.interaction.generationError ? ` · ${detail.interaction.generationError}` : ''}
-            </dd>
-          </dl>
+          <section aria-labelledby="audit-summary-title" className="flex flex-col gap-5">
+            <h2 id="audit-summary-title" className="text-base font-semibold">
+              Resumen de auditoría
+            </h2>
+            <dl className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              <Detail label="Tipo" value={contentTypeLabel(detail.interaction.contentType)} />
+              <Detail label="Referencia" value={detail.interaction.contentReference} />
+              <Detail label="Fecha" value={formatDateTime(detail.interaction.createdAt)} />
+              <div>
+                <dt className="text-xs font-medium text-muted-foreground">Riesgo</dt>
+                <dd className="mt-1">
+                  <RiskLabel risk={detail.interaction.riskLevel} />
+                </dd>
+              </div>
+              <Detail
+                label="Generación"
+                value={generationStatusLabel(detail.interaction.generationStatus)}
+              />
+              <Detail label="Modelo" value={detail.interaction.generationModel ?? 'No utilizado'} />
+            </dl>
+            {detail.interaction.generationError && (
+              <p className="text-sm text-destructive">{detail.interaction.generationError}</p>
+            )}
+          </section>
 
           {detail.interaction.decision === 'blocked' && (
-            <p className="section">
-              El contenido no se envió al generador de respuestas de la IA.
-            </p>
+            <Alert variant="destructive">
+              <ShieldAlert aria-hidden="true" />
+              <AlertDescription>
+                El contenido no se envió al generador de respuestas de la IA.
+              </AlertDescription>
+            </Alert>
           )}
 
           {detail.interaction.maskedFindings.length > 0 && (
             <>
-              <div className="section">
-                <h2 className="section__title">Información detectada</h2>
-                <div className="detected-types">
+              <Separator />
+              <section className="flex flex-col gap-4" aria-labelledby="masked-findings-title">
+                <h2 id="masked-findings-title" className="text-base font-semibold">
+                  Hallazgos enmascarados
+                </h2>
+                <div className="flex flex-wrap gap-2">
                   {detectedInformationTypes(detail.interaction.maskedFindings).map((type) => (
-                    <span className="tag" key={type}>
+                    <Badge variant="secondary" key={type}>
                       {type}
-                    </span>
+                    </Badge>
                   ))}
                 </div>
-              </div>
-
-              <div className="section">
-                <h2 className="section__title">Hallazgos enmascarados</h2>
                 <FindingsList findings={detail.interaction.maskedFindings} />
-              </div>
+              </section>
             </>
           )}
 
-          <div className="section">
-            <h2 className="section__title">Revisiones realizadas</h2>
+          <Separator />
+          <section className="flex flex-col gap-4" aria-labelledby="reviews-title">
+            <h2
+              id="reviews-title"
+              className="flex items-center gap-2 text-base font-semibold [&_svg]:size-4"
+            >
+              <FileSearch aria-hidden="true" /> Revisiones realizadas
+            </h2>
             {detail.promptAnalysis === null && detail.documentAnalysis === null && (
-              <p>No hay revisiones asociadas disponibles.</p>
+              <p className="text-sm text-muted-foreground">
+                No hay revisiones asociadas disponibles.
+              </p>
             )}
             {detail.promptAnalysis && (
               <ReviewSummary title="Consulta" analysis={detail.promptAnalysis} />
@@ -94,36 +120,48 @@ export function InteractionDetailPage() {
             {detail.documentAnalysis && (
               <ReviewSummary title="Documento" analysis={detail.documentAnalysis} />
             )}
-          </div>
+          </section>
         </>
       )}
-    </>
+    </div>
   )
 }
 
-interface ReviewSummaryProps {
-  readonly title: string
-  readonly analysis: SecurityAnalysis
+function Detail({ label, value }: { readonly label: string; readonly value: string }) {
+  return (
+    <div>
+      <dt className="text-xs font-medium text-muted-foreground">{label}</dt>
+      <dd className="mt-1 break-words text-sm font-medium">{value}</dd>
+    </div>
+  )
 }
 
-function ReviewSummary({ title, analysis }: ReviewSummaryProps) {
+function ReviewSummary({
+  title,
+  analysis,
+}: {
+  readonly title: string
+  readonly analysis: SecurityAnalysis
+}) {
   return (
-    <section className="review">
-      <p className="review__head">
-        <span className="review__title">{title}</span>
+    <article className="flex flex-col gap-3 border-l-2 pl-4">
+      <div className="flex flex-wrap items-center gap-2">
+        <h3 className="font-medium">{title}</h3>
         <RiskLabel risk={analysis.riskLevel} />
-        <span className="table__date">{analysisStatusLabel(analysis.status)}</span>
-        <span className="table__date">Modelo {analysis.modelName}</span>
-      </p>
-      <p className="review__body">{analysis.explanation}</p>
+        <Badge variant="outline">{analysisStatusLabel(analysis.status)}</Badge>
+        <Badge variant="outline">{analysis.modelName}</Badge>
+      </div>
+      <p className="text-sm leading-6 text-muted-foreground">{analysis.explanation}</p>
       {analysis.maskedPreview && (
-        <p className="review__preview">Vista previa enmascarada: {analysis.maskedPreview}</p>
+        <p className="rounded-lg bg-muted p-3 font-mono text-xs break-words">
+          Vista previa enmascarada: {analysis.maskedPreview}
+        </p>
       )}
       {analysis.contentTruncated && (
-        <p className="review__body">
+        <p className="text-xs text-muted-foreground">
           El contenido era mayor que el contexto analizado y se resumió de forma segura.
         </p>
       )}
-    </section>
+    </article>
   )
 }

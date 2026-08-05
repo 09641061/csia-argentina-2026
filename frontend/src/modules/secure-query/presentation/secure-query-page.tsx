@@ -14,11 +14,14 @@ export function SecureQueryPage() {
   const isBusy = state.phase === 'analyzing' || state.phase === 'generating'
 
   return (
-    <>
-      <h1 className="page-title">Consultar</h1>
-      <p className="page-lead">
-        Sentinel revisa tu consulta y el documento adjunto antes de que la IA local pueda leerlos.
-      </p>
+    <div className="mx-auto flex max-w-4xl flex-col gap-8">
+      <header>
+        <h1 className="page-heading">Consultar</h1>
+        <p className="page-description">
+          Sentinel revisa la consulta y el archivo antes de permitir que el modelo local genere una
+          respuesta.
+        </p>
+      </header>
 
       <SecureQueryForm
         draft={state.draft}
@@ -28,26 +31,20 @@ export function SecureQueryPage() {
         onSubmit={submit}
       />
 
-      {state.phase === 'analyzing' && <LoadingStatus message="Analizando el contenido…" />}
+      {state.phase === 'analyzing' && <LoadingStatus message="Analizando el contenido con IA local…" />}
       {state.phase === 'generating' && (
-        <LoadingStatus message="Contenido revisado. Generando la respuesta…" />
+        <LoadingStatus message="Contenido permitido. Generando la respuesta…" />
       )}
-
       {state.phase === 'error' && state.errorMessage && (
-        <div className="section">
-          <ErrorNotice message={state.errorMessage} onRetry={submit} />
-        </div>
+        <ErrorNotice message={state.errorMessage} onRetry={submit} />
       )}
-
       {state.phase === 'done' && state.interaction && (
-        <div className="section">
-          <SecureQueryResult
-            interaction={state.interaction}
-            answer={state.answer}
-            onNewQuery={reset}
-          />
-        </div>
+        <SecureQueryResult
+          interaction={state.interaction}
+          answer={state.answer}
+          onNewQuery={reset}
+        />
       )}
-    </>
+    </div>
   )
 }

@@ -1,6 +1,18 @@
+import { ArrowLeft, ArrowRight, Eye } from 'lucide-react'
 import { useMemo } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { contentTypeLabel } from '@/modules/analysis/domain/content-type'
 import { decisionLabel } from '@/modules/analysis/domain/decision'
 import { generationStatusLabel } from '@/modules/analysis/domain/generation-status'
@@ -26,17 +38,23 @@ export function HistoryPage() {
   }
 
   return (
-    <>
-      <h1 className="page-title">Historial</h1>
-      <p className="page-lead">
-        Cada consulta revisada, con su decisión y la explicación de por qué se permitió o se
-        bloqueó.
-      </p>
+    <div className="flex flex-col gap-8">
+      <header className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 className="page-heading">Historial</h1>
+          <p className="page-description">
+            Cada consulta revisada conserva su decisión, riesgo y explicación enmascarada.
+          </p>
+        </div>
+        {page && (
+          <Badge variant="outline" className="bg-background">
+            {page.total} {page.total === 1 ? 'consulta' : 'consultas'}
+          </Badge>
+        )}
+      </header>
 
       {isLoading && <LoadingStatus message="Cargando el historial…" />}
-
       {errorMessage && !isLoading && <ErrorNotice message={errorMessage} onRetry={retry} />}
-
       {page && !isLoading && page.items.length === 0 && (
         <EmptyState
           title="Todavía no hay consultas"
@@ -45,71 +63,87 @@ export function HistoryPage() {
       )}
 
       {page && !isLoading && page.items.length > 0 && (
-        <>
-          <div className="table-scroll">
-            <table className="table">
-              <caption className="visually-hidden">Consultas revisadas por Sentinel</caption>
-              <thead>
-                <tr>
-                  <th scope="col">Tipo</th>
-                  <th scope="col">Referencia</th>
-                  <th scope="col">Fecha</th>
-                  <th scope="col">Riesgo</th>
-                  <th scope="col">Decisión</th>
-                  <th scope="col">Generación</th>
-                  <th scope="col">
-                    <span className="visually-hidden">Acciones</span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
+        <Card className="overflow-hidden">
+          <CardHeader>
+            <CardTitle className="text-base">Interacciones revisadas</CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Tipo</TableHead>
+                  <TableHead>Referencia</TableHead>
+                  <TableHead>Fecha</TableHead>
+                  <TableHead>Riesgo</TableHead>
+                  <TableHead>Decisión</TableHead>
+                  <TableHead>Generación</TableHead>
+                  <TableHead className="w-16">
+                    <span className="sr-only">Acciones</span>
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {page.items.map((interaction) => (
-                  <tr key={interaction.id}>
-                    <td>{contentTypeLabel(interaction.contentType)}</td>
-                    <td className="table__reference">{interaction.contentReference}</td>
-                    <td className="table__date">{formatDateTime(interaction.createdAt)}</td>
-                    <td>
+                  <TableRow key={interaction.id}>
+                    <TableCell className="font-medium">
+                      {contentTypeLabel(interaction.contentType)}
+                    </TableCell>
+                    <TableCell className="max-w-64 truncate text-muted-foreground">
+                      {interaction.contentReference}
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap text-muted-foreground">
+                      {formatDateTime(interaction.createdAt)}
+                    </TableCell>
+                    <TableCell>
                       <RiskLabel risk={interaction.riskLevel} />
-                    </td>
-                    <td className={`decision--${interaction.decision}`}>
-                      {decisionLabel(interaction.decision).replace('Consulta ', '')}
-                    </td>
-                    <td>{generationStatusLabel(interaction.generationStatus)}</td>
-                    <td>
-                      <Link to={`/historial/${interaction.id}`}>Ver detalle</Link>
-                    </td>
-                  </tr>
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={interaction.decision === 'allowed' ? 'secondary' : 'outline'}
+                      >
+                        {decisionLabel(interaction.decision).replace('Consulta ', '')}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {generationStatusLabel(interaction.generationStatus)}
+                    </TableCell>
+                    <TableCell>
+                      <Button asChild size="icon" variant="ghost">
+                        <Link to={`/historial/${interaction.id}`} aria-label="Ver detalle">
+                          <Eye aria-hidden="true" />
+                        </Link>
+                      </Button>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="pagination">
-            <span>
-              Página {page.page} de {totalPages(page)} · {page.total}{' '}
-              {page.total === 1 ? 'consulta' : 'consultas'}
+              </TableBody>
+            </Table>
+          </CardContent>
+          <CardFooter className="flex flex-wrap justify-between gap-3">
+            <span className="text-sm text-muted-foreground">
+              Página {page.page} de {totalPages(page)}
             </span>
-            <span className="pagination__buttons">
-              <button
+            <div className="flex gap-2">
+              <Button
                 type="button"
-                className="button button--secondary"
+                variant="outline"
                 onClick={() => goToPage(currentPage - 1)}
                 disabled={currentPage <= 1}
               >
-                Anterior
-              </button>
-              <button
+                <ArrowLeft data-icon="inline-start" /> Anterior
+              </Button>
+              <Button
                 type="button"
-                className="button button--secondary"
+                variant="outline"
                 onClick={() => goToPage(currentPage + 1)}
                 disabled={currentPage >= totalPages(page)}
               >
-                Siguiente
-              </button>
-            </span>
-          </div>
-        </>
+                Siguiente <ArrowRight data-icon="inline-end" />
+              </Button>
+            </div>
+          </CardFooter>
+        </Card>
       )}
-    </>
+    </div>
   )
 }

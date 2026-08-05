@@ -37,7 +37,7 @@ Contextos delimitados:
   evidencia y exige una evaluación contextual al modelo local de seguridad.
 * **Decision & Audit** aplica la política ALLOWED/BLOCKED, ejecuta la generación solo si
   el contenido fue permitido y conserva el historial explicable.
-* **IAM** autentica al usuario configurado y protege las operaciones funcionales.
+* **IAM** registra usuarios locales, protege contraseñas con Argon2 y valida JWT Bearer.
 * **Chat** recibe preguntas y recursos y consume capacidades externas mediante ACL.
 """
 

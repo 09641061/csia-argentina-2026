@@ -1,7 +1,8 @@
 # Sentinel AI Guard — Frontend
 
-Interfaz de consulta segura de una sola interacción: escribes una consulta, opcionalmente adjuntas
-un JSON, PDF, Word, Excel o imagen, Sentinel lo revisa y solo entonces la IA local puede responder.
+Interfaz de consulta segura de una sola interacción: creas una cuenta local, escribes una consulta
+y opcionalmente adjuntas un JSON, PNG o JPEG. Sentinel lo revisa y solo entonces la IA local puede
+responder.
 
 No es un chatbot. No hay conversaciones, ni lista de mensajes, ni memoria. No hay dashboard.
 
@@ -37,6 +38,9 @@ npm run preview  # sirve el build de producción
 ```
 
 ## Pantallas
+
+**Acceso** — registro e inicio de sesión local. La sesión usa el JWT Bearer emitido por el backend;
+las pantallas funcionales no son accesibles sin un token válido.
 
 **Consultar** — campo de consulta con contador de caracteres, zona opcional para adjuntar un archivo
 (nombre, tamaño y opción de retirarlo), y un botón que se adapta: `Analizar y consultar` cuando hay
@@ -105,6 +109,9 @@ desmontar y evita solicitudes duplicadas mientras una consulta está en curso.
 
 Endpoints consumidos:
 
+- `POST /api/v1/auth/register`
+- `POST /api/v1/auth/login`
+- `GET /api/v1/auth/me`
 - `POST /api/v1/secure-queries`
 - `GET /api/v1/interactions`
 - `GET /api/v1/interactions/{id}`
@@ -112,7 +119,7 @@ Endpoints consumidos:
 
 ## Pruebas
 
-42 pruebas con Vitest y Testing Library, sin red: `fetch` siempre está sustituido por un doble.
+47 pruebas con Vitest y Testing Library, sin red: `fetch` siempre está sustituido por un doble.
 
 Cubren consulta sin documento, documento sin consulta, consulta con documento, formatos admitidos,
 retirada del archivo, estado de análisis, resultado permitido, resultado bloqueado, respuesta del
@@ -122,10 +129,9 @@ ausencia de interfaz de chat y backend caído.
 
 ## Diseño
 
-Fuente del sistema (`-apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display",
-"Segoe UI", Roboto, Helvetica, Arial, sans-serif`), fondo neutro, bordes discretos, colores de
-riesgo sobrios, ancho de lectura acotado, foco visible y navegación por teclado. Sin gradientes,
-glow, glassmorphism, hero sections ni gráficos.
+Sistema visual construido con Tailwind CSS y componentes shadcn/ui sobre Radix: tipografía Geist,
+paleta monocromática, foco visible, navegación por teclado y componentes reutilizables para
+formularios, alertas, tablas, menús y navegación móvil.
 
 ## Nota de dependencias
 

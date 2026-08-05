@@ -3,27 +3,43 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
+import { AuthProvider } from '@/modules/auth/presentation/auth-provider'
 import { allowedInteractionResource, stubFetch } from '@/test/builders'
 
 import { AppRoutes } from './app-routes'
 
-function renderApp(initialEntry = '/') {
+function renderApp(initialEntry = '/', routes: Record<string, unknown> = {}) {
+  window.localStorage.setItem(
+    'sentinel.auth.session',
+    JSON.stringify({
+      accessToken: 'test.jwt.token',
+      expiresAt: '2099-08-04T12:00:00Z',
+      username: 'sentinel.demo',
+    }),
+  )
+  vi.stubGlobal(
+    'fetch',
+    stubFetch({ '/api/v1/auth/me': { username: 'sentinel.demo' }, ...routes }),
+  )
   return render(
     <MemoryRouter initialEntries={[initialEntry]}>
-      <AppRoutes />
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
     </MemoryRouter>,
   )
 }
 
 afterEach(() => {
   vi.unstubAllGlobals()
+  window.localStorage.clear()
 })
 
 describe('Navegación', () => {
-  it('offers only Consultar and Historial', () => {
+  it('offers only Consultar and Historial', async () => {
     renderApp()
 
-    const navigation = screen.getByRole('navigation', { name: 'Navegación principal' })
+    const navigation = await screen.findByRole('navigation', { name: 'Navegación principal' })
     const links = Array.from(navigation.querySelectorAll('a')).map((link) => link.textContent)
 
     expect(links).toEqual(['Consultar', 'Historial'])
@@ -33,34 +49,29 @@ describe('Navegación', () => {
   })
 
   it('navigates from Consultar to Historial', async () => {
-    vi.stubGlobal(
-      'fetch',
-      stubFetch({
+    renderApp('/', {
         '/api/v1/interactions': {
           items: [allowedInteractionResource()],
           page: { page: 1, page_size: 10, total: 1 },
         },
-      }),
-    )
+      })
     const user = userEvent.setup()
-    renderApp()
 
-    expect(screen.getByRole('heading', { name: 'Consultar', level: 1 })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Consultar', level: 1 })).toBeInTheDocument()
 
     await user.click(screen.getByRole('link', { name: 'Historial' }))
 
     expect(await screen.findByRole('heading', { name: 'Historial', level: 1 })).toBeInTheDocument()
   })
 
-  it('shows a friendly page for an unknown route', () => {
+  it('shows a friendly page for an unknown route', async () => {
     renderApp('/no-existe')
-    expect(screen.getByRole('heading', { name: 'Página no encontrada' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Página no encontrada' })).toBeInTheDocument()
   })
 
-  it('uses the system font stack and a fluid main column', () => {
+  it('uses the shadcn application shell and a fluid main column', async () => {
     renderApp()
-    const main = document.querySelector('.app__main')
-    expect(main).not.toBeNull()
-    expect(document.querySelector('.app__header')).not.toBeNull()
+    expect((await screen.findAllByRole('banner')).length).toBeGreaterThan(0)
+    expect(screen.getByRole('main')).toBeInTheDocument()
   })
 })

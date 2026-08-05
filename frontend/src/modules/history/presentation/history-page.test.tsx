@@ -50,7 +50,8 @@ describe('Historial', () => {
     expect(screen.getByText('bloqueada')).toBeInTheDocument()
     expect(screen.getByText('Respuesta generada')).toBeInTheDocument()
     expect(screen.getByText('No se envió al asistente')).toBeInTheDocument()
-    expect(screen.getByText('Página 1 de 1 · 2 consultas')).toBeInTheDocument()
+    expect(screen.getByText('Página 1 de 1')).toBeInTheDocument()
+    expect(screen.getByText('2 consultas')).toBeInTheDocument()
   })
 
   it('shows an empty state when nothing was reviewed yet', async () => {
@@ -132,7 +133,7 @@ describe('Historial', () => {
     await screen.findByRole('table')
 
     expect(container.querySelector('canvas')).toBeNull()
-    expect(container.querySelector('svg')).toBeNull()
+    expect(container.querySelector('[data-chart]')).toBeNull()
     expect(screen.queryByText(/métricas/i)).not.toBeInTheDocument()
     expect(screen.queryByText(/ranking/i)).not.toBeInTheDocument()
     expect(screen.queryByText(/tendencia/i)).not.toBeInTheDocument()

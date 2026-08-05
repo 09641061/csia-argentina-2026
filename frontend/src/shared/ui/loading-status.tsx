@@ -1,12 +1,14 @@
+import { Spinner } from '@/components/ui/spinner'
+
 interface LoadingStatusProps {
   readonly message: string
 }
 
 export function LoadingStatus({ message }: LoadingStatusProps) {
   return (
-    <p className="status" role="status" aria-live="polite">
-      <span className="spinner" aria-hidden="true" />
+    <div className="flex items-center gap-3 text-sm text-muted-foreground" role="status" aria-live="polite">
+      <Spinner aria-hidden="true" />
       {message}
-    </p>
+    </div>
   )
 }

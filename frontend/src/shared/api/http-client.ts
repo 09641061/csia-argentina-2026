@@ -1,4 +1,9 @@
 import { apiBaseUrl, requestTimeoutMs } from '@/shared/config/env'
+import {
+  clearAuthSession,
+  currentAccessToken,
+  notifyAuthChanged,
+} from '@/modules/auth/infrastructure/auth-storage'
 
 import { ApiError } from './api-error'
 
@@ -7,13 +12,15 @@ interface RequestOptions {
   readonly body?: FormData | Record<string, unknown>
   readonly signal?: AbortSignal
   readonly timeoutMs?: number
+  readonly authenticated?: boolean
 }
 
 const SAFE_MESSAGES: Record<number, string> = {
   400: 'La solicitud no es válida.',
+  401: 'Tu sesión no es válida o ha expirado. Vuelve a iniciar sesión.',
   404: 'No encontramos lo que buscabas.',
   413: 'El documento supera el tamaño permitido.',
-  415: 'Solo se admiten archivos JSON, PDF, Word, Excel, PNG y JPEG.',
+  415: 'Solo se admiten archivos JSON, PNG y JPEG.',
   422: 'La solicitud no es válida.',
   500: 'El servicio tuvo un problema interno. Vuelve a intentarlo.',
   502: 'El asistente local no está disponible en este momento.',
@@ -29,7 +36,13 @@ const SAFE_MESSAGES: Record<number, string> = {
  * no internal detail can leak into the interface by accident.
  */
 export async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
-  const { method = 'GET', body, signal, timeoutMs = requestTimeoutMs } = options
+  const {
+    method = 'GET',
+    body,
+    signal,
+    timeoutMs = requestTimeoutMs,
+    authenticated = true,
+  } = options
 
   const controller = new AbortController()
   const timeout = setTimeout(() => controller.abort(new DOMException('timeout', 'TimeoutError')), timeoutMs)
@@ -38,10 +51,18 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
 
   let response: Response
   try {
+    const headers = new Headers()
+    if (!(body instanceof FormData) && body !== undefined) {
+      headers.set('Content-Type', 'application/json')
+    }
+    if (authenticated) {
+      const accessToken = currentAccessToken()
+      if (accessToken) headers.set('Authorization', `Bearer ${accessToken}`)
+    }
     response = await fetch(`${apiBaseUrl}${path}`, {
       method,
       signal: controller.signal,
-      headers: body instanceof FormData || body === undefined ? undefined : { 'Content-Type': 'application/json' },
+      headers,
       body: body instanceof FormData ? body : body === undefined ? undefined : JSON.stringify(body),
     })
   } catch (error) {
@@ -59,6 +80,10 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
   }
 
   if (!response.ok) {
+    if (response.status === 401 && authenticated) {
+      clearAuthSession()
+      notifyAuthChanged()
+    }
     throw new ApiError(kindFor(response.status), await safeMessage(response), response.status)
   }
 
@@ -74,6 +99,7 @@ function isTimeout(error: unknown): boolean {
 }
 
 function kindFor(status: number): ApiError['kind'] {
+  if (status === 401) return 'unauthorized'
   if (status === 404) return 'not_found'
   if (status === 413) return 'too_large'
   if (status === 415) return 'unsupported_media'

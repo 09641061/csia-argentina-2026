@@ -1,5 +1,11 @@
+import { ArrowRight, Bot, CheckCircle2, ShieldAlert } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Separator } from '@/components/ui/separator'
 import { includesPrompt } from '@/modules/analysis/domain/content-type'
 import { decisionLabel } from '@/modules/analysis/domain/decision'
 import { detectedInformationTypes } from '@/modules/analysis/domain/finding'
@@ -9,9 +15,9 @@ import {
   wasAllowed,
   type SecureInteraction,
 } from '@/modules/secure-query/domain/secure-interaction'
+import { formatDateTime } from '@/shared/lib/format'
 import { FindingsList } from '@/shared/ui/findings-list'
 import { RiskLabel } from '@/shared/ui/risk-label'
-import { formatDateTime } from '@/shared/lib/format'
 
 interface SecureQueryResultProps {
   readonly interaction: SecureInteraction
@@ -25,76 +31,97 @@ export function SecureQueryResult({ interaction, answer, onNewQuery }: SecureQue
   const detectedTypes = detectedInformationTypes(interaction.maskedFindings)
 
   return (
-    <section
-      className={`result result--${interaction.decision}`}
-      aria-live="polite"
-      data-testid="secure-query-result"
-    >
-      <h2 className="result__verdict">
-        {allowed && !askedSomething ? 'Documento permitido' : decisionLabel(interaction.decision)}
-      </h2>
-
-      <p className="result__meta">
-        <RiskLabel risk={interaction.riskLevel} />
-        <span>{formatDateTime(interaction.createdAt)}</span>
-      </p>
-
-      <p className="result__reason">{interaction.reason}</p>
-
-      {!allowed && (
-        <>
-          <p className="result__reason">
-            El contenido no se envió al generador de respuestas de la IA.
-          </p>
-          {detectedTypes.length > 0 && (
-            <div className="section">
-              <h3 className="section__title">Información detectada</h3>
-              <div className="detected-types">
-                {detectedTypes.map((type) => (
-                  <span className="tag" key={type}>
-                    {type}
-                  </span>
-                ))}
-              </div>
-              <div className="section">
-                <h3 className="section__title">Hallazgos enmascarados</h3>
-                <FindingsList findings={interaction.maskedFindings} />
-              </div>
+    <Card aria-live="polite" data-testid="secure-query-result">
+      <CardHeader>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div className="flex items-start gap-3">
+            <span className="grid size-10 place-items-center rounded-lg bg-muted [&_svg]:size-5">
+              {allowed ? <CheckCircle2 aria-hidden="true" /> : <ShieldAlert aria-hidden="true" />}
+            </span>
+            <div>
+              <CardTitle>
+                {allowed && !askedSomething
+                  ? 'Documento permitido'
+                  : decisionLabel(interaction.decision)}
+              </CardTitle>
+              <p className="mt-1 text-sm text-muted-foreground">{interaction.reason}</p>
             </div>
-          )}
-        </>
-      )}
-
-      {allowed && !askedSomething && (
-        <p className="result__reason">
-          No escribiste una consulta, por lo que no se generó una respuesta. Añade una pregunta si
-          quieres que el asistente trabaje con este documento.
-        </p>
-      )}
-
-      {passedReviewButHasNoAnswer(interaction) && (
-        <p className="notice notice--error" role="alert">
-          El contenido superó la revisión, pero no fue posible generar la respuesta.
-          {interaction.generationError ? ` ${interaction.generationError}` : ''}
-        </p>
-      )}
-
-      {answer && (
-        <div className="answer">
-          <h3 className="section__title">Respuesta del asistente local</h3>
-          <p className="answer__text">{answer.text}</p>
-          <p className="answer__source">
-            Generada por {answer.modelName} · {formatDateTime(answer.generatedAt)}
-          </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <RiskLabel risk={interaction.riskLevel} />
+            <Badge variant="outline">{formatDateTime(interaction.createdAt)}</Badge>
+          </div>
         </div>
-      )}
+      </CardHeader>
+      <CardContent className="flex flex-col gap-6">
+        {!allowed && (
+          <>
+            <Alert variant="destructive">
+              <ShieldAlert aria-hidden="true" />
+              <AlertTitle>Generación detenida</AlertTitle>
+              <AlertDescription>
+                El contenido no se envió al generador de respuestas de la IA.
+              </AlertDescription>
+            </Alert>
+            {detectedTypes.length > 0 && (
+              <section className="flex flex-col gap-4">
+                <div>
+                  <h3 className="text-sm font-semibold">Información detectada</h3>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {detectedTypes.map((type) => (
+                      <Badge key={type} variant="secondary">
+                        {type}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+                <FindingsList findings={interaction.maskedFindings} />
+              </section>
+            )}
+          </>
+        )}
 
-      <div className="form-actions">
-        <button type="button" className="button button--primary" onClick={onNewQuery}>
+        {allowed && !askedSomething && (
+          <Alert>
+            <AlertDescription>
+              No escribiste una consulta, por lo que no se generó una respuesta. Añade una pregunta
+              para trabajar con el documento.
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {passedReviewButHasNoAnswer(interaction) && (
+          <Alert variant="destructive" role="alert">
+            <AlertDescription>
+              El contenido superó la revisión, pero no fue posible generar la respuesta.
+              {interaction.generationError ? ` ${interaction.generationError}` : ''}
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {answer && (
+          <section className="border-l-2 border-foreground pl-4">
+            <h3 className="flex items-center gap-2 text-sm font-medium [&_svg]:size-4">
+              <Bot aria-hidden="true" /> Respuesta del asistente local
+            </h3>
+            <p className="mt-4 whitespace-pre-wrap text-[15px] leading-7">{answer.text}</p>
+            <Separator className="my-4" />
+            <p className="text-xs text-muted-foreground">
+              Generada por {answer.modelName} · {formatDateTime(answer.generatedAt)}
+            </p>
+          </section>
+        )}
+      </CardContent>
+      <CardFooter className="flex-wrap gap-3">
+        <Button type="button" onClick={onNewQuery}>
           {allowed ? 'Realizar una nueva consulta' : 'Editar y volver a intentar'}
-        </button>
-        <Link to={`/historial/${interaction.id}`}>Ver el detalle en el historial</Link>
-      </div>
-    </section>
+        </Button>
+        <Button asChild variant="ghost">
+          <Link to={`/historial/${interaction.id}`}>
+            Ver detalle <ArrowRight data-icon="inline-end" aria-hidden="true" />
+          </Link>
+        </Button>
+      </CardFooter>
+    </Card>
   )
 }

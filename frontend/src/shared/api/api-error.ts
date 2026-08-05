@@ -1,6 +1,7 @@
 export type ApiErrorKind =
   | 'offline'
   | 'timeout'
+  | 'unauthorized'
   | 'bad_request'
   | 'not_found'
   | 'too_large'

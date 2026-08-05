@@ -22,7 +22,8 @@ prompt + archivo opcional
 - Formatos: JSON, PNG y JPEG, con máximo 5 MB.
 - Decisiones `ALLOWED` y `BLOCKED`. No hay WARN, SANITIZE ni aprobaciones.
 - No se entrega al usuario ninguna versión sanitizada del contenido bloqueado.
-- Autenticación local inicial con credenciales configuradas en Python; sin conversaciones, RAG ni dashboard.
+- Registro e inicio de sesión local con usuarios persistidos, contraseñas Argon2 y JWT Bearer; sin
+  conversaciones, RAG ni dashboard.
 - Ollama tiene cuatro usos separados: descubrimiento de datos sensibles, visión documental,
   evaluación contextual y generación.
 - La IA es una dependencia funcional: sin una evaluación válida no existe `ALLOWED`; sin visión no
@@ -35,7 +36,7 @@ prompt + archivo opcional
 | **Documents** | Recibe archivos admitidos, valida tipo/tamaño/contenedor, los guarda con nombre interno opaco y expone metadatos seguros | No decide el riesgo ni llama al generador |
 | **Analysis** | Extracción local acotada, visión Ollama cuando corresponde, escaneo determinista, enmascarado, evaluación contextual obligatoria y cálculo de riesgo | No genera la respuesta ni decide si Ollama puede responder |
 | **Decision & Audit** | Política ALLOWED/BLOCKED, autorización de generación, ejecución del generador, historial explicable | No analiza contenido por su cuenta |
-| **IAM** | Autentica al usuario local y valida tokens Bearer firmados | No persiste usuarios ni credenciales |
+| **IAM** | Registra y autentica usuarios locales, persiste hashes Argon2 y valida JWT Bearer firmados | No implementa roles, SSO ni refresh tokens |
 | **Chat** | Recibe preguntas y recursos y consume la capacidad segura mediante ACL | No importa modelos internos de otros contextos |
 
 La comunicación entre contextos pasa por fachadas ACL públicas
@@ -124,6 +125,9 @@ uv run uvicorn app.main:app --reload
 | --- | --- | --- |
 | `DATABASE_URL` | Conexión SQLAlchemy asíncrona | `postgresql+asyncpg://postgres:admin@localhost:5432/sentinel_ai_guard` |
 | `FRONTEND_ORIGIN` | Orígenes permitidos por CORS, separados por comas | `http://localhost:5173,http://127.0.0.1:5173` |
+| `JWT_SECRET_KEY` | Clave de firma HS256; reemplazar fuera de desarrollo | Una cadena aleatoria de al menos 32 caracteres |
+| `JWT_ISSUER` / `JWT_AUDIENCE` | Emisor y audiencia que deben validar los tokens | `sentinel-ai-guard` / `sentinel-ai-guard-web` |
+| `JWT_ACCESS_TOKEN_EXPIRE_MINUTES` | Duración de la sesión local | `480` |
 | `DOCUMENT_STORAGE_BACKEND` | `cloudinary` o `local` | `cloudinary` |
 | `DOCUMENT_STORAGE_DIR` | Carpeta privada del adaptador local | `storage/documents` |
 | `MAX_DOCUMENT_SIZE_MB` | Tamaño máximo del archivo | `5` |
@@ -151,7 +155,9 @@ uv run uvicorn app.main:app --reload
 | Método | Ruta | Descripción |
 | --- | --- | --- |
 | `GET` | `/api/v1/health` | Estado de PostgreSQL y de los modelos locales |
+| `POST` | `/api/v1/auth/register` | Crea una cuenta local y entrega un Bearer token |
 | `POST` | `/api/v1/auth/login` | Autentica con usuario y contraseña y entrega un Bearer token |
+| `GET` | `/api/v1/auth/me` | Valida el JWT y devuelve la identidad autenticada |
 | `POST` | `/api/v1/chat/messages` | Asistente general con JSON o imagen opcional mediante ACL |
 | `POST` | `/api/v1/documents` | Registra un archivo admitido (multipart `file`) |
 | `GET` | `/api/v1/documents` | Lista paginada de documentos |
@@ -166,7 +172,7 @@ uv run uvicorn app.main:app --reload
 | `GET` | `/api/v1/interactions` | Historial paginado de interacciones |
 | `GET` | `/api/v1/interactions/{interaction_id}` | Detalle explicable de una interacción |
 
-Salvo `/api/v1/health` y `/api/v1/auth/login`, las rutas requieren
+Salvo `/api/v1/health`, `/api/v1/auth/register` y `/api/v1/auth/login`, las rutas requieren
 `Authorization: Bearer <access_token>`. Todas las rutas son inequívocas: ningún segmento estático
 compite con un parámetro de ruta.
 
@@ -174,9 +180,9 @@ Ejemplo:
 
 ```powershell
 $login = Invoke-RestMethod -Method Post `
-  -Uri http://127.0.0.1:8000/api/v1/auth/login `
+  -Uri http://127.0.0.1:8000/api/v1/auth/register `
   -ContentType "application/json" `
-  -Body '{"username":"admin","password":"admin"}'
+  -Body '{"username":"sentinel.demo","password":"DemoSecure2026"}'
 
 curl -X POST http://127.0.0.1:8000/api/v1/chat/messages `
   -H "Authorization: Bearer $($login.access_token)" `

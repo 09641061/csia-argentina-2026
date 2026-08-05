@@ -42,11 +42,9 @@ describe('SecureQueryDraft', () => {
     expect(draftProblem(draft)).toBe('document_too_large')
   })
 
-  it('accepts PDF, Word, Excel and image MIME types', () => {
+  it('accepts JSON and image MIME types', () => {
     for (const file of [
-      testFile('informe.pdf', 'application/pdf'),
-      testFile('informe.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'),
-      testFile('datos.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'),
+      testFile('datos.json', 'application/json'),
       testFile('captura.png', 'image/png'),
       testFile('foto.jpg', 'image/jpeg'),
     ]) {
@@ -65,7 +63,7 @@ describe('SecureQueryDraft', () => {
   })
 
   it('accepts a known extension when the browser reports no MIME type', () => {
-    expect(draftProblem({ prompt: '', document: testFile('informe.docx', '') })).toBeNull()
+    expect(draftProblem({ prompt: '', document: testFile('captura.png', '') })).toBeNull()
   })
 
   it('promises an answer only when there is a question', () => {

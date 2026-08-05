@@ -1,3 +1,4 @@
+import { Badge } from '@/components/ui/badge'
 import {
   findingOriginLabel,
   findingSeverityLabel,
@@ -10,31 +11,34 @@ interface FindingsListProps {
   readonly showOrigin?: boolean
 }
 
-/**
- * Masked evidence, exactly as the backend produced it.
- *
- * There is no "show original" affordance and no sanitized copy to copy or
- * download: the point of a block is that the content does not travel further.
- */
+/** Masked evidence exactly as the backend produced it. */
 export function FindingsList({ findings, showOrigin = true }: FindingsListProps) {
   if (findings.length === 0) return null
 
   return (
-    <ul className="findings">
+    <ul className="divide-y border-y">
       {findings.map((finding, index) => (
-        <li className="finding" key={`${finding.origin}-${finding.location}-${index}`}>
-          <span className="finding__type">{findingTypeLabel(finding.findingType)}</span>
-          <span className="finding__severity">
-            Severidad {findingSeverityLabel(finding.severity).toLowerCase()}
-          </span>
-          <span className="finding__detail">
+        <li
+          className="flex flex-col gap-3 py-4"
+          key={`${finding.origin}-${finding.location}-${index}`}
+        >
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <span className="text-sm font-medium">{findingTypeLabel(finding.findingType)}</span>
+            <Badge variant="outline">
+              Severidad {findingSeverityLabel(finding.severity).toLowerCase()}
+            </Badge>
+          </div>
+          <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-muted-foreground">
             {showOrigin && <span>{findingOriginLabel(finding.origin)}</span>}
-            <span>
-              Evidencia enmascarada: <code className="finding__evidence">{finding.maskedEvidence}</code>
-            </span>
             {finding.occurrences > 1 && <span>{finding.occurrences} coincidencias</span>}
-            {finding.isPlaceholder && <span>Parece un valor de ejemplo</span>}
-          </span>
+            {finding.isPlaceholder && <span>Valor de ejemplo probable</span>}
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Evidencia enmascarada:{' '}
+            <code className="rounded-md bg-muted px-1.5 py-1 font-mono text-foreground">
+              {finding.maskedEvidence}
+            </code>
+          </p>
         </li>
       ))}
     </ul>

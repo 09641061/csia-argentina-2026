@@ -1,3 +1,4 @@
+import { Badge } from '@/components/ui/badge'
 import { riskLevelLabel, type RiskLevel } from '@/modules/analysis/domain/risk-level'
 
 interface RiskLabelProps {
@@ -5,5 +6,6 @@ interface RiskLabelProps {
 }
 
 export function RiskLabel({ risk }: RiskLabelProps) {
-  return <span className={`risk risk--${risk ?? 'unknown'}`}>{riskLevelLabel(risk)}</span>
+  const variant = risk === 'low' ? 'secondary' : risk === null ? 'outline' : 'default'
+  return <Badge variant={variant}>{riskLevelLabel(risk)}</Badge>
 }

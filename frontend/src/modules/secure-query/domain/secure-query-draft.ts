@@ -2,15 +2,9 @@ export const PROMPT_MAX_LENGTH = 8000
 export const DOCUMENT_MAX_BYTES = 5 * 1024 * 1024
 export const SUPPORTED_DOCUMENT_ACCEPT = [
   'application/json',
-  'application/pdf',
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   'image/png',
   'image/jpeg',
   '.json',
-  '.pdf',
-  '.docx',
-  '.xlsx',
   '.png',
   '.jpg',
   '.jpeg',
@@ -18,15 +12,12 @@ export const SUPPORTED_DOCUMENT_ACCEPT = [
 
 const MIME_TYPES = new Set([
   'application/json',
-  'application/pdf',
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   'image/png',
   'image/jpeg',
   'image/jpg',
 ])
 
-const EXTENSIONS = ['.json', '.pdf', '.docx', '.xlsx', '.png', '.jpg', '.jpeg']
+const EXTENSIONS = ['.json', '.png', '.jpg', '.jpeg']
 
 export type DraftProblem =
   | 'empty'
@@ -89,7 +80,7 @@ export function draftProblemMessage(problem: DraftProblem): string {
     case 'document_too_large':
       return 'El documento supera los 5 MB permitidos.'
     case 'document_unsupported':
-      return 'Solo se admiten JSON, PDF, Word, Excel, PNG y JPEG.'
+      return 'Solo se admiten archivos JSON, PNG y JPEG.'
   }
 }
 

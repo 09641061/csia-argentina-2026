@@ -6,15 +6,21 @@ interface ErrorNoticeProps {
 
 export function ErrorNotice({ message, onRetry, retryLabel = 'Reintentar' }: ErrorNoticeProps) {
   return (
-    <div className="notice notice--error" role="alert">
-      <p>{message}</p>
+    <Alert variant="destructive" role="alert">
+      <AlertCircle aria-hidden="true" />
+      <AlertTitle>No pudimos completar la operación</AlertTitle>
+      <AlertDescription>{message}</AlertDescription>
       {onRetry && (
-        <p className="notice__actions">
-          <button type="button" className="button button--secondary" onClick={onRetry}>
+        <div className="mt-3">
+          <Button type="button" size="sm" variant="outline" onClick={onRetry}>
             {retryLabel}
-          </button>
-        </p>
+          </Button>
+        </div>
       )}
-    </div>
+    </Alert>
   )
 }
+import { AlertCircle } from 'lucide-react'
+
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Button } from '@/components/ui/button'

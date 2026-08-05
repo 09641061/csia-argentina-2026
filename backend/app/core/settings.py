@@ -28,6 +28,27 @@ class Settings(BaseSettings):
         description="Comma separated list of browser origins allowed by CORS",
     )
 
+    jwt_secret_key: str = Field(
+        default="sentinel-local-development-key-change-before-deploy-2026",
+        alias="JWT_SECRET_KEY",
+        min_length=32,
+        description="Stable secret used to sign local access tokens",
+    )
+    jwt_issuer: str = Field(
+        default="sentinel-ai-guard", alias="JWT_ISSUER", min_length=1
+    )
+    jwt_audience: str = Field(
+        default="sentinel-ai-guard-web",
+        alias="JWT_AUDIENCE",
+        min_length=1,
+    )
+    jwt_access_token_expire_minutes: int = Field(
+        default=480,
+        alias="JWT_ACCESS_TOKEN_EXPIRE_MINUTES",
+        gt=0,
+        le=10080,
+    )
+
     document_storage_backend: str = Field(
         default="cloudinary",
         alias="DOCUMENT_STORAGE_BACKEND",
@@ -49,7 +70,9 @@ class Settings(BaseSettings):
     cloudinary_api_key: str = Field(default="", alias="CLOUDINARY_API_KEY")
     cloudinary_api_secret: str = Field(default="", alias="CLOUDINARY_API_SECRET")
 
-    ollama_base_url: str = Field(default="http://localhost:11434", alias="OLLAMA_BASE_URL")
+    ollama_base_url: str = Field(
+        default="http://localhost:11434", alias="OLLAMA_BASE_URL"
+    )
 
     ollama_security_model: str = Field(
         default="gemma3:4b",
@@ -163,7 +186,11 @@ class Settings(BaseSettings):
 
     @property
     def allowed_origins(self) -> list[str]:
-        return [origin.strip() for origin in self.frontend_origin.split(",") if origin.strip()]
+        return [
+            origin.strip()
+            for origin in self.frontend_origin.split(",")
+            if origin.strip()
+        ]
 
     @property
     def document_storage_root(self) -> Path:

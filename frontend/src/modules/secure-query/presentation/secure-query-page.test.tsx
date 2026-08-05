@@ -140,19 +140,20 @@ describe('Consultar', () => {
     renderPage()
 
     const input = screen.getByLabelText(/Adjuntar archivo/) as HTMLInputElement
-    expect(input.accept).toContain('application/pdf')
-    expect(input.accept).toContain('.docx')
+    expect(input.accept).toContain('application/json')
     expect(input.accept).toContain('image/png')
+    expect(input.accept).not.toContain('application/pdf')
+    expect(input.accept).not.toContain('.docx')
+
+    await user.upload(input, new File(['image'], 'captura.png', { type: 'image/png' }))
+
+    expect(input.files).toHaveLength(1)
+    expect(screen.getByText('captura.png')).toBeInTheDocument()
 
     await user.upload(input, new File(['%PDF-1.4'], 'informe.pdf', { type: 'application/pdf' }))
 
-    expect(input.files).toHaveLength(1)
-    expect(screen.getByText('informe.pdf')).toBeInTheDocument()
-
-    await user.upload(input, new File(['zip'], 'archivo.zip', { type: 'application/zip' }))
-
     expect(input.files).toHaveLength(0)
-    expect(screen.queryByText('archivo.zip')).not.toBeInTheDocument()
+    expect(screen.queryByText('informe.pdf')).not.toBeInTheDocument()
     expect(fetchStub).not.toHaveBeenCalled()
   })
 
@@ -178,7 +179,7 @@ describe('Consultar', () => {
     await user.type(screen.getByLabelText('Consulta'), 'Una consulta cualquiera')
     await user.click(screen.getByRole('button', { name: 'Analizar y consultar' }))
 
-    expect(await screen.findByText('Analizando el contenido…')).toBeInTheDocument()
+    expect(await screen.findByText('Analizando el contenido con IA local…')).toBeInTheDocument()
 
     release(
       new Response(JSON.stringify(secureQueryResponse(allowedInteractionResource())), {

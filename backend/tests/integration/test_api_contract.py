@@ -7,6 +7,7 @@ import json
 import httpx
 import pytest
 from fastapi import FastAPI
+from sqlalchemy import select
 
 from app.analysis.interfaces.rest.controllers import security_analysis_router
 from app.chat.application.internal.commandservices.chat_command_service_impl import (
@@ -17,11 +18,16 @@ from app.chat.application.internal.outboundservices.acl.decision_context_respons
 )
 from app.chat.interfaces.rest.controllers import chat_router
 from app.core.database import get_session
-from app.decision.application.acl.decision_context_facade_impl import DecisionContextFacadeImpl
+from app.decision.application.acl.decision_context_facade_impl import (
+    DecisionContextFacadeImpl,
+)
 from app.decision.interfaces.rest.controllers import secure_query_router
 from app.documents.interfaces.rest.controllers import document_router
 from app.iam.domain.model.valueobjects.authenticated_user import AuthenticatedUser
 from app.iam.domain.model.valueobjects.username import Username
+from app.iam.infrastructure.persistence.sqlalchemy.models.user_account_model import (
+    UserAccountModel,
+)
 from app.iam.interfaces.rest.controllers import authentication_router
 from app.main import create_app
 from tests.conftest import SentinelTestContext
@@ -53,11 +59,15 @@ def build_test_app(context: SentinelTestContext) -> FastAPI:
     app.dependency_overrides[secure_query_router.get_secure_query_command_service] = (
         context.secure_query_service
     )
-    app.dependency_overrides[secure_query_router.get_secure_interaction_query_service] = (
-        context.interaction_query_service
-    )
-    app.dependency_overrides[chat_router.get_chat_command_service] = lambda: ChatCommandServiceImpl(
-        DecisionContextResponseService(DecisionContextFacadeImpl(context.secure_query_service()))
+    app.dependency_overrides[
+        secure_query_router.get_secure_interaction_query_service
+    ] = context.interaction_query_service
+    app.dependency_overrides[chat_router.get_chat_command_service] = lambda: (
+        ChatCommandServiceImpl(
+            DecisionContextResponseService(
+                DecisionContextFacadeImpl(context.secure_query_service())
+            )
+        )
     )
 
     async def authenticated_user_override():
@@ -82,6 +92,8 @@ def test_routes_are_unambiguous_and_documented() -> None:
     assert set(paths) == {
         "/api/v1/health",
         "/api/v1/auth/login",
+        "/api/v1/auth/register",
+        "/api/v1/auth/me",
         "/api/v1/chat/messages",
         "/api/v1/documents",
         "/api/v1/documents/{document_id}",
@@ -124,7 +136,9 @@ async def test_real_document_query_dependency_includes_readable_storage(
     context: SentinelTestContext,
     monkeypatch,
 ) -> None:
-    monkeypatch.setattr(document_router, "get_document_storage", lambda: context.storage)
+    monkeypatch.setattr(
+        document_router, "get_document_storage", lambda: context.storage
+    )
 
     service = await document_router.get_document_query_service(context.session)
 
@@ -132,21 +146,54 @@ async def test_real_document_query_dependency_includes_readable_storage(
 
 
 @pytest.mark.asyncio
-async def test_iam_login_accepts_only_configured_credentials() -> None:
+async def test_iam_registration_login_and_jwt_validation(
+    context: SentinelTestContext,
+) -> None:
     app = FastAPI()
     app.include_router(authentication_router.router)
+
+    async def session_override():
+        yield context.session
+
+    app.dependency_overrides[get_session] = session_override
     async with client_for(app) as client:
+        registered = await client.post(
+            "/api/v1/auth/register",
+            json={"username": "sentinel.demo", "password": "DemoSecure2026"},
+        )
+        duplicate = await client.post(
+            "/api/v1/auth/register",
+            json={"username": "SENTINEL.DEMO", "password": "DemoSecure2026"},
+        )
         accepted = await client.post(
-            "/api/v1/auth/login", json={"username": "admin", "password": "admin"}
+            "/api/v1/auth/login",
+            json={"username": "sentinel.demo", "password": "DemoSecure2026"},
         )
         rejected = await client.post(
-            "/api/v1/auth/login", json={"username": "admin", "password": "wrong"}
+            "/api/v1/auth/login",
+            json={"username": "sentinel.demo", "password": "WrongPass2026"},
         )
+        me = await client.get(
+            "/api/v1/auth/me",
+            headers={"Authorization": f"Bearer {accepted.json()['access_token']}"},
+        )
+    stored_account = (
+        await context.session.execute(
+            select(UserAccountModel).where(UserAccountModel.username == "sentinel.demo")
+        )
+    ).scalar_one()
 
+    assert registered.status_code == 201
+    assert duplicate.status_code == 409
     assert accepted.status_code == 200
     assert accepted.json()["token_type"] == "bearer"
     assert accepted.json()["access_token"]
+    assert accepted.json()["username"] == "sentinel.demo"
     assert rejected.status_code == 401
+    assert me.status_code == 200
+    assert me.json() == {"username": "sentinel.demo"}
+    assert stored_account.password_hash.startswith("$argon2")
+    assert "DemoSecure2026" not in stored_account.password_hash
 
 
 @pytest.mark.asyncio
@@ -188,7 +235,9 @@ async def test_secure_query_endpoint_returns_answer_only_when_allowed(
 
 
 @pytest.mark.asyncio
-async def test_secure_query_endpoint_requires_content(context: SentinelTestContext) -> None:
+async def test_secure_query_endpoint_requires_content(
+    context: SentinelTestContext,
+) -> None:
     app = build_test_app(context)
     async with client_for(app) as client:
         response = await client.post("/api/v1/secure-queries", data={})
@@ -198,7 +247,9 @@ async def test_secure_query_endpoint_requires_content(context: SentinelTestConte
 
 
 @pytest.mark.asyncio
-async def test_document_upload_and_analysis_over_http(context: SentinelTestContext) -> None:
+async def test_document_upload_and_analysis_over_http(
+    context: SentinelTestContext,
+) -> None:
     app = build_test_app(context)
     payload = context.sample_bytes("sample-01-clean-inventory.json")
 
@@ -265,7 +316,9 @@ async def test_chat_hides_auditing_details_and_returns_forbidden_when_blocked(
 
 
 @pytest.mark.asyncio
-async def test_rejected_uploads_return_safe_status_codes(context: SentinelTestContext) -> None:
+async def test_rejected_uploads_return_safe_status_codes(
+    context: SentinelTestContext,
+) -> None:
     app = build_test_app(context)
 
     async with client_for(app) as client:
@@ -285,7 +338,9 @@ async def test_rejected_uploads_return_safe_status_codes(context: SentinelTestCo
 
 
 @pytest.mark.asyncio
-async def test_interaction_history_pagination_and_detail(context: SentinelTestContext) -> None:
+async def test_interaction_history_pagination_and_detail(
+    context: SentinelTestContext,
+) -> None:
     app = build_test_app(context)
 
     async with client_for(app) as client:
@@ -318,7 +373,9 @@ async def test_prompt_analysis_endpoint_rejects_empty_and_oversized_prompts(
 
     async with client_for(app) as client:
         empty = await client.post("/api/v1/prompts/analyses", json={"prompt": "   "})
-        oversized = await client.post("/api/v1/prompts/analyses", json={"prompt": "a" * 9000})
+        oversized = await client.post(
+            "/api/v1/prompts/analyses", json={"prompt": "a" * 9000}
+        )
         valid = await client.post(
             "/api/v1/prompts/analyses",
             json={"prompt": "¿Cuáles son las ventajas de la arquitectura hexagonal?"},
@@ -333,7 +390,9 @@ async def test_prompt_analysis_endpoint_rejects_empty_and_oversized_prompts(
 
 def test_cors_is_restricted_to_the_configured_frontend_origin() -> None:
     app = create_app()
-    cors = [middleware for middleware in app.user_middleware if "CORS" in str(middleware)]
+    cors = [
+        middleware for middleware in app.user_middleware if "CORS" in str(middleware)
+    ]
 
     assert cors, "CORS middleware must be configured"
     origins = cors[0].kwargs["allow_origins"]

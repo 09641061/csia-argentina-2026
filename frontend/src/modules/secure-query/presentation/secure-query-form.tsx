@@ -1,5 +1,13 @@
+import { FileJson2, Image, Send, Upload, X } from 'lucide-react'
 import { useId, useRef, type ChangeEvent, type FormEvent } from 'react'
 
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field'
+import { Spinner } from '@/components/ui/spinner'
+import { Textarea } from '@/components/ui/textarea'
+import { cn } from '@/lib/utils'
 import {
   PROMPT_MAX_LENGTH,
   SUPPORTED_DOCUMENT_ACCEPT,
@@ -48,72 +56,112 @@ export function SecureQueryForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate>
-      <div className="field">
-        <label className="field__label" htmlFor={promptId}>
-          Consulta
-        </label>
-        <textarea
-          id={promptId}
-          className="field__textarea"
-          value={draft.prompt}
-          onChange={(event) => onPromptChange(event.target.value)}
-          placeholder="Escribe lo que necesitas preguntar al asistente local."
-          disabled={isBusy}
-        />
-        <span
-          className={`field__counter${overLimit ? ' field__counter--over' : ''}`}
-          data-testid="prompt-counter"
-        >
-          {draft.prompt.trim().length.toLocaleString('es')} / {PROMPT_MAX_LENGTH.toLocaleString('es')} caracteres
-        </span>
-      </div>
+    <Card>
+      <form onSubmit={handleSubmit} noValidate>
+        <CardHeader>
+          <CardTitle>Nueva consulta segura</CardTitle>
+          <CardDescription>Escribe una consulta, adjunta un archivo o combina ambos.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <FieldGroup>
+            <Field data-invalid={overLimit}>
+              <div className="flex items-center justify-between gap-4">
+                <FieldLabel htmlFor={promptId}>Consulta</FieldLabel>
+                <span
+                  className={cn(
+                    'text-xs tabular-nums text-muted-foreground',
+                    overLimit && 'text-destructive',
+                  )}
+                  data-testid="prompt-counter"
+                >
+                  {draft.prompt.trim().length.toLocaleString('es')} /{' '}
+                  {PROMPT_MAX_LENGTH.toLocaleString('es')} caracteres
+                </span>
+              </div>
+              <Textarea
+                id={promptId}
+                className="min-h-36 resize-y"
+                value={draft.prompt}
+                onChange={(event) => onPromptChange(event.target.value)}
+                placeholder="Escribe lo que necesitas consultar al asistente local…"
+                disabled={isBusy}
+                aria-invalid={overLimit}
+              />
+            </Field>
 
-      <div className="attachment">
-        <input
-          ref={fileInput}
-          id="secure-query-document"
-          type="file"
-          accept={SUPPORTED_DOCUMENT_ACCEPT}
-          className="visually-hidden"
-          onChange={handleFile}
-          disabled={isBusy}
-        />
-        {hasDocument(draft) && draft.document ? (
-          <div className="attachment__file">
-            <span className="attachment__name">{draft.document.name}</span>
-            <span className="attachment__size">{formatFileSize(draft.document.size)}</span>
-            <button
-              type="button"
-              className="attachment__remove"
-              onClick={removeDocument}
-              disabled={isBusy}
-            >
-              Quitar archivo
-            </button>
-          </div>
-        ) : (
-          <label className="attachment__button" htmlFor="secure-query-document">
-            Adjuntar archivo (opcional)
-          </label>
-        )}
-        <p className="field__hint">
-          JSON, PDF, Word, Excel, PNG o JPEG de hasta 5 MB. La IA local valida el contenido antes
-          de que el asistente pueda usarlo.
-        </p>
-      </div>
+            <Field data-invalid={showProblem}>
+              <FieldLabel htmlFor="secure-query-document">Documento opcional</FieldLabel>
+              <input
+                ref={fileInput}
+                id="secure-query-document"
+                type="file"
+                accept={SUPPORTED_DOCUMENT_ACCEPT}
+                className="sr-only"
+                onChange={handleFile}
+                disabled={isBusy}
+                aria-invalid={showProblem}
+              />
 
-      {showProblem && (
-        <p className="notice notice--error" role="alert">
-          {draftProblemMessage(problem)}
-        </p>
-      )}
+              {hasDocument(draft) && draft.document ? (
+                <div className="flex items-center gap-3 rounded-lg border p-3">
+                  <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-muted [&_svg]:size-5">
+                    {draft.document.type.startsWith('image/') ? (
+                      <Image aria-hidden="true" />
+                    ) : (
+                      <FileJson2 aria-hidden="true" />
+                    )}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-sm font-medium">{draft.document.name}</span>
+                    <span className="block text-xs text-muted-foreground">
+                      {formatFileSize(draft.document.size)}
+                    </span>
+                  </span>
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="ghost"
+                    onClick={removeDocument}
+                    disabled={isBusy}
+                    aria-label="Quitar archivo"
+                  >
+                    <X aria-hidden="true" />
+                  </Button>
+                </div>
+              ) : (
+                <Button asChild variant="outline" className="h-auto w-full justify-start py-4">
+                  <label htmlFor="secure-query-document">
+                    <Upload data-icon="inline-start" aria-hidden="true" />
+                    <span className="text-left">
+                      <span className="block font-medium">Adjuntar archivo</span>
+                      <span className="block text-xs font-normal text-muted-foreground">
+                        JSON, PNG o JPEG
+                      </span>
+                    </span>
+                  </label>
+                </Button>
+              )}
+              <FieldDescription>JSON, PNG o JPEG · Máximo 5 MB.</FieldDescription>
+            </Field>
 
-      <div className="form-actions">
-        <button type="submit" className="button button--primary" disabled={isBusy || !canSubmit(draft)}>
-          {submitActionLabel(draft)}
-        </button>
-      </div>
-    </form>
+            {showProblem && problem && (
+              <Alert variant="destructive" role="alert">
+                <AlertDescription>{draftProblemMessage(problem)}</AlertDescription>
+              </Alert>
+            )}
+          </FieldGroup>
+        </CardContent>
+        <CardFooter className="justify-end">
+          <Button type="submit" size="lg" disabled={isBusy || !canSubmit(draft)}>
+            {isBusy ? (
+              <Spinner data-icon="inline-start" />
+            ) : (
+              <Send data-icon="inline-start" aria-hidden="true" />
+            )}
+            {isBusy ? 'Procesando…' : submitActionLabel(draft)}
+          </Button>
+        </CardFooter>
+      </form>
+    </Card>
   )
 }

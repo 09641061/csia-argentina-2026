@@ -5,6 +5,7 @@ import { request } from './http-client'
 
 afterEach(() => {
   vi.unstubAllGlobals()
+  window.localStorage.clear()
 })
 
 describe('http client', () => {
@@ -77,5 +78,44 @@ describe('http client', () => {
     const error = await request('/api/v1/interactions').catch((caught: unknown) => caught)
     expect((error as ApiError).kind).toBe('timeout')
     expect((error as ApiError).isRetryable).toBe(true)
+  })
+
+  it('sends the stored JWT as a Bearer token on protected requests', async () => {
+    window.localStorage.setItem(
+      'sentinel.auth.session',
+      JSON.stringify({
+        accessToken: 'header.payload.signature',
+        expiresAt: '2099-08-04T12:00:00Z',
+        username: 'sentinel.demo',
+      }),
+    )
+    const fetchStub = vi.fn(async (_input: RequestInfo | URL, init?: RequestInit) => {
+      const headers = new Headers(init?.headers)
+      expect(headers.get('Authorization')).toBe('Bearer header.payload.signature')
+      return new Response(JSON.stringify({ ok: true }), { status: 200 })
+    })
+    vi.stubGlobal('fetch', fetchStub)
+
+    await expect(request<{ ok: boolean }>('/api/v1/interactions')).resolves.toEqual({ ok: true })
+  })
+
+  it('clears an expired server session after a protected 401 response', async () => {
+    window.localStorage.setItem(
+      'sentinel.auth.session',
+      JSON.stringify({
+        accessToken: 'header.payload.signature',
+        expiresAt: '2099-08-04T12:00:00Z',
+        username: 'sentinel.demo',
+      }),
+    )
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () =>
+        new Response(JSON.stringify({ detail: 'Invalid or expired access token' }), { status: 401 }),
+      ),
+    )
+
+    await expect(request('/api/v1/interactions')).rejects.toMatchObject({ kind: 'unauthorized' })
+    expect(window.localStorage.getItem('sentinel.auth.session')).toBeNull()
   })
 })
