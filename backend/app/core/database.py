@@ -44,11 +44,12 @@ async def initialize_database() -> None:
     from app.decision.infrastructure.persistence.sqlalchemy.models import (  # noqa: F401
         secure_interaction_model,
     )
-    from app.documents.infrastructure.persistence.sqlalchemy.models import (  # noqa: F401
-        document_model,
-    )
     from app.iam.infrastructure.persistence.sqlalchemy.models import (  # noqa: F401
         user_account_model,
+    )
+    from app.chat.infrastructure.persistence.sqlalchemy.models import (  # noqa: F401
+        conversation_model,
+        message_model,
     )
 
     async with engine.begin() as connection:

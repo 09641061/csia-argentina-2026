@@ -1,1 +1,0 @@
-"""Documents ACL facade implementations."""
