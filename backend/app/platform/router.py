@@ -15,14 +15,17 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_session
+from app.core.settings import get_settings
 from app.decision.infrastructure.persistence.sqlalchemy.models.secure_interaction_model import SecureInteractionModel
 from app.platform.models import (
     ApprovalRequestModel,
+    CopilotActionModel,
     SanitizationRecordModel,
     SecurityEventModel,
     SecurityIncidentModel,
     SecurityPolicyModel,
 )
+from app.platform.copilot import ALLOWED_ACTIONS, analyze_incident
 from app.platform.soc import run_scenario, sync_interaction_events
 
 router = APIRouter(prefix="/api/v1/platform", tags=["Security platform"])
@@ -57,6 +60,19 @@ class IncidentResolutionPayload(BaseModel):
     status: Literal["open", "investigating", "contained", "closed"]
     assignee: str = "Analista SOC"
     response_action: str = "Evidencia revisada y operación contenida."
+
+
+class CopilotQuestionPayload(BaseModel):
+    question: str = Field(default="Resumí este incidente y recomendá próximos pasos.", min_length=3, max_length=500)
+
+
+class CopilotActionPayload(BaseModel):
+    action: str
+    reason: str = Field(min_length=3, max_length=500)
+
+
+class CopilotActionResolutionPayload(BaseModel):
+    action: Literal["approved", "rejected"]
 
 
 PATTERNS = [
@@ -105,6 +121,11 @@ def serialize_incident(row: SecurityIncidentModel) -> dict[str, object]:
             "response_action": row.response_action, "created_at": row.created_at, "updated_at": row.updated_at}
 
 
+def serialize_copilot_action(row: CopilotActionModel) -> dict[str, object]:
+    return {"id": row.id, "incident_id": row.incident_id, "action": row.action, "reason": row.reason,
+            "status": row.status, "requester": row.requester, "reviewer": row.reviewer, "created_at": row.created_at}
+
+
 @router.get("/events", summary="List SOC events", description="Returns normalized, privacy-safe events for investigation and correlation.")
 async def security_events(session: Annotated[AsyncSession, Depends(get_session)]) -> list[dict[str, object]]:
     await sync_interaction_events(session)
@@ -131,6 +152,43 @@ async def update_incident(incident_id: int, payload: IncidentResolutionPayload, 
     await session.commit()
     await session.refresh(row)
     return serialize_incident(row)
+
+
+@router.post("/incidents/{incident_id}/copilot", summary="Analyze incident with SOC Copilot", description="Produces a guarded, evidence-cited explanation and human-approved response proposals.")
+async def incident_copilot(incident_id: int, payload: CopilotQuestionPayload, session: Annotated[AsyncSession, Depends(get_session)]) -> dict[str, object]:
+    incident = await session.get(SecurityIncidentModel, incident_id)
+    if incident is None:
+        raise HTTPException(404, "Incidente no encontrado.")
+    events = (await session.execute(select(SecurityEventModel).where(SecurityEventModel.id.in_(incident.event_ids)))).scalars().all()
+    result = await analyze_incident(incident, events, payload.question)
+    return {"incident_id": incident.id, "model": get_settings().ollama_generation_model, **result}
+
+
+@router.post("/incidents/{incident_id}/copilot/actions", status_code=status.HTTP_201_CREATED, summary="Queue Copilot action", description="Places a safe Copilot recommendation in the human approval queue; it never executes automatically.")
+async def queue_copilot_action(incident_id: int, payload: CopilotActionPayload, session: Annotated[AsyncSession, Depends(get_session)]) -> dict[str, object]:
+    if payload.action not in ALLOWED_ACTIONS:
+        raise HTTPException(422, "Acción no permitida para el Copilot.")
+    if await session.get(SecurityIncidentModel, incident_id) is None:
+        raise HTTPException(404, "Incidente no encontrado.")
+    row = CopilotActionModel(incident_id=incident_id, action=payload.action, reason=payload.reason)
+    session.add(row); await session.commit(); await session.refresh(row)
+    return serialize_copilot_action(row)
+
+
+@router.get("/copilot/actions", summary="List Copilot action approvals", description="Returns Copilot recommendations waiting for or completed by human review.")
+async def copilot_actions(session: Annotated[AsyncSession, Depends(get_session)]) -> list[dict[str, object]]:
+    rows = (await session.execute(select(CopilotActionModel).order_by(CopilotActionModel.created_at.desc()))).scalars().all()
+    return [serialize_copilot_action(row) for row in rows]
+
+
+@router.post("/copilot/actions/{action_id}/resolve", summary="Resolve Copilot action", description="Records explicit human approval or rejection without granting autonomous execution to the model.")
+async def resolve_copilot_action(action_id: int, payload: CopilotActionResolutionPayload, session: Annotated[AsyncSession, Depends(get_session)], x_sentinel_user: Annotated[str, Header()] = "Analista SOC") -> dict[str, object]:
+    row = await session.get(CopilotActionModel, action_id)
+    if row is None:
+        raise HTTPException(404, "Recomendación no encontrada.")
+    row.status = payload.action; row.reviewer = x_sentinel_user; row.resolved_at = datetime.now(timezone.utc)
+    await session.commit(); await session.refresh(row)
+    return serialize_copilot_action(row)
 
 
 @router.get("/policies/current", summary="Get active policy", description="Returns the latest version of the organization's security policy.")

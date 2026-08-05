@@ -103,6 +103,17 @@ async def test_soc_lab_correlates_events_into_an_incident(
         )
         incidents = await client.get("/api/v1/platform/incidents")
         events = await client.get("/api/v1/platform/events")
+        proposal = await client.post(
+            f"/api/v1/platform/incidents/{simulation.json()['id']}/copilot/actions",
+            json={
+                "action": "rotate_credential",
+                "reason": "La evidencia indica una posible exposición.",
+            },
+        )
+        resolved = await client.post(
+            f"/api/v1/platform/copilot/actions/{proposal.json()['id']}/resolve",
+            json={"action": "approved"},
+        )
 
     assert simulation.status_code == 201
     assert simulation.json()["severity"] == "critical"
@@ -111,6 +122,10 @@ async def test_soc_lab_correlates_events_into_an_incident(
     assert incidents.json()[0]["code"].startswith("INC-LAB-")
     assert len(events.json()) == 3
     assert {event["rule_id"] for event in events.json()} == {"CRED-001"}
+    assert proposal.status_code == 201
+    assert proposal.json()["status"] == "pending"
+    assert resolved.json()["status"] == "approved"
+    assert resolved.json()["reviewer"] == "Analista SOC"
 
 
 def test_routes_are_unambiguous_and_documented() -> None:
@@ -138,6 +153,10 @@ def test_routes_are_unambiguous_and_documented() -> None:
         "/api/v1/platform/events",
         "/api/v1/platform/incidents",
         "/api/v1/platform/incidents/{incident_id}",
+        "/api/v1/platform/incidents/{incident_id}/copilot",
+        "/api/v1/platform/incidents/{incident_id}/copilot/actions",
+        "/api/v1/platform/copilot/actions",
+        "/api/v1/platform/copilot/actions/{action_id}/resolve",
         "/api/v1/platform/policies/current",
         "/api/v1/platform/sanitize",
         "/api/v1/platform/interactions/{interaction_id}/trace",
