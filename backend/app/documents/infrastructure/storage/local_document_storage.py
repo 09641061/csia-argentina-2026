@@ -76,6 +76,8 @@ class LocalDocumentStorage(DocumentStorage):
         return content
 
     def _resolve_inside_root(self, key: str) -> Path:
+        if "/" in key or "\\" in key:
+            raise DocumentStorageReadError("Rejected nested storage key")
         candidate = (self._root / key).resolve()
         if candidate.parent != self._root:
             raise DocumentStorageReadError("Rejected storage key outside the private root")

@@ -33,14 +33,14 @@ class HealthResponse(BaseModel):
         description="The answer generation model is installed in the local Ollama"
     )
     vision_model_available: bool = Field(
-        description="The image and scanned-document model is installed in local Ollama"
+        description="The image model is installed in local Ollama"
     )
-    security_model: str = Field(description="Configured security model", examples=["llama3.2:3b"])
+    security_model: str = Field(description="Configured security model", examples=["gemma3:4b"])
     discovery_model: str = Field(
         description="Configured sensitive-content discovery model", examples=["gemma3:4b"]
     )
     generation_model: str = Field(
-        description="Configured generation model", examples=["llama3.2:3b"]
+        description="Configured generation model", examples=["gemma3:4b"]
     )
     vision_model: str = Field(
         description="Configured visual document model", examples=["gemma3:4b"]

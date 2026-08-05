@@ -12,8 +12,8 @@ def get_document_storage() -> DocumentStorage:
     """
     Resolve the configured storage adapter.
 
-    Local private storage is the default so the MVP runs with no external
-    account; Cloudinary is only imported when it is explicitly enabled.
+    Cloudinary is the configured default and is imported lazily; the local
+    private adapter stays available for running with no external account.
     """
 
     settings = get_settings()

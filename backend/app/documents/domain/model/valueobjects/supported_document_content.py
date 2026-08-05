@@ -3,16 +3,12 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass
 from io import BytesIO
-from zipfile import BadZipFile, ZipFile, is_zipfile
 
-import pymupdf
 from PIL import Image, UnidentifiedImageError
 
 from app.documents.domain.exceptions import InvalidDocumentContentError
 from app.documents.domain.model.valueobjects.document_mime_type import DocumentMimeType
 
-MAX_OFFICE_ARCHIVE_ENTRIES = 2_000
-MAX_OFFICE_UNCOMPRESSED_BYTES = 40 * 1024 * 1024
 MAX_IMAGE_PIXELS = 20_000_000
 
 
@@ -34,9 +30,6 @@ class SupportedDocumentContent:
 
         validators = {
             DocumentMimeType.JSON: self._validate_json,
-            DocumentMimeType.PDF: self._validate_pdf,
-            DocumentMimeType.DOCX: lambda: self._validate_office("word/document.xml"),
-            DocumentMimeType.XLSX: lambda: self._validate_office("xl/workbook.xml"),
             DocumentMimeType.PNG: self._validate_image,
             DocumentMimeType.JPEG: self._validate_image,
         }
@@ -66,48 +59,6 @@ class SupportedDocumentContent:
             raise InvalidDocumentContentError(
                 "JSON content must be an object or an array"
             )
-
-    def _validate_pdf(self) -> None:
-        if not self.value.startswith(b"%PDF-"):
-            raise InvalidDocumentContentError("The file is not a valid PDF document")
-        try:
-            document = pymupdf.open(stream=self.value, filetype="pdf")
-        except Exception as error:
-            raise InvalidDocumentContentError("The PDF document is corrupted") from error
-        try:
-            if document.needs_pass:
-                raise InvalidDocumentContentError(
-                    "Password-protected PDF documents are not supported"
-                )
-            if document.page_count == 0:
-                raise InvalidDocumentContentError("The PDF document has no pages")
-        finally:
-            document.close()
-
-    def _validate_office(self, required_member: str) -> None:
-        if not is_zipfile(BytesIO(self.value)):
-            raise InvalidDocumentContentError("The Office document is not a valid ZIP container")
-        try:
-            with ZipFile(BytesIO(self.value)) as archive:
-                entries = archive.infolist()
-                if len(entries) > MAX_OFFICE_ARCHIVE_ENTRIES:
-                    raise InvalidDocumentContentError(
-                        "The Office document contains too many embedded entries"
-                    )
-                total_size = sum(entry.file_size for entry in entries)
-                if total_size > MAX_OFFICE_UNCOMPRESSED_BYTES:
-                    raise InvalidDocumentContentError(
-                        "The Office document expands beyond the safe processing limit"
-                    )
-                names = {entry.filename for entry in entries}
-                if required_member not in names or "[Content_Types].xml" not in names:
-                    raise InvalidDocumentContentError(
-                        "The Office document does not match its declared format"
-                    )
-        except BadZipFile as error:
-            raise InvalidDocumentContentError(
-                "The Office document container is corrupted"
-            ) from error
 
     def _validate_image(self) -> None:
         try:

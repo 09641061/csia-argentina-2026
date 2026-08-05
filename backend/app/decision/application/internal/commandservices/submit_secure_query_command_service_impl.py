@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import logging
-from dataclasses import dataclass
 
 from app.decision.application.internal.outboundservices.content_review_service import (
     ContentReviewService,
@@ -37,23 +36,17 @@ from app.decision.domain.model.valueobjects.reviewed_content_assessment import (
     ReviewedContentAssessment,
 )
 from app.decision.domain.model.valueobjects.security_decision import SecurityDecision
+from app.decision.domain.model.valueobjects.secure_query_result import SecureQueryResult
 from app.decision.domain.policies.secure_query_decision_policy import SecureQueryDecisionPolicy
 from app.decision.domain.repositories.secure_interaction_repository import (
     SecureInteractionRepository,
 )
+from app.decision.domain.services.secure_query_command_service import SecureQueryCommandService
 
 logger = logging.getLogger(__name__)
 
 
-@dataclass(frozen=True, slots=True)
-class SecureQueryResult:
-    """The outcome of one secure query: the audited interaction and, if it was allowed and asked something, the answer."""
-
-    interaction: SecureInteraction
-    answer: AssistantAnswer | None = None
-
-
-class SubmitSecureQueryCommandServiceImpl:
+class SubmitSecureQueryCommandServiceImpl(SecureQueryCommandService):
     """
     Coordinates the three bounded contexts for "Analizar y consultar".
 

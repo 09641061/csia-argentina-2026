@@ -15,4 +15,4 @@ class ListDocumentsResponse(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     items: list[DocumentResource] = Field(description="Documents in the current page")
-    page: DocumentPageMetadataResponse
+    page: DocumentPageMetadataResponse = Field(description="Pagination metadata")

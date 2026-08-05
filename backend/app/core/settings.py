@@ -11,11 +11,11 @@ class Settings(BaseSettings):
     """
     Runtime configuration for Sentinel AI Guard.
 
-    Local, private storage is the default so an uploaded document is never sent
-    to a third party before the security review decides whether it is safe.
+    Cloudinary is the configured storage backend; "local" stays available for
+    running the project without an external account.
     """
 
-    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+    model_config = SettingsConfigDict(env_file=PROJECT_ROOT / ".env", extra="ignore")
 
     database_url: str = Field(
         default="postgresql+asyncpg://postgres:postgres@localhost:5432/sentinel_ai_guard",
@@ -29,7 +29,7 @@ class Settings(BaseSettings):
     )
 
     document_storage_backend: str = Field(
-        default="local",
+        default="cloudinary",
         alias="DOCUMENT_STORAGE_BACKEND",
         description="Storage adapter used by Documents: local or cloudinary",
     )
@@ -52,7 +52,7 @@ class Settings(BaseSettings):
     ollama_base_url: str = Field(default="http://localhost:11434", alias="OLLAMA_BASE_URL")
 
     ollama_security_model: str = Field(
-        default="llama3.2:3b",
+        default="gemma3:4b",
         alias="OLLAMA_SECURITY_MODEL",
         description="Model used only for the contextual security evaluation",
     )
@@ -101,7 +101,7 @@ class Settings(BaseSettings):
     ollama_vision_model: str = Field(
         default="gemma3:4b",
         alias="OLLAMA_VISION_MODEL",
-        description="Mandatory local model for images and scanned PDF pages",
+        description="Mandatory local multimodal model for uploaded images",
     )
     ollama_vision_timeout_seconds: int = Field(
         default=180,
@@ -120,7 +120,7 @@ class Settings(BaseSettings):
     )
 
     ollama_generation_model: str = Field(
-        default="llama3.2:3b",
+        default="gemma3:4b",
         alias="OLLAMA_GENERATION_MODEL",
         description="Model used only to answer already allowed content",
     )

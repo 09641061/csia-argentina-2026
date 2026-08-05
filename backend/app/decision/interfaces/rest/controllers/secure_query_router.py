@@ -19,7 +19,6 @@ from app.core.composition import (
 from app.core.database import get_session
 from app.core.settings import get_settings
 from app.decision.application.internal.commandservices.submit_secure_query_command_service_impl import (
-    SecureQueryResult,
     SubmitSecureQueryCommandServiceImpl,
 )
 from app.decision.application.internal.queryservices.secure_interaction_query_service_impl import (
@@ -30,6 +29,7 @@ from app.decision.domain.model.commands.submit_secure_query_command import (
     SubmitSecureQueryCommand,
 )
 from app.decision.domain.model.entities.secure_interaction import SecureInteraction
+from app.decision.domain.model.valueobjects.secure_query_result import SecureQueryResult
 from app.decision.domain.model.queries.get_secure_interaction_by_id_query import (
     GetSecureInteractionByIdQuery,
 )
@@ -51,8 +51,16 @@ from app.decision.interfaces.rest.resources.secure_query_response import (
 from app.shared.infrastructure.persistence.sqlalchemy.unit_of_work import (
     SqlAlchemyUnitOfWork,
 )
+from app.iam.interfaces.rest.controllers.authentication_router import (
+    require_authenticated_user,
+)
 
-router = APIRouter(prefix="/api/v1", tags=["Secure queries"])
+router = APIRouter(
+    prefix="/api/v1",
+    tags=["Secure queries"],
+    dependencies=[Depends(require_authenticated_user)],
+    responses={401: {"description": "Authentication required"}},
+)
 
 
 async def get_secure_query_command_service(
@@ -120,7 +128,7 @@ def to_secure_query_response(result: SecureQueryResult) -> SecureQueryResponse:
     status_code=status.HTTP_201_CREATED,
     summary="Analyze and ask (the main use case)",
     description=(
-        "Reviews the query and an optional JSON, PDF, DOCX, XLSX or image attachment, applies the "
+        "Reviews the query and an optional JSON or image attachment, applies the "
         "ALLOWED/BLOCKED policy and, "
         "only when the content was allowed and a question was submitted, asks the local model for "
         "an answer. A blocked submission never reaches the answer generator. "
@@ -141,7 +149,7 @@ async def submit_secure_query(
     session: Annotated[AsyncSession, Depends(get_session)],
     prompt: Annotated[str | None, Form(description="Free-text query")] = None,
     file: Annotated[
-        UploadFile | None, File(description="Optional JSON, PDF, DOCX, XLSX, PNG or JPEG file")
+        UploadFile | None, File(description="Optional JSON, PNG or JPEG file")
     ] = None,
 ) -> SecureQueryResponse:
     settings = get_settings()

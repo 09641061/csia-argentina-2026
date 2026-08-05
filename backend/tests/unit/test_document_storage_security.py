@@ -4,6 +4,9 @@ from app.documents.domain.model.valueobjects.document_display_name import Docume
 from app.documents.domain.model.valueobjects.document_storage_reference import (
     DocumentStorageReference,
 )
+from app.documents.infrastructure.storage.cloudinary_document_storage import (
+    CloudinaryDocumentStorage,
+)
 from app.documents.infrastructure.storage.exceptions import DocumentStorageReadError
 from app.documents.infrastructure.storage.local_document_storage import LocalDocumentStorage
 from app.documents.infrastructure.storage.safe_url_content_reader import SafeUrlContentReader
@@ -56,6 +59,33 @@ def test_local_storage_refuses_a_key_that_escapes_the_root(tmp_path) -> None:
     for key in ("../escape.json", "nested/escape.json", "..\\escape.json"):
         with pytest.raises(DocumentStorageReadError):
             adapter._resolve_inside_root(key)
+
+
+@pytest.mark.parametrize(
+    ("content_type", "expected_extension"),
+    [
+        ("application/json", ".json"),
+        ("image/png", ".png"),
+        ("image/jpeg", ".jpg"),
+    ],
+)
+def test_cloudinary_storage_uses_an_allowed_extension_for_validated_content(
+    monkeypatch, content_type: str, expected_extension: str
+) -> None:
+    uploaded_names: list[str] = []
+
+    def fake_upload(upload_file, **kwargs):
+        del kwargs
+        uploaded_names.append(upload_file.name)
+        return {"secure_url": "https://res.cloudinary.com/demo/raw/upload/document"}
+
+    monkeypatch.setattr("cloudinary.uploader.upload", fake_upload)
+    adapter = object.__new__(CloudinaryDocumentStorage)
+    adapter._folder = "sentinel-ai-guard/documents"
+
+    adapter._store_sync(b"document", content_type)
+
+    assert uploaded_names[0].endswith(expected_extension)
 
 
 @pytest.mark.parametrize(

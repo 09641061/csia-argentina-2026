@@ -20,7 +20,7 @@ class DocumentResource(BaseModel):
     )
     mime_type: str = Field(
         description="Validated document MIME type",
-        examples=["application/pdf"],
+        examples=["application/json"],
     )
     size_bytes: int = Field(description="Document size in bytes", examples=[24567])
     status: str = Field(description="Current document status", examples=["uploaded"])

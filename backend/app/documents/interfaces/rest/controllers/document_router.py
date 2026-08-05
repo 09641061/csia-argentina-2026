@@ -23,6 +23,7 @@ from app.documents.domain.model.entities.document import Document
 from app.documents.domain.model.queries.get_document_by_id_query import (
     GetDocumentByIdQuery,
 )
+from app.documents.domain.model.queries.get_document_table_query import GetDocumentTableQuery
 from app.documents.domain.model.queries.list_documents_query import ListDocumentsQuery
 from app.documents.infrastructure.persistence.sqlalchemy.repositories.sqlalchemy_document_repository import (
     SqlAlchemyDocumentRepository,
@@ -38,6 +39,7 @@ from app.documents.interfaces.rest.resources.create_document_response import (
     CreateDocumentResponse,
 )
 from app.documents.interfaces.rest.resources.document_resource import DocumentResource
+from app.documents.interfaces.rest.resources.document_table_response import DocumentTableResponse
 from app.documents.interfaces.rest.resources.list_documents_response import (
     DocumentPageMetadataResponse,
     ListDocumentsResponse,
@@ -45,8 +47,16 @@ from app.documents.interfaces.rest.resources.list_documents_response import (
 from app.shared.infrastructure.persistence.sqlalchemy.unit_of_work import (
     SqlAlchemyUnitOfWork,
 )
+from app.iam.interfaces.rest.controllers.authentication_router import (
+    require_authenticated_user,
+)
 
-router = APIRouter(prefix="/api/v1/documents", tags=["Documents"])
+router = APIRouter(
+    prefix="/api/v1/documents",
+    tags=["Documents"],
+    dependencies=[Depends(require_authenticated_user)],
+    responses={401: {"description": "Authentication required"}},
+)
 
 
 async def get_document_command_service(
@@ -70,7 +80,10 @@ async def get_document_command_service(
 async def get_document_query_service(
     session: Annotated[AsyncSession, Depends(get_session)],
 ) -> DocumentQueryServiceImpl:
-    return DocumentQueryServiceImpl(document_repository=SqlAlchemyDocumentRepository(session))
+    return DocumentQueryServiceImpl(
+        document_repository=SqlAlchemyDocumentRepository(session),
+        document_storage=get_document_storage(),
+    )
 
 
 def to_document_resource(document: Document) -> DocumentResource:
@@ -93,7 +106,7 @@ def to_document_resource(document: Document) -> DocumentResource:
     status_code=status.HTTP_201_CREATED,
     summary="Register a supported document",
     description=(
-        "Receives a JSON, PDF, DOCX, XLSX, PNG or JPEG file, validates its real container, "
+        "Receives a JSON, PNG or JPEG file, validates its real container, "
         "stores it in the configured private storage and registers its metadata. "
         "The declared MIME type is not trusted: the bytes themselves are inspected."
     ),
@@ -106,7 +119,7 @@ def to_document_resource(document: Document) -> DocumentResource:
     },
 )
 async def create_document(
-    file: Annotated[UploadFile, File(description="JSON, PDF, DOCX, XLSX, PNG or JPEG file")],
+    file: Annotated[UploadFile, File(description="JSON, PNG or JPEG file")],
     command_service: Annotated[DocumentCommandServiceImpl, Depends(get_document_command_service)],
     session: Annotated[AsyncSession, Depends(get_session)],
 ) -> CreateDocumentResponse:
@@ -176,6 +189,39 @@ async def list_documents(
     return ListDocumentsResponse(
         items=[to_document_resource(document) for document in documents],
         page=DocumentPageMetadataResponse(page=page, page_size=page_size, total=total),
+    )
+
+
+@router.get(
+    "/{document_id}/table",
+    response_model=DocumentTableResponse,
+    summary="Get normalized JSON table data",
+    description="Extracts a stored JSON document into columns, rows and scalar metadata suitable for frontend table rendering.",
+    responses={
+        200: {"description": "Normalized table returned"},
+        400: {"description": "The document is not JSON or its identifier is invalid"},
+        401: {"description": "Authentication required"},
+        404: {"description": "Document not found"},
+    },
+)
+async def get_document_table(
+    document_id: int,
+    query_service: Annotated[DocumentQueryServiceImpl, Depends(get_document_query_service)],
+) -> DocumentTableResponse:
+    try:
+        table = await query_service.handle_get_document_table(
+            GetDocumentTableQuery(document_id=document_id)
+        )
+    except ValueError as error:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, str(error)) from error
+    if table is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Document not found")
+    return DocumentTableResponse(
+        document_id=document_id,
+        columns=list(table.columns),
+        rows=list(table.rows),
+        metadata=table.metadata,
+        total_rows=len(table.rows),
     )
 
 

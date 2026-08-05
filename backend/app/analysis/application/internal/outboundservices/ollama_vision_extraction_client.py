@@ -6,7 +6,7 @@ from app.analysis.domain.model.valueobjects.vision_extraction_result import (
 
 
 class OllamaVisionExtractionClient(Protocol):
-    """Local multimodal AI used to understand images and scanned PDF pages."""
+    """Local multimodal AI used to understand uploaded images."""
 
     @property
     def model_name(self) -> str: ...

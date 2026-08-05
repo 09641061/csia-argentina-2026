@@ -52,7 +52,7 @@ class SecurityAnalysisResource(BaseModel):
     rationale: str = Field(description="Safe evidence trail without source values")
     explanation: str = Field(description="Combined human-readable explanation")
     model_name: str = Field(
-        description="Ollama model used for the security evaluation", examples=["llama3.2:3b"]
+        description="Ollama model used for the security evaluation", examples=["gemma3:4b"]
     )
     findings: list[AnalysisFindingResource] = Field(description="Masked deterministic findings")
     content_truncated: bool = Field(

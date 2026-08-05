@@ -9,9 +9,20 @@ import pytest
 from fastapi import FastAPI
 
 from app.analysis.interfaces.rest.controllers import security_analysis_router
+from app.chat.application.internal.commandservices.chat_command_service_impl import (
+    ChatCommandServiceImpl,
+)
+from app.chat.application.internal.outboundservices.acl.decision_context_response_service import (
+    DecisionContextResponseService,
+)
+from app.chat.interfaces.rest.controllers import chat_router
 from app.core.database import get_session
+from app.decision.application.acl.decision_context_facade_impl import DecisionContextFacadeImpl
 from app.decision.interfaces.rest.controllers import secure_query_router
 from app.documents.interfaces.rest.controllers import document_router
+from app.iam.domain.model.valueobjects.authenticated_user import AuthenticatedUser
+from app.iam.domain.model.valueobjects.username import Username
+from app.iam.interfaces.rest.controllers import authentication_router
 from app.main import create_app
 from tests.conftest import SentinelTestContext
 
@@ -21,6 +32,7 @@ def build_test_app(context: SentinelTestContext) -> FastAPI:
     app.include_router(document_router.router)
     app.include_router(security_analysis_router.router)
     app.include_router(secure_query_router.router)
+    app.include_router(chat_router.router)
 
     async def session_override():
         yield context.session
@@ -44,6 +56,16 @@ def build_test_app(context: SentinelTestContext) -> FastAPI:
     app.dependency_overrides[secure_query_router.get_secure_interaction_query_service] = (
         context.interaction_query_service
     )
+    app.dependency_overrides[chat_router.get_chat_command_service] = lambda: ChatCommandServiceImpl(
+        DecisionContextResponseService(DecisionContextFacadeImpl(context.secure_query_service()))
+    )
+
+    async def authenticated_user_override():
+        return AuthenticatedUser(username=Username("admin"))
+
+    app.dependency_overrides[authentication_router.require_authenticated_user] = (
+        authenticated_user_override
+    )
     return app
 
 
@@ -59,8 +81,11 @@ def test_routes_are_unambiguous_and_documented() -> None:
 
     assert set(paths) == {
         "/api/v1/health",
+        "/api/v1/auth/login",
+        "/api/v1/chat/messages",
         "/api/v1/documents",
         "/api/v1/documents/{document_id}",
+        "/api/v1/documents/{document_id}/table",
         "/api/v1/documents/{document_id}/analyses",
         "/api/v1/prompts/analyses",
         "/api/v1/analyses",
@@ -92,6 +117,47 @@ def test_public_schema_never_declares_internal_storage_fields() -> None:
         "database_url",
     ):
         assert forbidden not in serialized
+
+
+@pytest.mark.asyncio
+async def test_real_document_query_dependency_includes_readable_storage(
+    context: SentinelTestContext,
+    monkeypatch,
+) -> None:
+    monkeypatch.setattr(document_router, "get_document_storage", lambda: context.storage)
+
+    service = await document_router.get_document_query_service(context.session)
+
+    assert service._document_storage is context.storage
+
+
+@pytest.mark.asyncio
+async def test_iam_login_accepts_only_configured_credentials() -> None:
+    app = FastAPI()
+    app.include_router(authentication_router.router)
+    async with client_for(app) as client:
+        accepted = await client.post(
+            "/api/v1/auth/login", json={"username": "admin", "password": "admin"}
+        )
+        rejected = await client.post(
+            "/api/v1/auth/login", json={"username": "admin", "password": "wrong"}
+        )
+
+    assert accepted.status_code == 200
+    assert accepted.json()["token_type"] == "bearer"
+    assert accepted.json()["access_token"]
+    assert rejected.status_code == 401
+
+
+@pytest.mark.asyncio
+async def test_protected_routes_require_a_bearer_token() -> None:
+    app = FastAPI()
+    app.include_router(document_router.router)
+    async with client_for(app) as client:
+        response = await client.get("/api/v1/documents")
+
+    assert response.status_code == 401
+    assert response.headers["www-authenticate"] == "Bearer"
 
 
 @pytest.mark.asyncio
@@ -148,6 +214,7 @@ async def test_document_upload_and_analysis_over_http(context: SentinelTestConte
         listing = await client.get("/api/v1/analyses?page=1&page_size=5")
         detail = await client.get(f"/api/v1/analyses/{analysis_id}")
         documents = await client.get("/api/v1/documents")
+        table = await client.get(f"/api/v1/documents/{document_id}/table")
 
     assert upload.status_code == 201
     assert "storage_reference" not in upload.text
@@ -158,6 +225,43 @@ async def test_document_upload_and_analysis_over_http(context: SentinelTestConte
     assert detail.status_code == 200
     assert documents.status_code == 200
     assert documents.json()["page"]["total"] == 1
+    assert table.status_code == 200
+    assert table.json()["total_rows"] == 10
+    assert "name" in table.json()["columns"]
+    assert table.json()["metadata"]["report"] == "Service inventory"
+
+
+@pytest.mark.asyncio
+async def test_chat_uses_the_acl_backed_secure_query_flow(
+    context: SentinelTestContext,
+) -> None:
+    app = build_test_app(context)
+    async with client_for(app) as client:
+        response = await client.post(
+            "/api/v1/chat/messages",
+            data={"prompt": "Explica qué es una arquitectura orientada a eventos."},
+        )
+
+    assert response.status_code == 200
+    assert response.json()["answer"]
+    assert set(response.json()) == {"answer", "model_name", "generated_at"}
+
+
+@pytest.mark.asyncio
+async def test_chat_hides_auditing_details_and_returns_forbidden_when_blocked(
+    context: SentinelTestContext,
+) -> None:
+    app = build_test_app(context)
+    async with client_for(app) as client:
+        response = await client.post(
+            "/api/v1/chat/messages",
+            data={"prompt": "La contraseña del cliente es SuperSecret123, resúmelo."},
+        )
+
+    assert response.status_code == 403
+    assert "SuperSecret123" not in response.text
+    assert "interaction_id" not in response.text
+    assert "decision" not in response.text
 
 
 @pytest.mark.asyncio
@@ -169,15 +273,15 @@ async def test_rejected_uploads_return_safe_status_codes(context: SentinelTestCo
             "/api/v1/documents",
             files={"file": ("broken.json", b"{not json", "application/json")},
         )
-        malformed_pdf = await client.post(
+        unsupported_pdf = await client.post(
             "/api/v1/documents",
             files={"file": ("report.pdf", b"%PDF-1.4", "application/pdf")},
         )
 
     assert broken.status_code == 400
-    assert malformed_pdf.status_code == 400
+    assert unsupported_pdf.status_code == 415
     assert "Traceback" not in broken.text
-    assert "app/" not in malformed_pdf.text
+    assert "app/" not in unsupported_pdf.text
 
 
 @pytest.mark.asyncio

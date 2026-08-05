@@ -16,5 +16,7 @@ class SecureInteractionPageMetadataResponse(BaseModel):
 class SecureInteractionListResponse(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    items: list[SecureInteractionResource]
-    page: SecureInteractionPageMetadataResponse
+    items: list[SecureInteractionResource] = Field(
+        description="Audited interactions in the current page"
+    )
+    page: SecureInteractionPageMetadataResponse = Field(description="Pagination metadata")

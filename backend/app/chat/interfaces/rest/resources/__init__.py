@@ -1,0 +1,1 @@
+"""Chat REST resources."""

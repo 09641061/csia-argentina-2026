@@ -22,17 +22,20 @@ from app.documents.infrastructure.storage.safe_url_content_reader import (
 )
 
 CLOUDINARY_ALLOWED_HOSTS = frozenset({"res.cloudinary.com"})
+CLOUDINARY_EXTENSION_BY_MIME_TYPE = {
+    "application/json": ".json",
+    "image/png": ".png",
+    "image/jpeg": ".jpg",
+}
 
 
 class CloudinaryDocumentStorage(DocumentStorage):
     """
-    Optional remote storage, disabled by default.
+    Remote storage used by the deployment (DOCUMENT_STORAGE_BACKEND=cloudinary).
 
-    Kept because it is part of the existing deployment, but it is never the
-    default: uploading a document to a third party before Sentinel has reviewed
-    it would defeat the purpose of the product. Enable it only with
-    DOCUMENT_STORAGE_BACKEND=cloudinary and only for content you accept sending
-    outside the organization.
+    The uploaded bytes leave the machine before the security review runs, so use
+    it only for content the organization accepts sending to a third party.
+    DOCUMENT_STORAGE_BACKEND=local keeps everything on disk instead.
     """
 
     def __init__(self, folder: str = "sentinel-ai-guard/documents", max_content_bytes: int | None = None) -> None:
@@ -86,8 +89,14 @@ class CloudinaryDocumentStorage(DocumentStorage):
     def _store_sync(self, content: bytes, content_type: str) -> str:
         import cloudinary.uploader
 
+        extension = CLOUDINARY_EXTENSION_BY_MIME_TYPE.get(content_type)
+        if extension is None:
+            raise DocumentStorageUploadError(
+                "Cloudinary cannot store this document content type"
+            )
+
         upload_file = BytesIO(content)
-        upload_file.name = f"{uuid4().hex}.bin"
+        upload_file.name = f"{uuid4().hex}{extension}"
 
         try:
             result = cloudinary.uploader.upload(

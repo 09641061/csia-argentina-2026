@@ -27,7 +27,7 @@ _REQUIRED_FIELDS = {"visible_text", "visual_summary", "document_type"}
 
 
 class OllamaVisionExtractionClientImpl(OllamaVisionExtractionClient):
-    """Mandatory local-AI extraction for images and scanned PDF pages."""
+    """Mandatory local-AI extraction for uploaded images."""
 
     def __init__(
         self,
