@@ -5,9 +5,9 @@ antes de que el modelo pueda responder. Solo el contenido permitido llega al gen
 
 ```text
 prompt + archivo opcional
-  -> Documents valida el formato real y almacena los bytes en privado
-  -> Analysis extrae una estructura acotada (Ollama Vision para imágenes o PDF escaneado)
-  -> Gemma clasifica obligatoriamente el contenido local completo sin devolver valores
+  -> Documents valida el formato real y sube los bytes a Cloudinary (se guarda la URL)
+  -> Analysis extrae una estructura acotada (Ollama Vision para las imágenes)
+  -> Ollama clasifica obligatoriamente el contenido local completo sin devolver valores
   -> Analysis detecta y enmascara datos sensibles
   -> Ollama clasifica obligatoriamente el riesgo contextual
   -> Decision & Audit aplica ALLOWED/BLOCKED
@@ -17,14 +17,14 @@ prompt + archivo opcional
 
 ## Alcance del MVP
 
-- Formatos: JSON, PDF, DOCX, XLSX, PNG y JPEG, con máximo 5 MB.
+- Formatos: JSON, PNG y JPEG, con máximo 5 MB.
 - Decisiones `ALLOWED` y `BLOCKED`. No hay WARN, SANITIZE ni aprobaciones.
 - No se entrega al usuario ninguna versión sanitizada del contenido bloqueado.
 - Sin autenticación, sin conversaciones, sin RAG, sin dashboard.
 - Ollama tiene cuatro usos separados: descubrimiento de datos sensibles, visión documental,
   evaluación contextual y generación.
 - La IA es una dependencia funcional: sin una evaluación válida no existe `ALLOWED`; sin visión no
-  se pueden analizar imágenes ni páginas escaneadas; sin generación no existe respuesta.
+  se pueden analizar imágenes; sin generación no existe respuesta.
 
 ## Contextos delimitados
 
@@ -60,8 +60,9 @@ generador la exige como argumento.
 
 - Python 3.11 o superior, administrado por `uv` (verificado con 3.13.7).
 - PostgreSQL (verificado con 18.1).
-- Ollama con `llama3.2:3b` y `gemma3:4b`.
-- No se necesita cuenta de Cloudinary.
+- Ollama con `gemma3:4b`, el único modelo que usa el backend (es multimodal, así que también lee
+  las imágenes).
+- Cuenta de Cloudinary, salvo que uses `DOCUMENT_STORAGE_BACKEND=local`.
 
 ## Instalación
 
@@ -96,7 +97,6 @@ responde sin poder escribir su auditoría es peor que una API caída.
 ### Ollama
 
 ```powershell
-ollama pull llama3.2:3b
 ollama pull gemma3:4b
 ollama list
 ```
@@ -119,22 +119,22 @@ uv run uvicorn app.main:app --reload
 | --- | --- | --- |
 | `DATABASE_URL` | Conexión SQLAlchemy asíncrona | `postgresql+asyncpg://postgres:admin@localhost:5432/sentinel_ai_guard` |
 | `FRONTEND_ORIGIN` | Orígenes permitidos por CORS, separados por comas | `http://localhost:5173,http://127.0.0.1:5173` |
-| `DOCUMENT_STORAGE_BACKEND` | `local` o `cloudinary` | `local` |
+| `DOCUMENT_STORAGE_BACKEND` | `cloudinary` o `local` | `cloudinary` |
 | `DOCUMENT_STORAGE_DIR` | Carpeta privada del adaptador local | `storage/documents` |
 | `MAX_DOCUMENT_SIZE_MB` | Tamaño máximo del archivo | `5` |
-| `CLOUDINARY_*` | Solo si el backend es `cloudinary` | vacío |
+| `CLOUDINARY_*` | Credenciales, obligatorias con el backend `cloudinary` | — |
 | `OLLAMA_BASE_URL` | API HTTP local de Ollama | `http://localhost:11434` |
-| `OLLAMA_SECURITY_MODEL` | Modelo de evaluación de seguridad | `llama3.2:3b` |
+| `OLLAMA_SECURITY_MODEL` | Modelo de evaluación de seguridad | `gemma3:4b` |
 | `OLLAMA_SECURITY_TIMEOUT_SECONDS` | Timeout de la evaluación | `120` |
 | `OLLAMA_SECURITY_CONTEXT_TOKENS` | Ventana de contexto de la evaluación | `8192` |
 | `OLLAMA_SECURITY_MAX_OUTPUT_TOKENS` | Límite de salida de la evaluación | `300` |
 | `OLLAMA_DISCOVERY_MODEL` | Clasificación local del contenido extraído completo | `gemma3:4b` |
 | `OLLAMA_DISCOVERY_MAX_INPUT_CHARS` | Máximo que puede inspeccionarse completamente | `24000` |
-| `OLLAMA_VISION_MODEL` | Modelo para imágenes y PDF escaneado | `gemma3:4b` |
+| `OLLAMA_VISION_MODEL` | Modelo multimodal para imágenes PNG/JPEG | `gemma3:4b` |
 | `OLLAMA_VISION_TIMEOUT_SECONDS` | Timeout de la extracción visual | `180` |
 | `OLLAMA_VISION_CONTEXT_TOKENS` | Ventana de contexto visual | `8192` |
 | `OLLAMA_VISION_MAX_OUTPUT_TOKENS` | Límite de la transcripción visual | `1200` |
-| `OLLAMA_GENERATION_MODEL` | Modelo de generación de la respuesta | `llama3.2:3b` |
+| `OLLAMA_GENERATION_MODEL` | Modelo de generación de la respuesta | `gemma3:4b` |
 | `OLLAMA_GENERATION_TIMEOUT_SECONDS` | Timeout de la generación | `180` |
 | `OLLAMA_GENERATION_CONTEXT_TOKENS` | Ventana de contexto de la generación | `8192` |
 | `OLLAMA_GENERATION_MAX_OUTPUT_TOKENS` | Límite de salida de la generación | `800` |
@@ -218,7 +218,7 @@ Las pruebas automáticas nunca llaman a Ollama real, a Cloudinary ni a internet.
 uv run pytest -q
 ```
 
-Cubren, entre otras cosas: extracción de PDF, DOCX, XLSX e imágenes, recorrido recursivo con
+Cubren, entre otras cosas: extracción de JSON e imágenes, recorrido recursivo con
 JSONPath, detección determinista, enmascarado, cálculo de riesgo, contratos estrictos y timeouts,
 política
 ALLOWED/BLOCKED, que un prompt bloqueado nunca llega al generador, que el generador exige una
@@ -245,16 +245,17 @@ Los cuatro usos de Ollama están separados en clientes, contratos y prompts de s
 
 ## Limitaciones
 
-- La precisión contextual depende de `llama3.2:3b`. El evaluador de seguridad admite un reintento
+- La precisión contextual depende de `gemma3:4b`. El evaluador de seguridad admite un reintento
   correctivo ante una respuesta que no cumple el contrato; si sigue siendo inválida, la ejecución
   falla y la consulta queda bloqueada.
-- `llama3.2:3b` extrae correctamente los datos del documento permitido, pero **no cuenta ni suma de
+- `gemma3:4b` extrae correctamente los datos del documento permitido, pero **no cuenta ni suma de
   forma fiable**. Una pregunta de tipo "cuántos elementos hay" puede devolver una cifra incorrecta.
   Un modelo mayor corrige esto sin tocar el código.
 - Los eventos de dominio se publican en memoria, siguiendo la convención existente.
-- Los PDF con texto usan su capa textual; solo las páginas sin texto se renderizan para visión.
-  El MVP limita los PDF a 50 páginas y las páginas visuales a 10 para mantener una demo predecible.
-- DOCX y XLSX se leen sin ejecutar macros ni fórmulas. No se admiten los formatos heredados `.doc`
-  y `.xls`, archivos con contraseña, OCR masivo ni análisis forense de archivos.
+- Solo se admiten JSON, PNG y JPEG. PDF, DOCX, XLSX y los formatos heredados quedan fuera del
+  alcance, igual que el OCR masivo y el análisis forense de archivos.
+- Con `DOCUMENT_STORAGE_BACKEND=cloudinary` el archivo se sube a Cloudinary antes de la revisión y
+  en PostgreSQL solo queda la URL `https://res.cloudinary.com/...`, nunca los bytes. Usa `local` si
+  el contenido no puede salir de la máquina.
 - La transcripción visual es una interpretación del modelo local, no OCR certificado; después se
   somete igualmente al detector determinista y al clasificador de seguridad obligatorio.

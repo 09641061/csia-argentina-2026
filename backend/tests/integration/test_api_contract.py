@@ -169,15 +169,15 @@ async def test_rejected_uploads_return_safe_status_codes(context: SentinelTestCo
             "/api/v1/documents",
             files={"file": ("broken.json", b"{not json", "application/json")},
         )
-        malformed_pdf = await client.post(
+        unsupported_pdf = await client.post(
             "/api/v1/documents",
             files={"file": ("report.pdf", b"%PDF-1.4", "application/pdf")},
         )
 
     assert broken.status_code == 400
-    assert malformed_pdf.status_code == 400
+    assert unsupported_pdf.status_code == 415
     assert "Traceback" not in broken.text
-    assert "app/" not in malformed_pdf.text
+    assert "app/" not in unsupported_pdf.text
 
 
 @pytest.mark.asyncio

@@ -11,17 +11,19 @@ from app.analysis.infrastructure.ollama.ollama_sensitive_content_discovery_clien
 )
 
 
-def test_applies_labeled_identity_rules_inside_extracted_word_text() -> None:
+def test_applies_labeled_identity_rules_inside_transcribed_image_text() -> None:
     findings = DocumentFreeTextSensitiveDataDetectionService().scan(
         {
-            "format": "docx",
-            "paragraphs": [{"paragraph": 1, "text": "DNI: 65432112"}],
+            "document_type": "id_card",
+            "visible_text": "DNI: 65432112",
+            "visual_summary": "Foto de un documento de identidad.",
+            "vision_model": "gemma3:4b",
         }
     )
 
     assert len(findings) == 1
     assert findings[0].finding_type == AnalysisFindingType.PERSONAL_ID
-    assert findings[0].json_path == "$.paragraphs[0].text"
+    assert findings[0].json_path == "$.visible_text"
     assert findings[0].masked_evidence == "6*****12"
 
 

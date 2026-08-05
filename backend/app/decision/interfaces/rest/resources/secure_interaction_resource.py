@@ -58,7 +58,7 @@ class SecureInteractionResource(BaseModel):
         description="not_requested, skipped, succeeded or failed", examples=["succeeded"]
     )
     generation_model: str | None = Field(
-        default=None, description="Model that produced the answer", examples=["llama3.2:3b"]
+        default=None, description="Model that produced the answer", examples=["gemma3:4b"]
     )
     generation_error: str | None = Field(
         default=None, description="Safe message when the answer could not be produced"

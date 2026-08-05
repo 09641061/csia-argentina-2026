@@ -12,24 +12,12 @@ class DocumentMimeType:
     value: str
 
     JSON: ClassVar[str] = "application/json"
-    PDF: ClassVar[str] = "application/pdf"
-    DOCX: ClassVar[str] = (
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-    )
-    XLSX: ClassVar[str] = (
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    )
     PNG: ClassVar[str] = "image/png"
     JPEG: ClassVar[str] = "image/jpeg"
 
-    SUPPORTED: ClassVar[frozenset[str]] = frozenset(
-        {JSON, PDF, DOCX, XLSX, PNG, JPEG}
-    )
+    SUPPORTED: ClassVar[frozenset[str]] = frozenset({JSON, PNG, JPEG})
     EXTENSION_TYPES: ClassVar[dict[str, str]] = {
         ".json": JSON,
-        ".pdf": PDF,
-        ".docx": DOCX,
-        ".xlsx": XLSX,
         ".png": PNG,
         ".jpg": JPEG,
         ".jpeg": JPEG,
@@ -46,7 +34,7 @@ class DocumentMimeType:
         if normalized not in self.SUPPORTED:
             raise UnsupportedDocumentTypeError(
                 f"Unsupported document type: {normalized}. Supported formats: "
-                "JSON, PDF, DOCX, XLSX, PNG and JPEG"
+                "JSON, PNG and JPEG"
             )
 
         object.__setattr__(self, "value", normalized)

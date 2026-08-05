@@ -83,22 +83,6 @@
       "memory_limit": "256Mi",
       "healthy": true,
       "owner_team": "platform"
-    },
-    {
-      "name": "scheduler",
-      "replicas": 1,
-      "cpu_limit": "400m",
-      "memory_limit": "384Mi",
-      "healthy": true,
-      "owner_team": "product"
-    },
-    {
-      "name": "webhook-relay",
-      "replicas": 2,
-      "cpu_limit": "500m",
-      "memory_limit": "512Mi",
-      "healthy": true,
-      "owner_team": "security"
     }
   ],
   "notes": "Synthetic service metadata without personal data or credentials."

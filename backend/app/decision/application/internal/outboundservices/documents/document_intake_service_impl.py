@@ -63,7 +63,7 @@ class DocumentIntakeServiceImpl(DocumentIntakeService):
             )
         except UnsupportedDocumentTypeError as error:
             raise SecureQueryValidationError(
-                "Solo se admiten archivos JSON, PDF, DOCX, XLSX, PNG y JPEG."
+                "Solo se admiten archivos JSON, PNG y JPEG."
             ) from error
         except DocumentFileTooLargeError as error:
             raise SecureQueryValidationError(

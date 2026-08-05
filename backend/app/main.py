@@ -28,7 +28,7 @@ Solo el contenido permitido llega al generador de respuestas.
 
 Contextos delimitados:
 
-* **Documents** recibe, valida y almacena JSON, PDF, DOCX, XLSX e imágenes en privado.
+* **Documents** recibe, valida y almacena JSON e imágenes (PNG/JPEG) en privado.
 * **Analysis** usa visión local cuando hace falta, detecta datos sensibles, enmascara la
   evidencia y exige una evaluación contextual al modelo local de seguridad.
 * **Decision & Audit** aplica la política ALLOWED/BLOCKED, ejecuta la generación solo si

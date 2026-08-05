@@ -93,7 +93,7 @@ def to_document_resource(document: Document) -> DocumentResource:
     status_code=status.HTTP_201_CREATED,
     summary="Register a supported document",
     description=(
-        "Receives a JSON, PDF, DOCX, XLSX, PNG or JPEG file, validates its real container, "
+        "Receives a JSON, PNG or JPEG file, validates its real container, "
         "stores it in the configured private storage and registers its metadata. "
         "The declared MIME type is not trusted: the bytes themselves are inspected."
     ),
@@ -106,7 +106,7 @@ def to_document_resource(document: Document) -> DocumentResource:
     },
 )
 async def create_document(
-    file: Annotated[UploadFile, File(description="JSON, PDF, DOCX, XLSX, PNG or JPEG file")],
+    file: Annotated[UploadFile, File(description="JSON, PNG or JPEG file")],
     command_service: Annotated[DocumentCommandServiceImpl, Depends(get_document_command_service)],
     session: Annotated[AsyncSession, Depends(get_session)],
 ) -> CreateDocumentResponse:

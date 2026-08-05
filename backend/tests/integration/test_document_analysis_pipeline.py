@@ -75,8 +75,13 @@ async def test_all_datasets_run_through_pipeline_and_history(
     assert len(page) == 4
 
     end_analysis = analyses[-1]
+    last_record_index = (
+        len(json.loads((SAMPLES / "sample-10-finding-at-end.json").read_text("utf-8"))["records"])
+        - 1
+    )
     assert any(
-        finding.json_path.startswith("$.records[349]") for finding in end_analysis.findings
+        finding.json_path.startswith(f"$.records[{last_record_index}]")
+        for finding in end_analysis.findings
     )
     assert end_analysis.content_truncated is True
 

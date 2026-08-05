@@ -120,7 +120,7 @@ def to_secure_query_response(result: SecureQueryResult) -> SecureQueryResponse:
     status_code=status.HTTP_201_CREATED,
     summary="Analyze and ask (the main use case)",
     description=(
-        "Reviews the query and an optional JSON, PDF, DOCX, XLSX or image attachment, applies the "
+        "Reviews the query and an optional JSON or image attachment, applies the "
         "ALLOWED/BLOCKED policy and, "
         "only when the content was allowed and a question was submitted, asks the local model for "
         "an answer. A blocked submission never reaches the answer generator. "
@@ -141,7 +141,7 @@ async def submit_secure_query(
     session: Annotated[AsyncSession, Depends(get_session)],
     prompt: Annotated[str | None, Form(description="Free-text query")] = None,
     file: Annotated[
-        UploadFile | None, File(description="Optional JSON, PDF, DOCX, XLSX, PNG or JPEG file")
+        UploadFile | None, File(description="Optional JSON, PNG or JPEG file")
     ] = None,
 ) -> SecureQueryResponse:
     settings = get_settings()
