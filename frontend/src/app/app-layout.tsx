@@ -3,15 +3,6 @@ import { NavLink, Outlet } from 'react-router-dom'
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
 import { Separator } from '@/components/ui/separator'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { cn } from '@/lib/utils'
@@ -30,81 +21,57 @@ export function AppLayout() {
   const { session, logout } = useAuth()
 
   return (
-    <div className="min-h-svh bg-background">
-      <header className="sticky top-0 z-40 border-b bg-background">
-        <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6 lg:px-8">
-          <NavLink className="flex min-w-0 items-center gap-2.5 text-foreground no-underline" to="/">
-            <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-primary text-primary-foreground [&_svg]:size-5">
-              <ShieldCheck aria-hidden="true" />
-            </span>
-            <span className="hidden text-sm font-semibold tracking-tight sm:block">
-              Sentinel AI Guard
-            </span>
-          </NavLink>
+    <div className="flex min-h-svh bg-background">
+      <aside className="sticky top-0 hidden h-svh w-64 shrink-0 flex-col border-r bg-card/40 md:flex">
+        <NavLink className="flex h-20 items-center gap-3 border-b px-5 text-foreground no-underline" to="/">
+          <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-primary text-primary-foreground [&_svg]:size-5">
+            <ShieldCheck aria-hidden="true" />
+          </span>
+          <span className="min-w-0"><strong className="block truncate text-sm">Sentinel AI Guard</strong><small className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">SOC workspace</small></span>
+        </NavLink>
 
-          <nav className="ml-4 hidden items-center gap-1 md:flex" aria-label="Navegación principal">
+        <div className="flex-1 overflow-y-auto px-3 py-5">
+          <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">Operaciones</p>
+          <nav className="grid gap-1" aria-label="Navegación principal">
             <NavigationLinks />
           </nav>
+          <div className="mt-6 rounded-xl border bg-background/30 p-4">
+            <div className="flex items-center gap-2 text-xs font-medium"><span className="size-2 rounded-full bg-emerald-400 shadow-[0_0_10px_currentColor]" /> Sistema operativo</div>
+            <p className="mt-2 text-[11px] leading-4 text-muted-foreground">Correlación, modelos locales y perímetro conectados.</p>
+          </div>
+        </div>
 
-          <div className="ml-auto flex items-center gap-2">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="lg" className="px-2" aria-label="Menú de usuario">
-                  <Avatar size="sm">
-                    <AvatarFallback className="text-xs font-semibold">
-                      {session?.username.slice(0, 2).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <span className="hidden max-w-36 truncate text-sm sm:block">{session?.username}</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuGroup>
-                  <DropdownMenuLabel className="font-normal">
-                    <span className="block text-xs text-muted-foreground">Usuario</span>
-                    <span className="block truncate text-sm font-medium">{session?.username}</span>
-                  </DropdownMenuLabel>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <DropdownMenuItem onClick={logout}>
-                    <LogOut aria-hidden="true" />
-                    Cerrar sesión
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
+        <div className="border-t p-3">
+          <div className="flex items-center gap-3 rounded-xl p-2">
+            <Avatar size="sm"><AvatarFallback className="text-xs font-semibold">{session?.username.slice(0, 2).toUpperCase()}</AvatarFallback></Avatar>
+            <span className="min-w-0 flex-1"><small className="block text-[10px] text-muted-foreground">Sesión activa</small><strong className="block truncate text-xs">{session?.username}</strong></span>
+            <Button type="button" variant="ghost" size="icon" onClick={logout} aria-label="Cerrar sesión"><LogOut aria-hidden="true" /></Button>
+          </div>
+        </div>
+      </aside>
 
+      <div className="min-w-0 flex-1">
+        <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur md:hidden">
+          <div className="flex h-16 items-center gap-3 px-4">
+            <NavLink className="flex min-w-0 flex-1 items-center gap-2.5 text-foreground no-underline" to="/">
+              <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-primary text-primary-foreground [&_svg]:size-5"><ShieldCheck aria-hidden="true" /></span>
+              <span className="truncate text-sm font-semibold">Sentinel AI Guard</span>
+            </NavLink>
             <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="outline" size="icon" className="md:hidden" aria-label="Abrir menú">
-                  <Menu aria-hidden="true" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="right" className="w-72">
-                <SheetHeader>
-                  <SheetTitle className="flex items-center gap-2">
-                    <ShieldCheck /> Sentinel
-                  </SheetTitle>
-                </SheetHeader>
-                <nav className="grid gap-1 px-4" aria-label="Navegación móvil">
-                  <NavigationLinks mobile />
-                </nav>
-                <div className="mt-auto">
-                  <Separator />
-                  <p className="flex items-center gap-2 p-4 text-sm text-muted-foreground [&_svg]:size-4">
-                    <UserRound aria-hidden="true" /> {session?.username}
-                  </p>
-                </div>
+              <SheetTrigger asChild><Button variant="outline" size="icon" aria-label="Abrir menú"><Menu aria-hidden="true" /></Button></SheetTrigger>
+              <SheetContent side="left" className="w-72">
+                <SheetHeader><SheetTitle className="flex items-center gap-2"><ShieldCheck /> Sentinel</SheetTitle></SheetHeader>
+                <nav className="grid gap-1 px-4" aria-label="Navegación móvil"><NavigationLinks mobile /></nav>
+                <div className="mt-auto"><Separator /><div className="flex items-center gap-3 p-4 text-sm text-muted-foreground"><UserRound className="size-4" aria-hidden="true" /><span className="min-w-0 flex-1 truncate">{session?.username}</span><Button variant="ghost" size="icon" onClick={logout} aria-label="Cerrar sesión"><LogOut /></Button></div></div>
               </SheetContent>
             </Sheet>
           </div>
-        </div>
-      </header>
+        </header>
 
-      <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
-        <Outlet />
-      </main>
+        <main className="mx-auto w-full max-w-[96rem] px-4 py-7 sm:px-6 lg:px-8 lg:py-9">
+          <Outlet />
+        </main>
+      </div>
     </div>
   )
 }
@@ -117,16 +84,15 @@ function NavigationLinks({ mobile = false }: { readonly mobile?: boolean }) {
         key={item.to}
         to={item.to}
         end={item.end}
-        className={({ isActive }) =>
-          cn(
-            'flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground no-underline transition-colors hover:bg-muted hover:text-foreground [&_svg]:size-4',
-            isActive && 'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground',
-            mobile && 'w-full py-2.5',
-          )
-        }
+        className={({ isActive }) => cn(
+          'group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground no-underline transition-colors hover:bg-muted hover:text-foreground [&_svg]:size-4',
+          isActive && 'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground',
+          mobile && 'w-full',
+        )}
       >
         <Icon aria-hidden="true" />
-        {item.label}
+        <span className="flex-1">{item.label}</span>
+        {!mobile && <span className="size-1.5 rounded-full bg-current opacity-0 group-[.active]:opacity-100" />}
       </NavLink>
     )
   })
