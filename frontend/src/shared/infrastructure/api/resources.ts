@@ -124,6 +124,9 @@ export interface ChatMessageResource {
   id: number
   role: 'user' | 'assistant'
   content: string
+  attachment_url?: string | null
+  attachment_name?: string | null
+  attachment_mime_type?: string | null
   created_at: string
 }
 

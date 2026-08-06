@@ -1,7 +1,7 @@
-# Sentinel AI Guard — Frontend
+# Claude AI Guard — Frontend
 
 Interfaz conversacional protegida, inspirada en la estructura visual de Claude. Cada mensaje pasa
-por las políticas locales de Sentinel antes de llegar al modelo; además, la aplicación permite
+por las políticas locales de Claude antes de llegar al modelo; además, la aplicación permite
 revisar contenido directamente y consultar la auditoría explicable.
 
 ## Ejecutar

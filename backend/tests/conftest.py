@@ -3,7 +3,7 @@ Shared test doubles and fixtures.
 
 The automated suite never touches a real Ollama, a real Cloudinary account or
 the network: every outbound collaborator has an explicit fake here, so a test
-failure always points at Sentinel's own logic.
+failure always points at Claude's own logic.
 """
 
 from __future__ import annotations
@@ -258,7 +258,7 @@ class UnavailableFakeGenerationClient(RecordingFakeGenerationClient):
 
 
 @dataclass(slots=True)
-class SentinelTestContext:
+class ClaudeTestContext:
     session: AsyncSession
     storage: InMemoryDocumentStorage
     security_client: object
@@ -328,13 +328,13 @@ class SentinelTestContext:
 
 @pytest_asyncio.fixture
 async def context(tmp_path: Path):
-    database_path = (tmp_path / "sentinel-tests.db").as_posix()
+    database_path = (tmp_path / "claude-tests.db").as_posix()
     engine = create_async_engine(f"sqlite+aiosqlite:///{database_path}")
     async with engine.begin() as connection:
         await connection.run_sync(Base.metadata.create_all)
     session_factory = async_sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
     async with session_factory() as session:
-        yield SentinelTestContext(
+        yield ClaudeTestContext(
             session=session,
             storage=InMemoryDocumentStorage(),
             security_client=ConservativeFakeSecurityClient(),

@@ -9,7 +9,7 @@ class LoginRequest(BaseModel):
         max_length=64,
         pattern=r"^[A-Za-z0-9._-]+$",
         description="Account username",
-        examples=["sentinel.demo"],
+        examples=["claude.demo"],
     )
     password: str = Field(
         min_length=8,

@@ -7,20 +7,22 @@ from app.documents.domain.exceptions import UnsupportedDocumentTypeError
 
 @dataclass(frozen=True, slots=True)
 class DocumentMimeType:
-    """Normalized MIME type of a document Sentinel can review locally."""
+    """Normalized MIME type of a document Claude can review locally."""
 
     value: str
 
     JSON: ClassVar[str] = "application/json"
     PNG: ClassVar[str] = "image/png"
     JPEG: ClassVar[str] = "image/jpeg"
+    WEBP: ClassVar[str] = "image/webp"
 
-    SUPPORTED: ClassVar[frozenset[str]] = frozenset({JSON, PNG, JPEG})
+    SUPPORTED: ClassVar[frozenset[str]] = frozenset({JSON, PNG, JPEG, WEBP})
     EXTENSION_TYPES: ClassVar[dict[str, str]] = {
         ".json": JSON,
         ".png": PNG,
         ".jpg": JPEG,
         ".jpeg": JPEG,
+        ".webp": WEBP,
     }
 
     def __post_init__(self) -> None:
@@ -34,7 +36,7 @@ class DocumentMimeType:
         if normalized not in self.SUPPORTED:
             raise UnsupportedDocumentTypeError(
                 f"Unsupported document type: {normalized}. Supported formats: "
-                "JSON, PNG and JPEG"
+                "JSON, PNG, JPEG and WebP"
             )
 
         object.__setattr__(self, "value", normalized)
@@ -61,4 +63,4 @@ class DocumentMimeType:
 
     @property
     def is_image(self) -> bool:
-        return self.value in {self.PNG, self.JPEG}
+        return self.value in {self.PNG, self.JPEG, self.WEBP}

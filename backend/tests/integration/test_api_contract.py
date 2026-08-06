@@ -30,10 +30,10 @@ from app.iam.infrastructure.persistence.sqlalchemy.models.user_account_model imp
 )
 from app.iam.interfaces.rest.controllers import authentication_router
 from app.main import create_app
-from tests.conftest import SentinelTestContext
+from tests.conftest import ClaudeTestContext
 
 
-def build_test_app(context: SentinelTestContext) -> FastAPI:
+def build_test_app(context: ClaudeTestContext) -> FastAPI:
     app = FastAPI()
     app.include_router(document_router.router)
     app.include_router(security_analysis_router.router)
@@ -133,7 +133,7 @@ def test_public_schema_never_declares_internal_storage_fields() -> None:
 
 @pytest.mark.asyncio
 async def test_real_document_query_dependency_includes_readable_storage(
-    context: SentinelTestContext,
+    context: ClaudeTestContext,
     monkeypatch,
 ) -> None:
     monkeypatch.setattr(
@@ -147,7 +147,7 @@ async def test_real_document_query_dependency_includes_readable_storage(
 
 @pytest.mark.asyncio
 async def test_iam_registration_login_and_jwt_validation(
-    context: SentinelTestContext,
+    context: ClaudeTestContext,
 ) -> None:
     app = FastAPI()
     app.include_router(authentication_router.router)
@@ -159,19 +159,19 @@ async def test_iam_registration_login_and_jwt_validation(
     async with client_for(app) as client:
         registered = await client.post(
             "/api/v1/auth/register",
-            json={"username": "sentinel.demo", "password": "DemoSecure2026"},
+            json={"username": "claude.demo", "password": "DemoSecure2026"},
         )
         duplicate = await client.post(
             "/api/v1/auth/register",
-            json={"username": "SENTINEL.DEMO", "password": "DemoSecure2026"},
+            json={"username": "CLAUDE.DEMO", "password": "DemoSecure2026"},
         )
         accepted = await client.post(
             "/api/v1/auth/login",
-            json={"username": "sentinel.demo", "password": "DemoSecure2026"},
+            json={"username": "claude.demo", "password": "DemoSecure2026"},
         )
         rejected = await client.post(
             "/api/v1/auth/login",
-            json={"username": "sentinel.demo", "password": "WrongPass2026"},
+            json={"username": "claude.demo", "password": "WrongPass2026"},
         )
         me = await client.get(
             "/api/v1/auth/me",
@@ -179,7 +179,7 @@ async def test_iam_registration_login_and_jwt_validation(
         )
     stored_account = (
         await context.session.execute(
-            select(UserAccountModel).where(UserAccountModel.username == "sentinel.demo")
+            select(UserAccountModel).where(UserAccountModel.username == "claude.demo")
         )
     ).scalar_one()
 
@@ -188,10 +188,10 @@ async def test_iam_registration_login_and_jwt_validation(
     assert accepted.status_code == 200
     assert accepted.json()["token_type"] == "bearer"
     assert accepted.json()["access_token"]
-    assert accepted.json()["username"] == "sentinel.demo"
+    assert accepted.json()["username"] == "claude.demo"
     assert rejected.status_code == 401
     assert me.status_code == 200
-    assert me.json() == {"username": "sentinel.demo"}
+    assert me.json() == {"username": "claude.demo"}
     assert stored_account.password_hash.startswith("$argon2")
     assert "DemoSecure2026" not in stored_account.password_hash
 
@@ -209,7 +209,7 @@ async def test_protected_routes_require_a_bearer_token() -> None:
 
 @pytest.mark.asyncio
 async def test_secure_query_endpoint_returns_answer_only_when_allowed(
-    context: SentinelTestContext,
+    context: ClaudeTestContext,
 ) -> None:
     app = build_test_app(context)
     async with client_for(app) as client:
@@ -236,7 +236,7 @@ async def test_secure_query_endpoint_returns_answer_only_when_allowed(
 
 @pytest.mark.asyncio
 async def test_secure_query_endpoint_requires_content(
-    context: SentinelTestContext,
+    context: ClaudeTestContext,
 ) -> None:
     app = build_test_app(context)
     async with client_for(app) as client:
@@ -248,7 +248,7 @@ async def test_secure_query_endpoint_requires_content(
 
 @pytest.mark.asyncio
 async def test_document_upload_and_analysis_over_http(
-    context: SentinelTestContext,
+    context: ClaudeTestContext,
 ) -> None:
     app = build_test_app(context)
     payload = context.sample_bytes("sample-01-clean-inventory.json")
@@ -284,7 +284,7 @@ async def test_document_upload_and_analysis_over_http(
 
 @pytest.mark.asyncio
 async def test_chat_uses_the_acl_backed_secure_query_flow(
-    context: SentinelTestContext,
+    context: ClaudeTestContext,
 ) -> None:
     app = build_test_app(context)
     async with client_for(app) as client:
@@ -300,7 +300,7 @@ async def test_chat_uses_the_acl_backed_secure_query_flow(
 
 @pytest.mark.asyncio
 async def test_chat_hides_auditing_details_and_returns_forbidden_when_blocked(
-    context: SentinelTestContext,
+    context: ClaudeTestContext,
 ) -> None:
     app = build_test_app(context)
     async with client_for(app) as client:
@@ -317,7 +317,7 @@ async def test_chat_hides_auditing_details_and_returns_forbidden_when_blocked(
 
 @pytest.mark.asyncio
 async def test_rejected_uploads_return_safe_status_codes(
-    context: SentinelTestContext,
+    context: ClaudeTestContext,
 ) -> None:
     app = build_test_app(context)
 
@@ -339,7 +339,7 @@ async def test_rejected_uploads_return_safe_status_codes(
 
 @pytest.mark.asyncio
 async def test_interaction_history_pagination_and_detail(
-    context: SentinelTestContext,
+    context: ClaudeTestContext,
 ) -> None:
     app = build_test_app(context)
 
@@ -367,7 +367,7 @@ async def test_interaction_history_pagination_and_detail(
 
 @pytest.mark.asyncio
 async def test_prompt_analysis_endpoint_rejects_empty_and_oversized_prompts(
-    context: SentinelTestContext,
+    context: ClaudeTestContext,
 ) -> None:
     app = build_test_app(context)
 

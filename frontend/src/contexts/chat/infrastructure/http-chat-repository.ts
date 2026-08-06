@@ -33,17 +33,18 @@ export class HttpChatRepository implements ChatRepository {
     }
   }
 
-  create(prompt: string, signal?: AbortSignal): Promise<AssistantReply> {
-    return this.post('/api/v1/chat/conversations', prompt, signal)
+  create(prompt: string, attachment?: File | null, signal?: AbortSignal): Promise<AssistantReply> {
+    return this.post('/api/v1/chat/conversations', prompt, attachment, signal)
   }
 
-  send(conversationId: number, prompt: string, signal?: AbortSignal): Promise<AssistantReply> {
-    return this.post(`/api/v1/chat/conversations/${conversationId}/messages`, prompt, signal)
+  send(conversationId: number, prompt: string, attachment?: File | null, signal?: AbortSignal): Promise<AssistantReply> {
+    return this.post(`/api/v1/chat/conversations/${conversationId}/messages`, prompt, attachment, signal)
   }
 
-  private async post(path: string, prompt: string, signal?: AbortSignal): Promise<AssistantReply> {
+  private async post(path: string, prompt: string, attachment?: File | null, signal?: AbortSignal): Promise<AssistantReply> {
     const body = new FormData()
-    body.append('prompt', prompt)
+    if (prompt) body.append('prompt', prompt)
+    if (attachment) body.append('attachment', attachment)
     const resource = await request<ChatMessageResponseResource>(path, {
       method: 'POST',
       body,
@@ -72,7 +73,9 @@ function toMessage(resource: ChatMessageResource): ChatMessage {
     id: resource.id,
     role: resource.role === 'assistant' ? 'assistant' : 'user',
     content: resource.content,
+    attachmentUrl: resource.attachment_url,
+    attachmentName: resource.attachment_name,
+    attachmentMimeType: resource.attachment_mime_type,
     createdAt: resource.created_at,
   }
 }
-

@@ -3,7 +3,6 @@ import type { AssistantReply, Conversation, ConversationSummary } from './conver
 export interface ChatRepository {
   list(signal?: AbortSignal): Promise<readonly ConversationSummary[]>
   findById(conversationId: number, signal?: AbortSignal): Promise<Conversation>
-  create(prompt: string, signal?: AbortSignal): Promise<AssistantReply>
-  send(conversationId: number, prompt: string, signal?: AbortSignal): Promise<AssistantReply>
+  create(prompt: string, attachment?: File | null, signal?: AbortSignal): Promise<AssistantReply>
+  send(conversationId: number, prompt: string, attachment?: File | null, signal?: AbortSignal): Promise<AssistantReply>
 }
-

@@ -4,6 +4,9 @@ export interface ChatMessage {
   readonly id: number
   readonly role: MessageRole
   readonly content: string
+  readonly attachmentUrl?: string | null
+  readonly attachmentName?: string | null
+  readonly attachmentMimeType?: string | null
   readonly createdAt: string
 }
 
@@ -24,4 +27,3 @@ export interface AssistantReply {
   readonly modelName: string
   readonly generatedAt: string
 }
-

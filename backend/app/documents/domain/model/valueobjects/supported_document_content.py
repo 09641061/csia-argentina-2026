@@ -32,6 +32,7 @@ class SupportedDocumentContent:
             DocumentMimeType.JSON: self._validate_json,
             DocumentMimeType.PNG: self._validate_image,
             DocumentMimeType.JPEG: self._validate_image,
+            DocumentMimeType.WEBP: self._validate_image,
         }
         validators[self.mime_type.value]()
 
@@ -73,7 +74,11 @@ class SupportedDocumentContent:
             raise
         except (Image.DecompressionBombError, UnidentifiedImageError, OSError, ValueError) as error:
             raise InvalidDocumentContentError("The uploaded image is corrupted") from error
-        expected = "PNG" if self.mime_type.value == DocumentMimeType.PNG else "JPEG"
+        expected = {
+            DocumentMimeType.PNG: "PNG",
+            DocumentMimeType.JPEG: "JPEG",
+            DocumentMimeType.WEBP: "WEBP",
+        }[self.mime_type.value]
         if detected != expected:
             raise InvalidDocumentContentError(
                 "The image bytes do not match the declared image type"

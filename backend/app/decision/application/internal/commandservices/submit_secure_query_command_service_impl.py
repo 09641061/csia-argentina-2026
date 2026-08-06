@@ -78,6 +78,7 @@ class SubmitSecureQueryCommandServiceImpl(SecureQueryCommandService):
     ) -> SecureQueryResult:
         document_id: int | None = None
         document_reference: str | None = None
+        attachment_url: str | None = None
 
         if command.has_document:
             if self._document_intake_service is None:
@@ -89,6 +90,7 @@ class SubmitSecureQueryCommandServiceImpl(SecureQueryCommandService):
             )
             document_id = registered.document_id
             document_reference = registered.display_name
+            attachment_url = registered.attachment_url
 
         prompt_assessment: ReviewedContentAssessment | None = None
         document_assessment: ReviewedContentAssessment | None = None
@@ -163,7 +165,11 @@ class SubmitSecureQueryCommandServiceImpl(SecureQueryCommandService):
                 decision=saved.decision,
             )
         )
-        return SecureQueryResult(interaction=saved, answer=answer)
+        return SecureQueryResult(
+            interaction=saved,
+            answer=answer,
+            attachment_url=attachment_url,
+        )
 
     async def _generate_answer(
         self,

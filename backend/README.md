@@ -1,4 +1,4 @@
-# Sentinel AI Guard — Backend
+# Claude AI Guard — Backend
 
 Portal seguro de acceso a una IA local. Una consulta y un archivo opcional se revisan
 antes de que el modelo pueda responder. Solo el contenido permitido llega al generador.
@@ -83,19 +83,19 @@ Copia [.env.example](.env.example) a `.env` y ajusta `DATABASE_URL`.
 El backend crea el esquema al arrancar. La base debe existir:
 
 ```powershell
-psql -U postgres -c "CREATE DATABASE sentinel_ai_guard;"
+psql -U postgres -c "CREATE DATABASE claude_ai_guard;"
 ```
 
 Si prefieres una instancia aislada con Docker, sin tocar otras bases:
 
 ```powershell
-docker run -d --name sentinel-postgres `
-  -e POSTGRES_PASSWORD=sentinel-dev `
-  -e POSTGRES_DB=sentinel_ai_guard `
+docker run -d --name claude-postgres `
+  -e POSTGRES_PASSWORD=claude-dev `
+  -e POSTGRES_DB=claude_ai_guard `
   -p 5433:5432 postgres:18
 ```
 
-y usa `DATABASE_URL=postgresql+asyncpg://postgres:sentinel-dev@localhost:5433/sentinel_ai_guard`.
+y usa `DATABASE_URL=postgresql+asyncpg://postgres:claude-dev@localhost:5433/claude_ai_guard`.
 
 Si la base no está disponible, **el backend falla al arrancar**. Es intencional: una API que
 responde sin poder escribir su auditoría es peor que una API caída.
@@ -123,10 +123,10 @@ uv run uvicorn app.main:app --reload
 
 | Variable | Uso | Valor sugerido |
 | --- | --- | --- |
-| `DATABASE_URL` | Conexión SQLAlchemy asíncrona | `postgresql+asyncpg://postgres:admin@localhost:5432/sentinel_ai_guard` |
+| `DATABASE_URL` | Conexión SQLAlchemy asíncrona | `postgresql+asyncpg://postgres:admin@localhost:5432/claude_ai_guard` |
 | `FRONTEND_ORIGIN` | Orígenes permitidos por CORS, separados por comas | `http://localhost:5173,http://127.0.0.1:5173` |
 | `JWT_SECRET_KEY` | Clave de firma HS256; reemplazar fuera de desarrollo | Una cadena aleatoria de al menos 32 caracteres |
-| `JWT_ISSUER` / `JWT_AUDIENCE` | Emisor y audiencia que deben validar los tokens | `sentinel-ai-guard` / `sentinel-ai-guard-web` |
+| `JWT_ISSUER` / `JWT_AUDIENCE` | Emisor y audiencia que deben validar los tokens | `claude-ai-guard` / `claude-ai-guard-web` |
 | `JWT_ACCESS_TOKEN_EXPIRE_MINUTES` | Duración de la sesión local | `480` |
 | `DOCUMENT_STORAGE_BACKEND` | `cloudinary` o `local` | `cloudinary` |
 | `DOCUMENT_STORAGE_DIR` | Carpeta privada del adaptador local | `storage/documents` |
@@ -182,7 +182,7 @@ Ejemplo:
 $login = Invoke-RestMethod -Method Post `
   -Uri http://127.0.0.1:8000/api/v1/auth/register `
   -ContentType "application/json" `
-  -Body '{"username":"sentinel.demo","password":"DemoSecure2026"}'
+  -Body '{"username":"claude.demo","password":"DemoSecure2026"}'
 
 curl -X POST http://127.0.0.1:8000/api/v1/chat/messages `
   -H "Authorization: Bearer $($login.access_token)" `

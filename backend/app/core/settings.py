@@ -9,7 +9,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 class Settings(BaseSettings):
     """
-    Runtime configuration for Sentinel AI Guard.
+    Runtime configuration for Claude AI Guard.
 
     Cloudinary is the configured storage backend; "local" stays available for
     running the project without an external account.
@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     )
 
     database_url: str = Field(
-        default="postgresql+asyncpg://postgres:postgres@localhost:5432/sentinel_ai_guard",
+        default="postgresql+asyncpg://postgres:postgres@localhost:5432/claude_ai_guard",
         alias="DATABASE_URL",
     )
 
@@ -35,16 +35,16 @@ class Settings(BaseSettings):
     )
 
     jwt_secret_key: str = Field(
-        default="sentinel-local-development-key-change-before-deploy-2026",
+        default="claude-local-development-key-change-before-deploy-2026",
         alias="JWT_SECRET_KEY",
         min_length=32,
         description="Stable secret used to sign local access tokens",
     )
     jwt_issuer: str = Field(
-        default="sentinel-ai-guard", alias="JWT_ISSUER", min_length=1
+        default="claude-ai-guard", alias="JWT_ISSUER", min_length=1
     )
     jwt_audience: str = Field(
-        default="sentinel-ai-guard-web",
+        default="claude-ai-guard-web",
         alias="JWT_AUDIENCE",
         min_length=1,
     )

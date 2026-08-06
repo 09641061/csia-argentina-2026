@@ -1,7 +1,7 @@
 import { isSessionExpired, type AuthSession } from '@/contexts/iam/domain/auth-session'
 
-const STORAGE_KEY = 'sentinel.auth.session'
-export const AUTH_CHANGED_EVENT = 'sentinel:auth-changed'
+const STORAGE_KEY = 'claude.auth.session'
+export const AUTH_CHANGED_EVENT = 'claude:auth-changed'
 
 export function readAuthSession(): AuthSession | null {
   try {

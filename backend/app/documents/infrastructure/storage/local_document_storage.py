@@ -21,7 +21,7 @@ class LocalDocumentStorage(DocumentStorage):
     """
     Default storage adapter: a private directory inside the deployment.
 
-    Sentinel exists to stop confidential content from leaving the organization,
+    Claude exists to stop confidential content from leaving the organization,
     so an uploaded document must not travel to a third party before the security
     review runs. Files are written with generated opaque names, and every read is
     confined to the configured root, which makes path traversal and arbitrary

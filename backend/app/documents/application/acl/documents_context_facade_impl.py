@@ -52,6 +52,9 @@ class DocumentsContextFacadeImpl(DocumentsContextFacade):
             "display_name": document.display_name.value,
             "mime_type": document.mime_type.value,
             "size_bytes": document.size_bytes.value,
+            "storage_url": document.storage_reference.key
+            if document.storage_reference.backend == "cloudinary"
+            else None,
         }
 
     async def find_document(self, document_id: int) -> dict[str, object] | None:
@@ -65,6 +68,9 @@ class DocumentsContextFacadeImpl(DocumentsContextFacade):
             "display_name": document.display_name.value,
             "mime_type": document.mime_type.value,
             "size_bytes": document.size_bytes.value,
+            "storage_url": document.storage_reference.key
+            if document.storage_reference.backend == "cloudinary"
+            else None,
         }
 
     async def read_document_content(self, document_id: int) -> bytes:

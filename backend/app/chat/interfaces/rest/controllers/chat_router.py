@@ -1,7 +1,7 @@
 from datetime import UTC, datetime
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Form, HTTPException, status
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -13,6 +13,7 @@ from app.chat.infrastructure.persistence.sqlalchemy.models.message_model import 
 from app.chat.interfaces.rest.resources.chat_message_response import ChatMessageResponse
 from app.core.composition import build_chat_command_service, build_conversation_title_generator
 from app.core.database import get_session
+from app.core.settings import get_settings
 from app.decision.interfaces.acl.decision_context_facade import DecisionContextValidationError
 from app.iam.domain.model.valueobjects.authenticated_user import AuthenticatedUser
 from app.iam.infrastructure.persistence.sqlalchemy.models.user_account_model import UserAccountModel
@@ -43,20 +44,35 @@ async def _answer_and_store(
     session: AsyncSession,
     command_service: ChatCommandServiceImpl,
     conversation: ConversationModel,
-    prompt: str,
+    prompt: str | None,
+    attachment: UploadFile | None,
 ) -> ChatMessageResponse:
     now = datetime.now(UTC)
+    content = await attachment.read() if attachment is not None else None
+    filename = attachment.filename if attachment is not None else None
+    mime_type = attachment.content_type if attachment is not None else None
+    if content is not None and len(content) > get_settings().max_document_size_bytes:
+        raise HTTPException(status.HTTP_413_REQUEST_ENTITY_TOO_LARGE, "Attachment is too large")
+    display_content = (prompt or "").strip() or f"Adjunto: {filename or 'archivo'}"
+    effective_prompt = (prompt or "").strip() or "Describe y analiza el archivo adjunto."
     session.add(
         MessageModel(
             conversation_id=conversation.id,
             role="user",
-            content=prompt.strip(),
+            content=display_content,
+            attachment_name=filename,
+            attachment_mime_type=mime_type,
             created_at=now,
         )
     )
     try:
         result = await command_service.handle_send_chat_message(
-            SendChatMessageCommand(prompt=prompt)
+            SendChatMessageCommand(
+                prompt=effective_prompt,
+                resource_filename=filename,
+                resource_mime_type=mime_type,
+                resource_content=content,
+            )
         )
     except (DecisionContextValidationError, ValueError) as error:
         await session.rollback()
@@ -73,6 +89,13 @@ async def _answer_and_store(
                 created_at=now,
             )
         )
+        user_message = await session.scalar(
+            select(MessageModel)
+            .where(MessageModel.conversation_id == conversation.id, MessageModel.role == "user")
+            .order_by(MessageModel.id.desc())
+        )
+        if user_message is not None:
+            user_message.attachment_url = result.attachment_url
         conversation.updated_at = now
         await session.commit()
         return ChatMessageResponse(
@@ -97,6 +120,13 @@ async def _answer_and_store(
             created_at=result.generated_at,
         )
     )
+    user_message = await session.scalar(
+        select(MessageModel)
+        .where(MessageModel.conversation_id == conversation.id, MessageModel.role == "user")
+        .order_by(MessageModel.id.desc())
+    )
+    if user_message is not None:
+        user_message.attachment_url = result.attachment_url
     conversation.updated_at = result.generated_at
     await session.commit()
     return ChatMessageResponse(
@@ -113,15 +143,17 @@ async def _answer_and_store(
     summary="Create a conversation with its first message",
 )
 async def create_conversation(
-    prompt: Annotated[str, Form(min_length=1, description="First message")],
     session: Annotated[AsyncSession, Depends(get_session)],
     command_service: Annotated[ChatCommandServiceImpl, Depends(get_chat_command_service)],
     title_generator: Annotated[ConversationTitleGenerator, Depends(build_conversation_title_generator)],
     authenticated_user: Annotated[AuthenticatedUser, Depends(require_authenticated_user)],
+    prompt: Annotated[str | None, Form(description="Optional first message")] = None,
+    attachment: Annotated[UploadFile | None, File(description="Optional JSON, PNG, JPEG or WebP attachment")] = None,
 ) -> ChatMessageResponse:
     user_id = await _user_id(session, authenticated_user)
+    title_source = prompt or (attachment.filename if attachment else None) or "New conversation"
     try:
-        title = await title_generator.generate(prompt)
+        title = await title_generator.generate(title_source)
     except Exception:
         title = "New conversation"
     now = datetime.now(UTC)
@@ -138,6 +170,7 @@ async def create_conversation(
         command_service=command_service,
         conversation=conversation,
         prompt=prompt,
+        attachment=attachment,
     )
 
 
@@ -148,10 +181,11 @@ async def create_conversation(
 )
 async def send_message(
     conversation_id: int,
-    prompt: Annotated[str, Form(min_length=1, description="Message for the assistant")],
     session: Annotated[AsyncSession, Depends(get_session)],
     command_service: Annotated[ChatCommandServiceImpl, Depends(get_chat_command_service)],
     authenticated_user: Annotated[AuthenticatedUser, Depends(require_authenticated_user)],
+    prompt: Annotated[str | None, Form(description="Optional message for the assistant")] = None,
+    attachment: Annotated[UploadFile | None, File(description="Optional JSON, PNG, JPEG or WebP attachment")] = None,
 ) -> ChatMessageResponse:
     user_id = await _user_id(session, authenticated_user)
     conversation = await session.scalar(
@@ -167,6 +201,7 @@ async def send_message(
         command_service=command_service,
         conversation=conversation,
         prompt=prompt,
+        attachment=attachment,
     )
 
 
@@ -226,6 +261,9 @@ async def get_conversation(
                 "id": message.id,
                 "role": message.role,
                 "content": message.content,
+                "attachment_url": message.attachment_url,
+                "attachment_name": message.attachment_name,
+                "attachment_mime_type": message.attachment_mime_type,
                 "created_at": message.created_at,
             }
             for message in messages

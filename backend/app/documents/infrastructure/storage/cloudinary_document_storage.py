@@ -26,6 +26,7 @@ CLOUDINARY_EXTENSION_BY_MIME_TYPE = {
     "application/json": ".json",
     "image/png": ".png",
     "image/jpeg": ".jpg",
+    "image/webp": ".webp",
 }
 
 
@@ -38,7 +39,7 @@ class CloudinaryDocumentStorage(DocumentStorage):
     DOCUMENT_STORAGE_BACKEND=local keeps everything on disk instead.
     """
 
-    def __init__(self, folder: str = "sentinel-ai-guard/documents", max_content_bytes: int | None = None) -> None:
+    def __init__(self, folder: str = "claude-ai-guard/documents", max_content_bytes: int | None = None) -> None:
         settings = get_settings()
         missing_settings = [
             name

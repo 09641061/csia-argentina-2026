@@ -9,17 +9,17 @@ import { AppRoutes } from './app-routes'
 
 function renderApp(initialEntry = '/', routes: Record<string, unknown> = {}) {
   window.localStorage.setItem(
-    'sentinel.auth.session',
+    'claude.auth.session',
     JSON.stringify({
       accessToken: 'test.jwt.token',
       expiresAt: '2099-08-04T12:00:00Z',
-      username: 'sentinel.demo',
+      username: 'claude.demo',
     }),
   )
   vi.stubGlobal(
     'fetch',
     stubFetch({
-      '/api/v1/auth/me': { username: 'sentinel.demo' },
+      '/api/v1/auth/me': { username: 'claude.demo' },
       '/api/v1/chat/conversations': [],
       '/api/v1/health': {
         status: 'ok', database: true,

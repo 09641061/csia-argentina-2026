@@ -8,10 +8,13 @@ from app.decision.domain.model.valueobjects.security_decision import SecurityDec
 class RegisteredDocument:
     document_id: int
     display_name: str
+    attachment_url: str | None = None
 
     def __post_init__(self) -> None:
         if self.document_id <= 0:
             raise ValueError("Document ID must be a positive number")
+        if self.attachment_url is not None and not self.attachment_url.startswith("https://"):
+            raise ValueError("Attachment URL must use HTTPS")
 
 
 class DocumentIntakeService(Protocol):

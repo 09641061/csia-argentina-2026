@@ -54,10 +54,10 @@ async def test_extracts_json_without_calling_vision() -> None:
     extractor = MultiFormatDocumentTextExtractor(vision)
 
     result = await extractor.extract_content(
-        b'{"project": "Sentinel"}', "application/json", "summary.json"
+        b'{"project": "Claude"}', "application/json", "summary.json"
     )
 
-    assert result == {"project": "Sentinel"}
+    assert result == {"project": "Claude"}
     assert vision.calls == []
 
 

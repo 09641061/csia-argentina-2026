@@ -27,6 +27,7 @@ export function ChatPage() {
   const { refresh } = useChats()
   const [conversation, setConversation] = useState<Conversation | null>(null)
   const [prompt, setPrompt] = useState('')
+  const [attachment, setAttachment] = useState<File | null>(null)
   const [isLoading, setIsLoading] = useState(parsedId !== null)
   const [isSending, setIsSending] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
@@ -57,8 +58,10 @@ export function ChatPage() {
 
   const submit = async () => {
     const submitted = prompt.trim()
-    if (!submitted || isSending) return
+    if ((!submitted && !attachment) || isSending) return
+    const submittedAttachment = attachment
     setPrompt('')
+    setAttachment(null)
     setErrorMessage(null)
     setIsSending(true)
     if (conversation) {
@@ -71,7 +74,7 @@ export function ChatPage() {
       setConversation({ ...conversation, messages: [...conversation.messages, optimistic] })
     }
     try {
-      const reply = await sendMessage.current.execute(parsedId, submitted)
+      const reply = await sendMessage.current.execute(parsedId, submitted, submittedAttachment)
       await refresh()
       if (parsedId === null) {
         navigate(`/chat/${reply.conversationId}`, { replace: true })
@@ -81,6 +84,7 @@ export function ChatPage() {
     } catch (error) {
       const message = apiErrorMessage(error)
       setPrompt(submitted)
+      setAttachment(submittedAttachment)
       if (parsedId !== null) await load(parsedId)
       setErrorMessage(message)
     } finally {
@@ -99,10 +103,10 @@ export function ChatPage() {
               {username ? `¿En qué puedo ayudarte, ${username}?` : '¿En qué puedo ayudarte?'}
             </h1>
           </header>
-          <ChatComposer value={prompt} isSending={isSending} onChange={setPrompt} onSubmit={submit} />
+          <ChatComposer value={prompt} attachment={attachment} isSending={isSending} onChange={setPrompt} onAttachmentChange={setAttachment} onSubmit={submit} />
           {errorMessage && <div className="mt-4"><ErrorNotice message={errorMessage} onRetry={submit} /></div>}
           <p className="mt-3 text-center text-[11px] text-[#8b8983]">
-            Sentinel revisa cada mensaje antes de enviarlo al modelo local.
+            Claude revisa cada mensaje antes de enviarlo al modelo local.
           </p>
         </section>
       </div>
@@ -133,7 +137,7 @@ export function ChatPage() {
       <div className="pointer-events-none fixed bottom-0 right-0 z-20 w-full bg-gradient-to-t from-[#1b1b1a] via-[#1b1b1a] to-transparent px-4 pb-5 pt-12 md:left-[280px] md:w-[calc(100%-280px)]">
         <div className="pointer-events-auto mx-auto max-w-[800px]">
           {errorMessage && conversation && <div className="mb-3"><ErrorNotice message={errorMessage} onRetry={submit} /></div>}
-          <ChatComposer value={prompt} isSending={isSending} onChange={setPrompt} onSubmit={submit} />
+          <ChatComposer value={prompt} attachment={attachment} isSending={isSending} onChange={setPrompt} onAttachmentChange={setAttachment} onSubmit={submit} />
         </div>
       </div>
     </div>
@@ -145,6 +149,8 @@ function MessageBubble({ message }: { readonly message: ChatMessage }) {
   if (message.role === 'user') {
     return (
       <article className="ml-auto w-fit max-w-[82%] rounded-[20px] bg-[#30302e] px-4 py-3 text-[15px] leading-7 text-[#f1efe8]">
+        {message.attachmentUrl && message.attachmentMimeType?.startsWith('image/') && <img src={message.attachmentUrl} alt={message.attachmentName ?? 'Imagen adjunta'} className="mb-3 max-h-72 rounded-xl object-contain" />}
+        {message.attachmentUrl && !message.attachmentMimeType?.startsWith('image/') && <a href={message.attachmentUrl} target="_blank" rel="noreferrer" className="mb-2 block text-sm underline">{message.attachmentName ?? 'Archivo adjunto'}</a>}
         <p className="whitespace-pre-wrap">{message.content}</p>
       </article>
     )

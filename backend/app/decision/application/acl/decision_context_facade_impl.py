@@ -40,6 +40,7 @@ class DecisionContextFacadeImpl(DecisionContextFacade):
             "decision": interaction.decision.value,
             "reason": interaction.reason,
             "document_id": interaction.document_id,
+            "attachment_url": result.attachment_url,
             "answer": result.answer.text if result.answer else None,
             "answer_model": result.answer.model_name if result.answer else None,
             "generated_at": result.answer.generated_at if result.answer else None,

@@ -72,7 +72,7 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
     }
     throw new ApiError(
       'offline',
-      'No pudimos conectar con el servicio de Sentinel. Comprueba que esté en ejecución e inténtalo de nuevo.',
+      'No pudimos conectar con el servicio de Claude. Comprueba que esté en ejecución e inténtalo de nuevo.',
     )
   } finally {
     clearTimeout(timeout)
