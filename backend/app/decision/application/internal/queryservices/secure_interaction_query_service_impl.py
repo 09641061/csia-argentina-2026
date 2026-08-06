@@ -21,10 +21,10 @@ class SecureInteractionQueryServiceImpl(SecureInteractionQueryService):
         self,
         query: GetSecureInteractionByIdQuery,
     ) -> SecureInteraction | None:
-        return await self._interaction_repository.find_by_id(query.interaction_id)
+        return await self._interaction_repository.find_by_id(query.interaction_id, query.requested_by)
 
     async def handle_list_secure_interactions(
         self,
         query: ListSecureInteractionsQuery,
     ) -> tuple[list[SecureInteraction], int]:
-        return await self._interaction_repository.list(query.page, query.page_size)
+        return await self._interaction_repository.list(query.requested_by, query.page, query.page_size)

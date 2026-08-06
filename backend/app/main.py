@@ -5,10 +5,10 @@ from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from app.chat.interfaces.rest.controllers.chat_router import router as chat_router
 from app.analysis.interfaces.rest.controllers.security_analysis_router import (
     router as analysis_router,
 )
+from app.chat.interfaces.rest.controllers.chat_router import router as chat_router
 from app.core.database import initialize_database
 from app.core.settings import get_settings
 from app.decision.interfaces.rest.controllers.secure_query_router import (

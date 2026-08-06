@@ -1,6 +1,8 @@
 import pytest
 
-from app.decision.domain.model.valueobjects.decision_reason_code import DecisionReasonCode
+from app.decision.domain.model.valueobjects.decision_reason_code import (
+    DecisionReasonCode,
+)
 from app.decision.domain.model.valueobjects.generation_authorization import (
     GenerationAuthorization,
 )
@@ -8,7 +10,9 @@ from app.decision.domain.model.valueobjects.reviewed_content_assessment import (
     ReviewedContentAssessment,
 )
 from app.decision.domain.model.valueobjects.security_decision import SecurityDecision
-from app.decision.domain.policies.secure_query_decision_policy import SecureQueryDecisionPolicy
+from app.decision.domain.policies.secure_query_decision_policy import (
+    SecureQueryDecisionPolicy,
+)
 
 
 def assessment(

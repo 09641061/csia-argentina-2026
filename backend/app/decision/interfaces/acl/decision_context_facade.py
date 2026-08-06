@@ -10,7 +10,5 @@ class DecisionContextFacade(Protocol):
         self,
         *,
         prompt: str | None,
-        document_filename: str | None,
-        document_mime_type: str | None,
-        document_content: bytes | None,
+        requested_by: str,
     ) -> dict[str, object | None]: ...

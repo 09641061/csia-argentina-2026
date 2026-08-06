@@ -3,6 +3,7 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True, slots=True)
 class ListAnalysesQuery:
+    requested_by: str = "system"
     page: int = 1
     page_size: int = 20
 
@@ -11,3 +12,5 @@ class ListAnalysesQuery:
             raise ValueError("Page must be greater than zero")
         if not 1 <= self.page_size <= 100:
             raise ValueError("Page size must be between 1 and 100")
+        if not self.requested_by.strip():
+            raise ValueError("Authenticated user is required")

@@ -1,6 +1,8 @@
 from dataclasses import dataclass, field
 
-from app.decision.domain.model.valueobjects.masked_finding_summary import MaskedFindingSummary
+from app.decision.domain.model.valueobjects.masked_finding_summary import (
+    MaskedFindingSummary,
+)
 
 
 @dataclass(frozen=True, slots=True)

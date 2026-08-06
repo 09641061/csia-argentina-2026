@@ -3,7 +3,9 @@ from datetime import UTC, datetime
 from uuid import UUID, uuid4
 
 from app.analysis.domain.model.valueobjects.analysis_risk_level import AnalysisRiskLevel
-from app.analysis.domain.model.valueobjects.analyzed_content_type import AnalyzedContentType
+from app.analysis.domain.model.valueobjects.analyzed_content_type import (
+    AnalyzedContentType,
+)
 
 
 @dataclass(frozen=True, slots=True)

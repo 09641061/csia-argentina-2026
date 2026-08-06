@@ -14,13 +14,7 @@ from app.analysis.domain.exceptions import (
     AnalysisModelInvalidResponseError,
     AnalysisModelTimeoutError,
     AnalysisModelUnavailableError,
-    DocumentContentExtractionError,
-    DocumentContentReadError,
-    DocumentSourceNotFoundError,
     InvalidPromptError,
-)
-from app.analysis.domain.model.commands.analyze_document_command import (
-    AnalyzeDocumentCommand,
 )
 from app.analysis.domain.model.commands.analyze_prompt_command import (
     AnalyzePromptCommand,
@@ -52,11 +46,12 @@ from app.core.composition import (
     build_security_analysis_query_service,
 )
 from app.core.database import get_session
-from app.shared.infrastructure.persistence.sqlalchemy.unit_of_work import (
-    SqlAlchemyUnitOfWork,
-)
+from app.iam.domain.model.valueobjects.authenticated_user import AuthenticatedUser
 from app.iam.interfaces.rest.controllers.authentication_router import (
     require_authenticated_user,
+)
+from app.shared.infrastructure.persistence.sqlalchemy.unit_of_work import (
+    SqlAlchemyUnitOfWork,
 )
 
 router = APIRouter(
@@ -100,7 +95,6 @@ def to_analysis_resource(analysis: SecurityAnalysis) -> SecurityAnalysisResource
     return SecurityAnalysisResource(
         id=analysis.id or 0,
         content_type=analysis.content_type.value,
-        document_id=analysis.document_id,
         content_reference=analysis.content_reference,
         content_fingerprint=analysis.content_fingerprint,
         content_length=analysis.content_length,
@@ -129,12 +123,8 @@ def to_analysis_resource(analysis: SecurityAnalysis) -> SecurityAnalysisResource
 
 
 def _raise_for_analysis_error(error: Exception) -> None:
-    if isinstance(error, DocumentSourceNotFoundError):
-        raise HTTPException(status.HTTP_404_NOT_FOUND, detail=str(error)) from error
     if isinstance(error, InvalidPromptError):
         raise HTTPException(status.HTTP_400_BAD_REQUEST, detail=str(error)) from error
-    if isinstance(error, DocumentContentExtractionError):
-        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, detail=str(error)) from error
     if isinstance(error, AnalysisModelTimeoutError):
         raise HTTPException(
             status.HTTP_504_GATEWAY_TIMEOUT,
@@ -144,11 +134,6 @@ def _raise_for_analysis_error(error: Exception) -> None:
         raise HTTPException(
             status.HTTP_502_BAD_GATEWAY,
             detail="El analizador de seguridad local no está disponible.",
-        ) from error
-    if isinstance(error, DocumentContentReadError):
-        raise HTTPException(
-            status.HTTP_502_BAD_GATEWAY,
-            detail="El contenido almacenado no pudo leerse de forma segura.",
         ) from error
     if isinstance(error, AnalysisExecutionError):
         raise HTTPException(
@@ -180,14 +165,22 @@ async def analyze_prompt(
         SecurityAnalysisCommandServiceImpl, Depends(get_analysis_command_service)
     ],
     session: Annotated[AsyncSession, Depends(get_session)],
+    authenticated_user: Annotated[AuthenticatedUser, Depends(require_authenticated_user)],
 ) -> SecurityAnalysisResource:
     unit_of_work = SqlAlchemyUnitOfWork(session)
     try:
         analysis = await command_service.handle_analyze_prompt(
-            AnalyzePromptCommand(prompt=payload.prompt)
+            AnalyzePromptCommand(prompt=payload.prompt, requested_by=authenticated_user.identity)
         )
         await unit_of_work.commit()
-    except Exception as error:
+    except (
+        AnalysisExecutionError,
+        AnalysisModelInvalidResponseError,
+        AnalysisModelTimeoutError,
+        AnalysisModelUnavailableError,
+        InvalidPromptError,
+        ValueError,
+    ) as error:
         await unit_of_work.commit()
         _raise_for_analysis_error(error)
         if isinstance(error, ValueError):
@@ -196,50 +189,9 @@ async def analyze_prompt(
             status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="La revisión de seguridad no pudo completarse.",
         ) from error
-    return to_analysis_resource(analysis)
-
-
-@router.post(
-    "/documents/{document_id}/analyses",
-    response_model=SecurityAnalysisResource,
-    status_code=status.HTTP_201_CREATED,
-    summary="Review a registered document",
-    description=(
-        "Loads a document through the controlled storage adapter, extracts a bounded structure "
-        "locally (using the visual Ollama model for images and scanned pages), masks findings, "
-        "requires a contextual evaluation from the security model and stores the execution."
-    ),
-    responses={
-        201: {"description": "Document review completed and stored"},
-        400: {"description": "Invalid document identifier"},
-        404: {"description": "Registered document not found"},
-        422: {"description": "The stored document could not be extracted safely"},
-        502: {"description": "The local security model or the storage is unavailable"},
-        504: {"description": "The local security model exceeded its timeout"},
-    },
-)
-async def analyze_document(
-    document_id: int,
-    command_service: Annotated[
-        SecurityAnalysisCommandServiceImpl, Depends(get_analysis_command_service)
-    ],
-    session: Annotated[AsyncSession, Depends(get_session)],
-) -> SecurityAnalysisResource:
-    unit_of_work = SqlAlchemyUnitOfWork(session)
-    try:
-        analysis = await command_service.handle_analyze_document(
-            AnalyzeDocumentCommand(document_id=document_id)
-        )
-        await unit_of_work.commit()
-    except Exception as error:
-        await unit_of_work.commit()
-        _raise_for_analysis_error(error)
-        if isinstance(error, ValueError):
-            raise HTTPException(status.HTTP_400_BAD_REQUEST, detail=str(error)) from error
-        raise HTTPException(
-            status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="La revisión de seguridad no pudo completarse.",
-        ) from error
+    except Exception:
+        await unit_of_work.rollback()
+        raise
     return to_analysis_resource(analysis)
 
 
@@ -257,10 +209,11 @@ async def list_analyses(
     query_service: Annotated[SecurityAnalysisQueryServiceImpl, Depends(get_analysis_query_service)],
     page: Annotated[int, Query(ge=1, description="Page number")] = 1,
     page_size: Annotated[int, Query(ge=1, le=100, description="Executions per page")] = 20,
+    authenticated_user: Annotated[AuthenticatedUser, Depends(require_authenticated_user)] = None,
 ) -> SecurityAnalysisListResponse:
     try:
         analyses, total = await query_service.handle_list_analyses(
-            ListAnalysesQuery(page=page, page_size=page_size)
+            ListAnalysesQuery(requested_by=authenticated_user.identity, page=page, page_size=page_size)
         )
     except ValueError as error:
         raise HTTPException(status.HTTP_400_BAD_REQUEST, detail=str(error)) from error
@@ -284,10 +237,11 @@ async def list_analyses(
 async def get_analysis_by_id(
     analysis_id: int,
     query_service: Annotated[SecurityAnalysisQueryServiceImpl, Depends(get_analysis_query_service)],
+    authenticated_user: Annotated[AuthenticatedUser, Depends(require_authenticated_user)],
 ) -> SecurityAnalysisResource:
     try:
         analysis = await query_service.handle_get_analysis_by_id(
-            GetAnalysisByIdQuery(analysis_id=analysis_id)
+            GetAnalysisByIdQuery(analysis_id=analysis_id, requested_by=authenticated_user.identity)
         )
     except ValueError as error:
         raise HTTPException(status.HTTP_400_BAD_REQUEST, detail=str(error)) from error
@@ -310,10 +264,11 @@ async def get_analysis_by_id(
 async def get_analysis_findings(
     analysis_id: int,
     query_service: Annotated[SecurityAnalysisQueryServiceImpl, Depends(get_analysis_query_service)],
+    authenticated_user: Annotated[AuthenticatedUser, Depends(require_authenticated_user)],
 ) -> AnalysisFindingsResponse:
     try:
         analysis = await query_service.handle_get_analysis_by_id(
-            GetAnalysisByIdQuery(analysis_id=analysis_id)
+            GetAnalysisByIdQuery(analysis_id=analysis_id, requested_by=authenticated_user.identity)
         )
     except ValueError as error:
         raise HTTPException(status.HTTP_400_BAD_REQUEST, detail=str(error)) from error

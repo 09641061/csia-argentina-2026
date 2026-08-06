@@ -7,10 +7,13 @@ from app.analysis.application.internal.services.prompt_sensitive_data_detection_
     PromptSensitiveDataDetectionService,
 )
 from app.analysis.domain.model.entities.analysis_finding import AnalysisFinding
-from app.analysis.domain.model.valueobjects.analysis_finding_type import AnalysisFindingType
+from app.analysis.domain.model.valueobjects.analysis_finding_type import (
+    AnalysisFindingType,
+)
 from app.analysis.domain.model.valueobjects.estimated_subjects import EstimatedSubjects
-from app.analysis.domain.model.valueobjects.prompt_content_summary import PromptContentSummary
-from app.shared.domain.text_masking import mask_free_text
+from app.analysis.domain.model.valueobjects.prompt_content_summary import (
+    PromptContentSummary,
+)
 
 MAX_EXCERPT_CHARACTERS = 400
 

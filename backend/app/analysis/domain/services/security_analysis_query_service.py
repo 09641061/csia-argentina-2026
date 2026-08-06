@@ -1,7 +1,9 @@
 from typing import Protocol
 
 from app.analysis.domain.model.entities.security_analysis import SecurityAnalysis
-from app.analysis.domain.model.queries.get_analysis_by_id_query import GetAnalysisByIdQuery
+from app.analysis.domain.model.queries.get_analysis_by_id_query import (
+    GetAnalysisByIdQuery,
+)
 from app.analysis.domain.model.queries.get_latest_analysis_by_document_id_query import (
     GetLatestAnalysisByDocumentIdQuery,
 )

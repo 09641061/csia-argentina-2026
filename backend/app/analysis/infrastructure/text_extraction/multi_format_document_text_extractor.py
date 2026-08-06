@@ -11,6 +11,7 @@ from app.analysis.domain.model.valueobjects.json_types import JsonContainer, Jso
 from app.analysis.infrastructure.text_extraction.json_document_text_extractor import (
     JsonDocumentTextExtractor,
 )
+
 _MAX_EXTRACTED_CHARACTERS = 200_000
 _JSON_MIME_TYPE = "application/json"
 _IMAGE_MIME_TYPES = frozenset({"image/png", "image/jpeg"})

@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 
-from app.analysis.domain.model.valueobjects.analyzed_content_type import AnalyzedContentType
+from app.analysis.domain.model.valueobjects.analyzed_content_type import (
+    AnalyzedContentType,
+)
 from app.analysis.domain.model.valueobjects.estimated_subjects import EstimatedSubjects
 
 

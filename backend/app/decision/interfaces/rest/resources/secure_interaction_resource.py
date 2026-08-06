@@ -6,7 +6,7 @@ from pydantic import BaseModel, ConfigDict, Field
 class MaskedFindingResource(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    origin: str = Field(description="Where the finding came from", examples=["document"])
+    origin: str = Field(description="Where the finding came from", examples=["prompt"])
     finding_type: str = Field(description="Type of sensitive data", examples=["api_key"])
     severity: str = Field(description="Deterministic severity", examples=["high"])
     title: str = Field(description="Short human-readable title")
@@ -26,14 +26,14 @@ class SecureInteractionResource(BaseModel):
     Public view of one audited secure query.
 
     It exposes the verdict, the reason and masked evidence. It never exposes the
-    submitted prompt, the document content or the generated answer.
+    submitted prompt or the generated answer.
     """
 
     model_config = ConfigDict(extra="forbid")
 
     id: int = Field(description="Interaction identifier", examples=[1])
     content_type: str = Field(
-        description="prompt, document or prompt_with_document", examples=["prompt_with_document"]
+        description="Type of reviewed content", examples=["prompt"]
     )
     decision: str = Field(description="allowed or blocked", examples=["blocked"])
     reason_code: str = Field(
@@ -42,16 +42,12 @@ class SecureInteractionResource(BaseModel):
     reason: str = Field(description="Human-readable reason in Spanish")
     content_reference: str = Field(
         description="Safe, masked label of what was reviewed",
-        examples=["Consulta con inventario.json"],
+        examples=["Consulta escrita"],
     )
     risk_level: str | None = Field(
         default=None, description="Highest risk across the reviews", examples=["high"]
     )
     prompt_analysis_id: int | None = Field(default=None, description="Prompt review identifier")
-    document_analysis_id: int | None = Field(
-        default=None, description="Document review identifier"
-    )
-    document_id: int | None = Field(default=None, description="Registered document identifier")
     data_categories: list[str] = Field(description="Types of information detected")
     masked_findings: list[MaskedFindingResource] = Field(description="Masked evidence")
     generation_status: str = Field(

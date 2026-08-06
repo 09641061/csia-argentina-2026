@@ -11,8 +11,7 @@ class Settings(BaseSettings):
     """
     Runtime configuration for Sentinel AI Guard.
 
-    Cloudinary is the configured storage backend; "local" stays available for
-    running the project without an external account.
+    Environment-specific runtime configuration for the text-only MVP.
     """
 
     # Accept the backend-local file first, with the repository-level file as a
@@ -21,7 +20,10 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=(PROJECT_ROOT.parent / ".env", PROJECT_ROOT / ".env"),
         extra="ignore",
+        populate_by_name=True,
     )
+
+    environment: str = Field(default="development", alias="ENVIRONMENT")
 
     database_url: str = Field(
         default="postgresql+asyncpg://postgres:postgres@localhost:5432/sentinel_ai_guard",
@@ -54,27 +56,6 @@ class Settings(BaseSettings):
         gt=0,
         le=10080,
     )
-
-    document_storage_backend: str = Field(
-        default="cloudinary",
-        alias="DOCUMENT_STORAGE_BACKEND",
-        description="Storage adapter used by Documents: local or cloudinary",
-    )
-    document_storage_dir: str = Field(
-        default="storage/documents",
-        alias="DOCUMENT_STORAGE_DIR",
-        description="Private directory used by the local storage adapter",
-    )
-    max_document_size_mb: int = Field(
-        default=5,
-        alias="MAX_DOCUMENT_SIZE_MB",
-        gt=0,
-        le=100,
-    )
-
-    cloudinary_cloud_name: str = Field(default="", alias="CLOUDINARY_CLOUD_NAME")
-    cloudinary_api_key: str = Field(default="", alias="CLOUDINARY_API_KEY")
-    cloudinary_api_secret: str = Field(default="", alias="CLOUDINARY_API_SECRET")
 
     # 127.0.0.1, never "localhost": on Windows that name resolves to ::1 first, and
     # a WSL or Docker port forward on the same port answers there. Pointing at the
@@ -130,27 +111,6 @@ class Settings(BaseSettings):
         gt=0,
     )
 
-    ollama_vision_model: str = Field(
-        default="gemma3:4b",
-        alias="OLLAMA_VISION_MODEL",
-        description="Mandatory local multimodal model for uploaded images",
-    )
-    ollama_vision_timeout_seconds: int = Field(
-        default=180,
-        alias="OLLAMA_VISION_TIMEOUT_SECONDS",
-        gt=0,
-    )
-    ollama_vision_context_tokens: int = Field(
-        default=8192,
-        alias="OLLAMA_VISION_CONTEXT_TOKENS",
-        gt=0,
-    )
-    ollama_vision_max_output_tokens: int = Field(
-        default=1200,
-        alias="OLLAMA_VISION_MAX_OUTPUT_TOKENS",
-        gt=0,
-    )
-
     ollama_generation_model: str = Field(
         default="gemma3:4b",
         alias="OLLAMA_GENERATION_MODEL",
@@ -171,27 +131,16 @@ class Settings(BaseSettings):
         alias="OLLAMA_GENERATION_MAX_OUTPUT_TOKENS",
         gt=0,
     )
-    ollama_generation_max_document_chars: int = Field(
-        default=24000,
-        alias="OLLAMA_GENERATION_MAX_DOCUMENT_CHARS",
-        gt=0,
-        description="Allowed document characters that still fit in the answer context",
-    )
-
     prompt_max_length: int = Field(default=8000, alias="PROMPT_MAX_LENGTH", gt=0)
     prompt_min_length: int = Field(default=3, alias="PROMPT_MIN_LENGTH", gt=0)
 
-    @field_validator("document_storage_backend")
+    @field_validator("jwt_secret_key")
     @classmethod
-    def validate_storage_backend(cls, value: str) -> str:
-        normalized = value.strip().lower()
-        if normalized not in {"local", "cloudinary"}:
-            raise ValueError("DOCUMENT_STORAGE_BACKEND must be 'local' or 'cloudinary'")
-        return normalized
-
-    @property
-    def max_document_size_bytes(self) -> int:
-        return self.max_document_size_mb * 1024 * 1024
+    def reject_development_secret_in_production(cls, value: str, info) -> str:
+        environment = str(info.data.get("environment", "development")).lower()
+        if environment in {"production", "prod"} and value == "sentinel-local-development-key-change-before-deploy-2026":
+            raise ValueError("JWT_SECRET_KEY must be configured for production")
+        return value
 
     @property
     def allowed_origins(self) -> list[str]:
@@ -200,14 +149,6 @@ class Settings(BaseSettings):
             for origin in self.frontend_origin.split(",")
             if origin.strip()
         ]
-
-    @property
-    def document_storage_root(self) -> Path:
-        configured = Path(self.document_storage_dir)
-        if configured.is_absolute():
-            return configured
-        return PROJECT_ROOT / configured
-
 
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:

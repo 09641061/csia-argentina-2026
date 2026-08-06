@@ -6,14 +6,20 @@ from app.analysis.application.internal.services.sensitive_value_masking import (
 )
 from app.analysis.domain.model.entities.analysis_finding import AnalysisFinding
 from app.analysis.domain.model.entities.security_analysis import SecurityAnalysis
-from app.analysis.domain.model.valueobjects.analysis_confidence import AnalysisConfidence
+from app.analysis.domain.model.valueobjects.analysis_confidence import (
+    AnalysisConfidence,
+)
 from app.analysis.domain.model.valueobjects.analysis_finding_severity import (
     AnalysisFindingSeverity,
 )
-from app.analysis.domain.model.valueobjects.analysis_finding_type import AnalysisFindingType
+from app.analysis.domain.model.valueobjects.analysis_finding_type import (
+    AnalysisFindingType,
+)
 from app.analysis.domain.model.valueobjects.analysis_risk_level import AnalysisRiskLevel
 from app.analysis.domain.model.valueobjects.analysis_status import AnalysisStatus
-from app.analysis.domain.model.valueobjects.analyzed_content_type import AnalyzedContentType
+from app.analysis.domain.model.valueobjects.analyzed_content_type import (
+    AnalyzedContentType,
+)
 from app.analysis.domain.model.valueobjects.estimated_subjects import EstimatedSubjects
 from app.analysis.domain.model.valueobjects.secrets_risk_level import SecretsRiskLevel
 from app.analysis.domain.repositories.security_analysis_repository import (
@@ -47,6 +53,7 @@ class SqlAlchemySecurityAnalysisRepository(SecurityAnalysisRepository):
         if model is None:
             model = SecurityAnalysisModel(
                 content_type=analysis.content_type.value,
+                requested_by=analysis.requested_by,
                 document_id=analysis.document_id,
                 content_reference=analysis.content_reference,
                 content_fingerprint=analysis.content_fingerprint,
@@ -67,9 +74,9 @@ class SqlAlchemySecurityAnalysisRepository(SecurityAnalysisRepository):
         await self._session.refresh(model)
         return self._to_domain(model)
 
-    async def find_by_id(self, analysis_id: int) -> SecurityAnalysis | None:
+    async def find_by_id(self, analysis_id: int, requested_by: str) -> SecurityAnalysis | None:
         model = await self._session.scalar(
-            select(SecurityAnalysisModel).where(SecurityAnalysisModel.id == analysis_id)
+            select(SecurityAnalysisModel).where(SecurityAnalysisModel.id == analysis_id, SecurityAnalysisModel.requested_by == requested_by)
         )
         return self._to_domain(model) if model is not None else None
 
@@ -82,10 +89,11 @@ class SqlAlchemySecurityAnalysisRepository(SecurityAnalysisRepository):
         )
         return self._to_domain(model) if model is not None else None
 
-    async def list(self, page: int, page_size: int) -> tuple[list[SecurityAnalysis], int]:
-        total = await self._session.scalar(select(func.count(SecurityAnalysisModel.id)))
+    async def list(self, requested_by: str, page: int, page_size: int) -> tuple[list[SecurityAnalysis], int]:
+        total = await self._session.scalar(select(func.count(SecurityAnalysisModel.id)).where(SecurityAnalysisModel.requested_by == requested_by))
         result = await self._session.execute(
             select(SecurityAnalysisModel)
+            .where(SecurityAnalysisModel.requested_by == requested_by)
             .order_by(SecurityAnalysisModel.id.desc())
             .offset((page - 1) * page_size)
             .limit(page_size)
@@ -122,6 +130,7 @@ class SqlAlchemySecurityAnalysisRepository(SecurityAnalysisRepository):
     def _to_domain(self, model: SecurityAnalysisModel) -> SecurityAnalysis:
         return SecurityAnalysis(
             id=model.id,
+            requested_by=model.requested_by,
             content_type=AnalyzedContentType(model.content_type),
             document_id=model.document_id,
             content_reference=model.content_reference,

@@ -1,5 +1,7 @@
 from app.analysis.domain.model.entities.security_analysis import SecurityAnalysis
-from app.analysis.domain.model.queries.get_analysis_by_id_query import GetAnalysisByIdQuery
+from app.analysis.domain.model.queries.get_analysis_by_id_query import (
+    GetAnalysisByIdQuery,
+)
 from app.analysis.domain.model.queries.get_latest_analysis_by_document_id_query import (
     GetLatestAnalysisByDocumentIdQuery,
 )
@@ -20,7 +22,7 @@ class SecurityAnalysisQueryServiceImpl(SecurityAnalysisQueryService):
         self,
         query: GetAnalysisByIdQuery,
     ) -> SecurityAnalysis | None:
-        return await self._analysis_repository.find_by_id(query.analysis_id)
+        return await self._analysis_repository.find_by_id(query.analysis_id, query.requested_by)
 
     async def handle_get_latest_analysis_by_document_id(
         self,
@@ -32,4 +34,4 @@ class SecurityAnalysisQueryServiceImpl(SecurityAnalysisQueryService):
         self,
         query: ListAnalysesQuery,
     ) -> tuple[list[SecurityAnalysis], int]:
-        return await self._analysis_repository.list(query.page, query.page_size)
+        return await self._analysis_repository.list(query.requested_by, query.page, query.page_size)

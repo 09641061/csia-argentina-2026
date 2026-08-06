@@ -1,15 +1,6 @@
 from typing import Annotated
 
-from fastapi import (
-    APIRouter,
-    Depends,
-    File,
-    Form,
-    HTTPException,
-    Query,
-    UploadFile,
-    status,
-)
+from fastapi import APIRouter, Body, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.composition import (
@@ -17,7 +8,6 @@ from app.core.composition import (
     build_secure_query_command_service,
 )
 from app.core.database import get_session
-from app.core.settings import get_settings
 from app.decision.application.internal.commandservices.submit_secure_query_command_service_impl import (
     SubmitSecureQueryCommandServiceImpl,
 )
@@ -29,13 +19,13 @@ from app.decision.domain.model.commands.submit_secure_query_command import (
     SubmitSecureQueryCommand,
 )
 from app.decision.domain.model.entities.secure_interaction import SecureInteraction
-from app.decision.domain.model.valueobjects.secure_query_result import SecureQueryResult
 from app.decision.domain.model.queries.get_secure_interaction_by_id_query import (
     GetSecureInteractionByIdQuery,
 )
 from app.decision.domain.model.queries.list_secure_interactions_query import (
     ListSecureInteractionsQuery,
 )
+from app.decision.domain.model.valueobjects.secure_query_result import SecureQueryResult
 from app.decision.interfaces.rest.resources.secure_interaction_list_response import (
     SecureInteractionListResponse,
     SecureInteractionPageMetadataResponse,
@@ -44,15 +34,19 @@ from app.decision.interfaces.rest.resources.secure_interaction_resource import (
     MaskedFindingResource,
     SecureInteractionResource,
 )
+from app.decision.interfaces.rest.resources.secure_query_request import (
+    SecureQueryRequest,
+)
 from app.decision.interfaces.rest.resources.secure_query_response import (
     AssistantAnswerResource,
     SecureQueryResponse,
 )
-from app.shared.infrastructure.persistence.sqlalchemy.unit_of_work import (
-    SqlAlchemyUnitOfWork,
-)
+from app.iam.domain.model.valueobjects.authenticated_user import AuthenticatedUser
 from app.iam.interfaces.rest.controllers.authentication_router import (
     require_authenticated_user,
+)
+from app.shared.infrastructure.persistence.sqlalchemy.unit_of_work import (
+    SqlAlchemyUnitOfWork,
 )
 
 router = APIRouter(
@@ -85,8 +79,6 @@ def to_interaction_resource(interaction: SecureInteraction) -> SecureInteraction
         content_reference=interaction.content_reference,
         risk_level=interaction.risk_level,
         prompt_analysis_id=interaction.prompt_analysis_id,
-        document_analysis_id=interaction.document_analysis_id,
-        document_id=interaction.document_id,
         data_categories=interaction.data_categories,
         masked_findings=[
             MaskedFindingResource(
@@ -128,18 +120,14 @@ def to_secure_query_response(result: SecureQueryResult) -> SecureQueryResponse:
     status_code=status.HTTP_201_CREATED,
     summary="Analyze and ask (the main use case)",
     description=(
-        "Reviews the query and an optional JSON or image attachment, applies the "
-        "ALLOWED/BLOCKED policy and, "
+        "Reviews the text query, applies the ALLOWED/BLOCKED policy and, "
         "only when the content was allowed and a question was submitted, asks the local model for "
         "an answer. A blocked submission never reaches the answer generator. "
-        "At least a prompt or a document must be provided; when only a document is sent the response "
-        "carries the review result without an answer."
+        "The MVP accepts text queries only."
     ),
     responses={
         201: {"description": "Interaction audited; the answer is present only when allowed"},
-        400: {"description": "Nothing was submitted, or the document is malformed"},
-        413: {"description": "The document exceeds the maximum allowed size"},
-        415: {"description": "Unsupported document type"},
+        400: {"description": "The text query is missing or invalid"},
     },
 )
 async def submit_secure_query(
@@ -147,33 +135,12 @@ async def submit_secure_query(
         SubmitSecureQueryCommandServiceImpl, Depends(get_secure_query_command_service)
     ],
     session: Annotated[AsyncSession, Depends(get_session)],
-    prompt: Annotated[str | None, Form(description="Free-text query")] = None,
-    file: Annotated[
-        UploadFile | None, File(description="Optional JSON, PNG or JPEG file")
-    ] = None,
+    payload: Annotated[SecureQueryRequest, Body()],
+    authenticated_user: Annotated[AuthenticatedUser, Depends(require_authenticated_user)],
 ) -> SecureQueryResponse:
-    settings = get_settings()
-    content: bytes | None = None
-    if file is not None and file.filename:
-        content = await file.read()
-        if len(content) > settings.max_document_size_bytes:
-            raise HTTPException(
-                status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
-                detail=f"El documento supera el límite de {settings.max_document_size_mb} MB.",
-            )
-        if not content:
-            content = None
-
     unit_of_work = SqlAlchemyUnitOfWork(session)
     try:
-        command = SubmitSecureQueryCommand(
-            prompt=prompt,
-            document_filename=file.filename if file is not None else None,
-            document_mime_type=(file.content_type or "application/octet-stream")
-            if file is not None
-            else None,
-            document_content=content,
-        )
+        command = SubmitSecureQueryCommand(prompt=payload.prompt, requested_by=authenticated_user.identity)
         result = await command_service.handle_submit_secure_query(command)
         await unit_of_work.commit()
     except SecureQueryValidationError as error:
@@ -202,10 +169,11 @@ async def list_interactions(
     ],
     page: Annotated[int, Query(ge=1, description="Page number")] = 1,
     page_size: Annotated[int, Query(ge=1, le=100, description="Interactions per page")] = 20,
+    authenticated_user: Annotated[AuthenticatedUser, Depends(require_authenticated_user)] = None,
 ) -> SecureInteractionListResponse:
     try:
         interactions, total = await query_service.handle_list_secure_interactions(
-            ListSecureInteractionsQuery(page=page, page_size=page_size)
+            ListSecureInteractionsQuery(requested_by=authenticated_user.identity, page=page, page_size=page_size)
         )
     except ValueError as error:
         raise HTTPException(status.HTTP_400_BAD_REQUEST, detail=str(error)) from error
@@ -231,10 +199,11 @@ async def get_interaction(
     query_service: Annotated[
         SecureInteractionQueryServiceImpl, Depends(get_secure_interaction_query_service)
     ],
+    authenticated_user: Annotated[AuthenticatedUser, Depends(require_authenticated_user)],
 ) -> SecureInteractionResource:
     try:
         interaction = await query_service.handle_get_secure_interaction_by_id(
-            GetSecureInteractionByIdQuery(interaction_id=interaction_id)
+            GetSecureInteractionByIdQuery(interaction_id=interaction_id, requested_by=authenticated_user.identity)
         )
     except ValueError as error:
         raise HTTPException(status.HTTP_400_BAD_REQUEST, detail=str(error)) from error

@@ -6,7 +6,9 @@ from app.analysis.application.internal.services.prompt_content_summarizer import
 from app.analysis.application.internal.services.prompt_sensitive_data_detection_service import (
     PromptSensitiveDataDetectionService,
 )
-from app.analysis.domain.model.valueobjects.analysis_finding_type import AnalysisFindingType
+from app.analysis.domain.model.valueobjects.analysis_finding_type import (
+    AnalysisFindingType,
+)
 
 
 def types(findings):

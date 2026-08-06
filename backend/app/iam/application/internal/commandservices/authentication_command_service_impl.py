@@ -40,10 +40,10 @@ class AuthenticationCommandServiceImpl(AuthenticationCommandService):
         username = Username(command.username)
         account = await self._user_repository.find_by_username(username)
         if account is None:
-            self._password_hashing_service.verify_dummy(command.password)
+            await asyncio.to_thread(self._password_hashing_service.verify_dummy, command.password)
             raise InvalidCredentialsError("Invalid username or password")
-        if not self._password_hashing_service.verify(
-            command.password, account.password_hash
+        if not await asyncio.to_thread(
+            self._password_hashing_service.verify, command.password, account.password_hash
         ):
             raise InvalidCredentialsError("Invalid username or password")
         token = self._access_token_service.issue(account.username.value)
@@ -60,7 +60,9 @@ class AuthenticationCommandServiceImpl(AuthenticationCommandService):
             UserAccount(
                 id=None,
                 username=username,
-                password_hash=self._password_hashing_service.hash(command.password),
+                password_hash=await asyncio.to_thread(
+                    self._password_hashing_service.hash, command.password
+                ),
             )
         )
         token = self._access_token_service.issue(account.username.value)
@@ -68,3 +70,4 @@ class AuthenticationCommandServiceImpl(AuthenticationCommandService):
             UserAuthenticatedEvent(username=account.username.value)
         )
         return token
+import asyncio

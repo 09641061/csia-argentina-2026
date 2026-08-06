@@ -11,7 +11,7 @@ class SecurityAnalysisResource(BaseModel):
     """
     Public view of one security review.
 
-    It carries no original prompt, no document content and no sanitized copy:
+    It carries no original prompt and no sanitized copy:
     only the fingerprint, the masked preview, the masked findings and the risk
     assessment.
     """
@@ -20,20 +20,17 @@ class SecurityAnalysisResource(BaseModel):
 
     id: int = Field(description="Analysis execution identifier", examples=[1])
     content_type: str = Field(
-        description="What was reviewed: prompt or document", examples=["document"]
-    )
-    document_id: int | None = Field(
-        default=None, description="Associated document identifier, when applicable", examples=[12]
+        description="What was reviewed", examples=["prompt"]
     )
     content_reference: str = Field(
         description="Safe, masked label of the reviewed content",
-        examples=["inventario-servicios.json"],
+        examples=["Consulta escrita"],
     )
     content_fingerprint: str = Field(
         description="SHA-256 digest of the reviewed content, for traceability without storing it"
     )
     content_length: int = Field(
-        description="Characters for a prompt, bytes for a document", examples=[24567]
+        description="Number of characters in the prompt", examples=[245]
     )
     masked_preview: str = Field(description="Masked preview of the reviewed content")
     status: str = Field(description="Analysis execution status", examples=["completed"])

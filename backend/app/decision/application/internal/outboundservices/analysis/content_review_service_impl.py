@@ -2,7 +2,9 @@ from app.analysis.interfaces.acl.analysis_context_facade import AnalysisContextF
 from app.decision.application.internal.outboundservices.content_review_service import (
     ContentReviewService,
 )
-from app.decision.domain.model.valueobjects.masked_finding_summary import MaskedFindingSummary
+from app.decision.domain.model.valueobjects.masked_finding_summary import (
+    MaskedFindingSummary,
+)
 from app.decision.domain.model.valueobjects.reviewed_content_assessment import (
     ReviewedContentAssessment,
 )
@@ -14,8 +16,8 @@ class ContentReviewServiceImpl(ContentReviewService):
     def __init__(self, analysis_facade: AnalysisContextFacade) -> None:
         self._analysis_facade = analysis_facade
 
-    async def review_prompt(self, prompt: str) -> ReviewedContentAssessment:
-        return self._to_assessment(await self._analysis_facade.review_prompt(prompt))
+    async def review_prompt(self, prompt: str, requested_by: str) -> ReviewedContentAssessment:
+        return self._to_assessment(await self._analysis_facade.review_prompt(prompt, requested_by))
 
     async def review_document(self, document_id: int) -> ReviewedContentAssessment:
         return self._to_assessment(await self._analysis_facade.review_document(document_id))

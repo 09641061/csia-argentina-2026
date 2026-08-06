@@ -6,13 +6,19 @@ from dataclasses import dataclass
 from app.analysis.application.internal.services.sensitive_data_detection_service import (
     SensitiveDataDetectionService,
 )
-from app.analysis.application.internal.services.sensitive_value_masking import mask_sensitive_value
+from app.analysis.application.internal.services.sensitive_value_masking import (
+    mask_sensitive_value,
+)
 from app.analysis.domain.model.entities.analysis_finding import AnalysisFinding
-from app.analysis.domain.model.valueobjects.analysis_confidence import AnalysisConfidence
+from app.analysis.domain.model.valueobjects.analysis_confidence import (
+    AnalysisConfidence,
+)
 from app.analysis.domain.model.valueobjects.analysis_finding_severity import (
     AnalysisFindingSeverity,
 )
-from app.analysis.domain.model.valueobjects.analysis_finding_type import AnalysisFindingType
+from app.analysis.domain.model.valueobjects.analysis_finding_type import (
+    AnalysisFindingType,
+)
 from app.shared.domain.text_masking import mask_free_text
 
 PROMPT_JSON_PATH = "$.prompt"
