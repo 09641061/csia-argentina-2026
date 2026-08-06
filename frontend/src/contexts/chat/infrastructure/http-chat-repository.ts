@@ -42,10 +42,9 @@ export class HttpChatRepository implements ChatRepository {
   }
 
   private async post(path: string, prompt: string, attachment?: File | null, signal?: AbortSignal): Promise<AssistantReply> {
-    // The current chat API accepts a JSON prompt. Attachments are handled by
-    // the document-analysis flow, not by conversation creation.
-    void attachment
-    const body = { prompt }
+    const body = new FormData()
+    body.append('prompt', prompt)
+    if (attachment) body.append('file', attachment, attachment.name)
     const resource = await request<ChatMessageResponseResource>(path, {
       method: 'POST',
       body,

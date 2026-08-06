@@ -131,6 +131,19 @@ class Settings(BaseSettings):
         alias="OLLAMA_GENERATION_MAX_OUTPUT_TOKENS",
         gt=0,
     )
+    ollama_generation_max_document_chars: int = Field(
+        default=50_000, alias="OLLAMA_GENERATION_MAX_DOCUMENT_CHARS", gt=0
+    )
+    ollama_vision_model: str = Field(default="gemma3:4b", alias="OLLAMA_VISION_MODEL")
+    ollama_vision_timeout_seconds: int = Field(default=180, alias="OLLAMA_VISION_TIMEOUT_SECONDS", gt=0)
+    ollama_vision_context_tokens: int = Field(default=8192, alias="OLLAMA_VISION_CONTEXT_TOKENS", gt=0)
+    ollama_vision_max_output_tokens: int = Field(default=1200, alias="OLLAMA_VISION_MAX_OUTPUT_TOKENS", gt=0)
+    max_document_size_mb: int = Field(default=10, alias="MAX_DOCUMENT_SIZE_MB", gt=0)
+    document_storage_backend: str = Field(default="cloudinary", alias="DOCUMENT_STORAGE_BACKEND")
+    document_storage_root: Path = Field(default=PROJECT_ROOT / "storage" / "documents", alias="DOCUMENT_STORAGE_DIR")
+    cloudinary_cloud_name: str = Field(default="", alias="CLOUDINARY_CLOUD_NAME")
+    cloudinary_api_key: str = Field(default="", alias="CLOUDINARY_API_KEY")
+    cloudinary_api_secret: str = Field(default="", alias="CLOUDINARY_API_SECRET")
     prompt_max_length: int = Field(default=8000, alias="PROMPT_MAX_LENGTH", gt=0)
     prompt_min_length: int = Field(default=3, alias="PROMPT_MIN_LENGTH", gt=0)
 
@@ -138,7 +151,7 @@ class Settings(BaseSettings):
     @classmethod
     def reject_development_secret_in_production(cls, value: str, info) -> str:
         environment = str(info.data.get("environment", "development")).lower()
-        if environment in {"production", "prod"} and value == "sentinel-local-development-key-change-before-deploy-2026":
+        if environment in {"production", "prod"} and value == "claude-local-development-key-change-before-deploy-2026":
             raise ValueError("JWT_SECRET_KEY must be configured for production")
         return value
 
@@ -149,6 +162,10 @@ class Settings(BaseSettings):
             for origin in self.frontend_origin.split(",")
             if origin.strip()
         ]
+
+    @property
+    def max_document_size_bytes(self) -> int:
+        return self.max_document_size_mb * 1024 * 1024
 
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:

@@ -18,6 +18,8 @@ class DecisionContextResponseService(AuthorizedContextResponseService):
         outcome = await self._decision_facade.execute_authorized_query(
             prompt=command.prompt,
             requested_by=command.requested_by,
+            attachment_payload=command.attachment_payload,
+            attachment_name=command.attachment_name,
         )
         generated_at = outcome["generated_at"]
         return ChatMessageResult(

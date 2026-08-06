@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import json
 
 from app.decision.application.internal.outboundservices.content_review_service import (
     ContentReviewService,
@@ -75,23 +76,33 @@ class SubmitSecureQueryCommandServiceImpl(SecureQueryCommandService):
             (command.prompt or "").strip(), command.requested_by
         )
 
+        document_assessment = None
+        if command.attachment_payload is not None:
+            # Review the exact locally extracted representation that will later
+            # be supplied to the answer model; the original bytes never bypass
+            # the security boundary.
+            document_assessment = await self._content_review_service.review_prompt(
+                json.dumps(command.attachment_payload, ensure_ascii=False),
+                command.requested_by,
+            )
+
         outcome = self._policy.evaluate(
             prompt_assessment=prompt_assessment,
-            document_assessment=None,
+            document_assessment=document_assessment,
         )
 
         interaction = SecureInteraction.record(
-            content_type=InteractionContentType.PROMPT,
+            content_type=(InteractionContentType.PROMPT_WITH_DOCUMENT if document_assessment else InteractionContentType.PROMPT),
             decision=outcome.decision,
             reason_code=outcome.reason_code,
             reason=outcome.reason,
             content_reference=prompt_assessment.reference,
             risk_level=outcome.risk_level,
             prompt_analysis_id=prompt_assessment.analysis_id if prompt_assessment else None,
-            document_analysis_id=None,
+            document_analysis_id=document_assessment.analysis_id if document_assessment else None,
             document_id=None,
-            masked_findings=list(prompt_assessment.findings),
-            data_categories=list(prompt_assessment.data_categories),
+            masked_findings=list(prompt_assessment.findings) + (list(document_assessment.findings) if document_assessment else []),
+            data_categories=list(prompt_assessment.data_categories) + (list(document_assessment.data_categories) if document_assessment else []),
             answer_expected=True,
             requested_by=command.requested_by,
         )
@@ -101,12 +112,14 @@ class SubmitSecureQueryCommandServiceImpl(SecureQueryCommandService):
             authorization = GenerationAuthorization(
                 decision=outcome.decision,
                 prompt_analysis_id=prompt_assessment.analysis_id,  # type: ignore[union-attr]
-                document_analysis_id=None,
+                document_analysis_id=document_assessment.analysis_id if document_assessment else None,
             )
             answer = await self._generate_answer(
                 interaction=interaction,
                 authorization=authorization,
                 prompt=(command.prompt or "").strip(),
+                allowed_document=command.attachment_payload,
+                document_reference=command.attachment_name,
             )
 
         saved = await self._interaction_repository.save(interaction)
@@ -124,12 +137,16 @@ class SubmitSecureQueryCommandServiceImpl(SecureQueryCommandService):
         interaction: SecureInteraction,
         authorization: GenerationAuthorization,
         prompt: str,
+        allowed_document: dict[str, object] | list[object] | None = None,
+        document_reference: str | None = None,
     ) -> AssistantAnswer | None:
         model_name = self._answer_generation_client.model_name
         try:
             answer = await self._answer_generation_client.generate(
                 authorization=authorization,
                 prompt=prompt,
+                allowed_document=allowed_document,
+                document_reference=document_reference,
             )
         except AnswerGenerationError as error:
             interaction.record_failed_generation(

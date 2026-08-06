@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Any
 
 
 @dataclass(frozen=True, slots=True)
@@ -9,6 +10,8 @@ class SubmitSecureQueryCommand:
 
     prompt: str | None = None
     requested_by: str = "system"
+    attachment_payload: dict[str, Any] | list[Any] | None = None
+    attachment_name: str | None = None
 
     def __post_init__(self) -> None:
         if not self.requested_by.strip():

@@ -18,6 +18,7 @@ dependencies = [
     "certifi>=2026.7.22",
     "pyjwt>=2.13.0",
     "pwdlib[argon2]>=0.3.0",
+    "cloudinary>=1.44.1",
 ]
 
 [project.optional-dependencies]

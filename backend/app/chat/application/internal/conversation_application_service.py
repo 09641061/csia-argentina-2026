@@ -40,20 +40,20 @@ class ConversationApplicationService:
         self._chat_service = chat_service
         self._title_generator = title_generator
 
-    async def send_message(self, *, user_id: int, username: str, conversation_id: int, prompt: str) -> ChatMessageResult:
+    async def send_message(self, *, user_id: int, username: str, conversation_id: int, prompt: str, attachment_payload=None, attachment_url: str | None = None, attachment_name: str | None = None, attachment_mime_type: str | None = None) -> ChatMessageResult:
         conversation = await self._session.scalar(select(ConversationModel).where(ConversationModel.id == conversation_id, ConversationModel.user_id == user_id))
         if conversation is None:
             raise ConversationNotFoundError
-        result = await self._review_and_answer(prompt, username)
+        result = await self._review_and_answer(prompt, username, attachment_payload, attachment_name)
         now = datetime.now(UTC)
-        self._session.add(MessageModel(conversation_id=conversation.id, role="user", content=prompt, created_at=now))
+        self._session.add(MessageModel(conversation_id=conversation.id, role="user", content=prompt, attachment_url=attachment_url, attachment_name=attachment_name, attachment_mime_type=attachment_mime_type, created_at=now))
         self._session.add(MessageModel(conversation_id=conversation.id, role="assistant", content=result.answer or "", secure_interaction_id=result.interaction_id, created_at=now))
         conversation.updated_at = result.generated_at or now
         await self._session.commit()
         return result
 
-    async def create_conversation(self, *, user_id: int, username: str, prompt: str) -> tuple[ConversationModel, ChatMessageResult]:
-        result = await self._review_and_answer(prompt, username)
+    async def create_conversation(self, *, user_id: int, username: str, prompt: str, attachment_payload=None, attachment_url: str | None = None, attachment_name: str | None = None, attachment_mime_type: str | None = None) -> tuple[ConversationModel, ChatMessageResult]:
+        result = await self._review_and_answer(prompt, username, attachment_payload, attachment_name)
         now = datetime.now(UTC)
         try:
             title = await self._title_generator.generate(prompt)
@@ -62,7 +62,7 @@ class ConversationApplicationService:
         conversation = ConversationModel(user_id=user_id, title=title, created_at=now, updated_at=result.generated_at or now)
         self._session.add(conversation)
         await self._session.flush()
-        self._session.add(MessageModel(conversation_id=conversation.id, role="user", content=prompt, created_at=now))
+        self._session.add(MessageModel(conversation_id=conversation.id, role="user", content=prompt, attachment_url=attachment_url, attachment_name=attachment_name, attachment_mime_type=attachment_mime_type, created_at=now))
         self._session.add(MessageModel(conversation_id=conversation.id, role="assistant", content=result.answer or "", secure_interaction_id=result.interaction_id, created_at=now))
         await self._session.commit()
         return conversation, result
@@ -77,8 +77,8 @@ class ConversationApplicationService:
         messages = list((await self._session.scalars(select(MessageModel).where(MessageModel.conversation_id == conversation.id).order_by(MessageModel.created_at, MessageModel.id).offset((page - 1) * page_size).limit(page_size))).all())
         return conversation, messages
 
-    async def _review_and_answer(self, prompt: str, username: str) -> ChatMessageResult:
-        result = await self._chat_service.handle_send_chat_message(SendChatMessageCommand(prompt=prompt, requested_by=username))
+    async def _review_and_answer(self, prompt: str, username: str, attachment_payload=None, attachment_name: str | None = None) -> ChatMessageResult:
+        result = await self._chat_service.handle_send_chat_message(SendChatMessageCommand(prompt=prompt, requested_by=username, attachment_payload=attachment_payload, attachment_name=attachment_name))
         if result.decision == "blocked":
             await self._session.commit()
             raise ContentBlockedError

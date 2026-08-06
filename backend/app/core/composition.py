@@ -80,6 +80,7 @@ def build_answer_generation_client() -> OllamaAnswerGenerationClientImpl:
         request_timeout_seconds=settings.ollama_generation_timeout_seconds,
         context_tokens=settings.ollama_generation_context_tokens,
         max_output_tokens=settings.ollama_generation_max_output_tokens,
+        max_document_characters=settings.ollama_generation_max_document_chars,
     )
 
 

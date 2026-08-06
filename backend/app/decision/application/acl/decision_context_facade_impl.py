@@ -9,6 +9,7 @@ from app.decision.interfaces.acl.decision_context_facade import (
     DecisionContextFacade,
     DecisionContextValidationError,
 )
+from typing import Any
 
 
 class DecisionContextFacadeImpl(DecisionContextFacade):
@@ -22,12 +23,16 @@ class DecisionContextFacadeImpl(DecisionContextFacade):
         *,
         prompt: str | None,
         requested_by: str,
+        attachment_payload: dict[str, Any] | list[Any] | None = None,
+        attachment_name: str | None = None,
     ) -> dict[str, object | None]:
         try:
             result = await self._command_service.handle_submit_secure_query(
                 SubmitSecureQueryCommand(
                     prompt=prompt,
                     requested_by=requested_by,
+                    attachment_payload=attachment_payload,
+                    attachment_name=attachment_name,
                 )
             )
         except (SecureQueryValidationError, ValueError) as error:

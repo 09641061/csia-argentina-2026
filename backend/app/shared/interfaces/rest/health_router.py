@@ -32,6 +32,7 @@ class HealthResponse(BaseModel):
     generation_model_available: bool = Field(
         description="The answer generation model is installed in the local Ollama"
     )
+    vision_model_available: bool = Field(description="The image analysis model is installed in local Ollama")
     security_model: str = Field(description="Configured security model", examples=["gemma3:4b"])
     discovery_model: str = Field(
         description="Configured sensitive-content discovery model", examples=["gemma3:4b"]
@@ -39,6 +40,7 @@ class HealthResponse(BaseModel):
     generation_model: str = Field(
         description="Configured generation model", examples=["gemma3:4b"]
     )
+    vision_model: str = Field(description="Configured vision model", examples=["gemma3:4b"])
 
 
 def _installed_models(base_url: str) -> set[str]:
@@ -77,17 +79,20 @@ async def get_health() -> HealthResponse:
     security_ok = _model_is_installed(settings.ollama_security_model, installed)
     discovery_ok = _model_is_installed(settings.ollama_discovery_model, installed)
     generation_ok = _model_is_installed(settings.ollama_generation_model, installed)
+    vision_ok = _model_is_installed(settings.ollama_vision_model, installed)
     return HealthResponse(
         status=(
             "ok"
-            if database_ok and security_ok and discovery_ok and generation_ok
+            if database_ok and security_ok and discovery_ok and generation_ok and vision_ok
             else "degraded"
         ),
         database=database_ok,
         security_model_available=security_ok,
         discovery_model_available=discovery_ok,
         generation_model_available=generation_ok,
+        vision_model_available=vision_ok,
         security_model=settings.ollama_security_model,
         discovery_model=settings.ollama_discovery_model,
         generation_model=settings.ollama_generation_model,
+        vision_model=settings.ollama_vision_model,
     )

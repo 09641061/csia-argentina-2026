@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Body, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, UploadFile, status
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -21,6 +21,12 @@ from app.core.composition import (
     build_conversation_title_generator,
 )
 from app.core.database import get_session
+from app.core.settings import get_settings
+from app.analysis.infrastructure.ollama.ollama_vision_extraction_client_impl import OllamaVisionExtractionClientImpl
+from app.analysis.infrastructure.text_extraction.multi_format_document_text_extractor import MultiFormatDocumentTextExtractor
+from app.analysis.domain.exceptions import DocumentContentExtractionError, AnalysisModelError
+from app.documents.infrastructure.storage.cloudinary_document_storage import CloudinaryDocumentStorage
+from app.documents.infrastructure.storage.exceptions import DocumentStorageError
 from app.iam.domain.model.valueobjects.authenticated_user import AuthenticatedUser
 from app.iam.interfaces.rest.controllers.authentication_router import (
     require_authenticated_user,
@@ -54,10 +60,43 @@ def _translate(error: Exception) -> None:
         raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, "El asistente no pudo generar una respuesta.") from error
 
 
-@router.post("/conversations/{conversation_id}/messages", response_model=ChatMessageResponse, responses={403: {"description": "Content blocked"}, 404: {"description": "Conversation not found"}, 503: {"description": "Assistant unavailable"}})
-async def send_chat_message(conversation_id: int, payload: Annotated[ChatPromptRequest, Body()], service: Annotated[ConversationApplicationService, Depends(get_conversation_service)], user: Annotated[AuthenticatedUser, Depends(require_authenticated_user)]) -> ChatMessageResponse:
+async def _read_attachment(file: UploadFile | None):
+    if file is None or not file.filename:
+        return None, None
+    settings = get_settings()
+    content = await file.read(settings.max_document_size_bytes + 1)
+    if len(content) > settings.max_document_size_bytes:
+        raise HTTPException(status.HTTP_413_REQUEST_ENTITY_TOO_LARGE, f"El archivo supera el límite de {settings.max_document_size_mb} MB.")
+    extractor = MultiFormatDocumentTextExtractor(OllamaVisionExtractionClientImpl(
+        base_url=settings.ollama_base_url,
+        model_name=settings.ollama_vision_model,
+        request_timeout_seconds=settings.ollama_vision_timeout_seconds,
+        context_tokens=settings.ollama_vision_context_tokens,
+        max_output_tokens=settings.ollama_vision_max_output_tokens,
+    ))
     try:
-        result = await service.send_message(user_id=_user_id(user), username=user.identity, conversation_id=conversation_id, prompt=payload.prompt)
+        payload = await extractor.extract_content(content, file.content_type or "application/octet-stream", file.filename)
+    except DocumentContentExtractionError as error:
+        raise HTTPException(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, "El archivo no es una imagen o JSON válido compatible.") from error
+    except AnalysisModelError as error:
+        raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, "El modelo de visión no pudo analizar la imagen.") from error
+    try:
+        reference = await CloudinaryDocumentStorage(max_content_bytes=settings.max_document_size_bytes).store(
+            content, file.content_type or "application/octet-stream"
+        )
+    except DocumentStorageError as error:
+        raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, "No se pudo guardar la imagen en Cloudinary.") from error
+    return payload, reference.key
+
+
+@router.post("/conversations/{conversation_id}/messages", response_model=ChatMessageResponse, responses={403: {"description": "Content blocked"}, 404: {"description": "Conversation not found"}, 503: {"description": "Assistant unavailable"}})
+async def send_chat_message(conversation_id: int, service: Annotated[ConversationApplicationService, Depends(get_conversation_service)], user: Annotated[AuthenticatedUser, Depends(require_authenticated_user)], prompt: Annotated[str, Form(max_length=8000)] = "", file: Annotated[UploadFile | None, File()] = None) -> ChatMessageResponse:
+    try:
+        attachment_payload, attachment_url = await _read_attachment(file)
+        effective_prompt = prompt.strip() or ("Analiza el archivo adjunto." if attachment_payload is not None else "")
+        if len(effective_prompt) < 3:
+            raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, "El mensaje debe tener al menos 3 caracteres.")
+        result = await service.send_message(user_id=_user_id(user), username=user.identity, conversation_id=conversation_id, prompt=effective_prompt, attachment_payload=attachment_payload, attachment_url=attachment_url, attachment_name=file.filename if file else None, attachment_mime_type=file.content_type if file else None)
     except (ConversationNotFoundError, ContentBlockedError, AssistantUnavailableError) as error:
         _translate(error)
         raise AssertionError("unreachable")
@@ -65,9 +104,13 @@ async def send_chat_message(conversation_id: int, payload: Annotated[ChatPromptR
 
 
 @router.post("/conversations", response_model=ChatMessageResponse, status_code=status.HTTP_201_CREATED, responses={403: {"description": "Content blocked"}, 503: {"description": "Assistant unavailable"}})
-async def create_conversation(payload: Annotated[ChatPromptRequest, Body()], service: Annotated[ConversationApplicationService, Depends(get_conversation_service)], user: Annotated[AuthenticatedUser, Depends(require_authenticated_user)]) -> ChatMessageResponse:
+async def create_conversation(service: Annotated[ConversationApplicationService, Depends(get_conversation_service)], user: Annotated[AuthenticatedUser, Depends(require_authenticated_user)], prompt: Annotated[str, Form(max_length=8000)] = "", file: Annotated[UploadFile | None, File()] = None) -> ChatMessageResponse:
     try:
-        conversation, result = await service.create_conversation(user_id=_user_id(user), username=user.identity, prompt=payload.prompt)
+        attachment_payload, attachment_url = await _read_attachment(file)
+        effective_prompt = prompt.strip() or ("Analiza el archivo adjunto." if attachment_payload is not None else "")
+        if len(effective_prompt) < 3:
+            raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, "El mensaje debe tener al menos 3 caracteres.")
+        conversation, result = await service.create_conversation(user_id=_user_id(user), username=user.identity, prompt=effective_prompt, attachment_payload=attachment_payload, attachment_url=attachment_url, attachment_name=file.filename if file else None, attachment_mime_type=file.content_type if file else None)
     except (ContentBlockedError, AssistantUnavailableError) as error:
         _translate(error)
         raise AssertionError("unreachable")

@@ -102,7 +102,7 @@ class CloudinaryDocumentStorage(DocumentStorage):
         try:
             result = cloudinary.uploader.upload(
                 upload_file,
-                resource_type="raw",
+                resource_type="image" if content_type.startswith("image/") else "raw",
                 folder=self._folder,
                 use_filename=True,
                 unique_filename=True,

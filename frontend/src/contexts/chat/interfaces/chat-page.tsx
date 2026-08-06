@@ -69,6 +69,9 @@ export function ChatPage() {
         id: -Date.now(),
         role: 'user',
         content: submitted,
+        attachmentUrl: submittedAttachment ? URL.createObjectURL(submittedAttachment) : null,
+        attachmentName: submittedAttachment?.name,
+        attachmentMimeType: submittedAttachment?.type,
         createdAt: new Date().toISOString(),
       }
       setConversation({ ...conversation, messages: [...conversation.messages, optimistic] })
