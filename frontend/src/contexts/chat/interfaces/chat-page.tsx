@@ -148,8 +148,11 @@ function orderedMessages(messages: readonly ChatMessage[]): readonly ChatMessage
   // Older conversations may have assistant timestamps/ids that predate the
   // user's message. The chat contract is turn-based, so render each user
   // message followed by its corresponding assistant response.
-  const users = messages.filter((message) => message.role === 'user').sort((left, right) => left.id - right.id)
-  const assistants = messages.filter((message) => message.role === 'assistant').sort((left, right) => left.id - right.id)
+  // Keep the API/optimistic insertion order. Optimistic user messages have a
+  // negative temporary id, so sorting by id would move the newest message to
+  // the beginning of the conversation.
+  const users = messages.filter((message) => message.role === 'user')
+  const assistants = messages.filter((message) => message.role === 'assistant')
   const ordered: ChatMessage[] = []
   const turns = Math.max(users.length, assistants.length)
   for (let index = 0; index < turns; index += 1) {
