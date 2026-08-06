@@ -7,6 +7,7 @@ from fastapi.responses import JSONResponse
 
 from app.analysis.interfaces.rest.controllers.security_analysis_router import (
     router as analysis_router,
+    query_router as analysis_query_router,
 )
 from app.chat.interfaces.rest.controllers.chat_router import router as chat_router
 from app.core.database import initialize_database
@@ -75,6 +76,7 @@ def create_app() -> FastAPI:
     app.include_router(authentication_router)
     app.include_router(chat_router)
     app.include_router(analysis_router)
+    app.include_router(analysis_query_router)
     app.include_router(secure_query_router)
 
     @app.exception_handler(Exception)
