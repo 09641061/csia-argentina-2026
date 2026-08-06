@@ -16,7 +16,7 @@ from app.decision.domain.model.commands.submit_secure_query_command import (
 )
 from tests.conftest import (
     SAMPLES,
-    SentinelTestContext,
+    ClaudeTestContext,
     TimeoutFakeSecurityClient,
     TimingOutFakeGenerationClient,
 )
@@ -27,7 +27,7 @@ SCENARIOS = json.loads((SAMPLES / "prompt-scenarios.json").read_text(encoding="u
 @pytest.mark.parametrize("scenario", SCENARIOS, ids=[item["id"] for item in SCENARIOS])
 @pytest.mark.asyncio
 async def test_prompt_scenario_behaves_as_declared(
-    context: SentinelTestContext,
+    context: ClaudeTestContext,
     scenario: dict,
 ) -> None:
     if scenario["simulate"] == "analysis_timeout":
@@ -66,7 +66,7 @@ async def test_prompt_scenario_behaves_as_declared(
 
 
 @pytest.mark.asyncio
-async def test_no_scenario_ever_leaks_its_raw_values(context: SentinelTestContext) -> None:
+async def test_no_scenario_ever_leaks_its_raw_values(context: ClaudeTestContext) -> None:
     raw_values = (
         "SuperSecret123",
         "sk-proj4Xm2QpLd8Rt6VbNc1Zk9WsYh3Ge7Uf5Ja",

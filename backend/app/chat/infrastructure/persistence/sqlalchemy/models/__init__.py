@@ -1,1 +1,1 @@
-"""Chat persistence models."""
+"""SQLAlchemy models owned by Chat."""

@@ -26,7 +26,7 @@ describe('Autenticación', () => {
     renderAuthFlow('/')
 
     expect(await screen.findByRole('heading', { name: 'Iniciar sesión' })).toBeInTheDocument()
-    expect(screen.queryByRole('heading', { name: 'Consultar' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: /¿En qué puedo ayudarte/i })).not.toBeInTheDocument()
   })
 
   it('registers a user, stores the JWT session and opens the protected portal', async () => {
@@ -38,7 +38,7 @@ describe('Autenticación', () => {
             access_token: 'header.payload.signature',
             token_type: 'bearer',
             expires_at: '2099-08-04T12:00:00Z',
-            username: 'sentinel.demo',
+            username: 'claude.demo',
           }),
           { status: 201, headers: { 'Content-Type': 'application/json' } },
         )
@@ -46,10 +46,24 @@ describe('Autenticación', () => {
       if (url.includes('/api/v1/auth/me')) {
         const headers = new Headers(init?.headers)
         expect(headers.get('Authorization')).toBe('Bearer header.payload.signature')
-        return new Response(JSON.stringify({ username: 'sentinel.demo' }), {
+        return new Response(JSON.stringify({ username: 'claude.demo' }), {
           status: 200,
           headers: { 'Content-Type': 'application/json' },
         })
+      }
+      if (url.includes('/api/v1/chat/conversations')) {
+        return new Response(JSON.stringify([]), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        })
+      }
+      if (url.includes('/api/v1/health')) {
+        return new Response(JSON.stringify({
+          status: 'ok', database: true,
+          security_model_available: true, discovery_model_available: true,
+          generation_model_available: true, vision_model_available: true,
+          security_model: 'local', discovery_model: 'local', generation_model: 'local', vision_model: 'local',
+        }), { status: 200, headers: { 'Content-Type': 'application/json' } })
       }
       return new Response(JSON.stringify({ detail: 'Not found' }), { status: 404 })
     })
@@ -57,17 +71,17 @@ describe('Autenticación', () => {
     const user = userEvent.setup()
     renderAuthFlow('/register')
 
-    await user.type(screen.getByLabelText('Usuario'), 'Sentinel.Demo')
+    await user.type(screen.getByLabelText('Usuario'), 'Claude.Demo')
     await user.type(screen.getByLabelText('Contraseña'), 'DemoSecure2026')
     await user.type(screen.getByLabelText('Confirmar contraseña'), 'DemoSecure2026')
     await user.click(screen.getByRole('button', { name: 'Crear cuenta' }))
 
-    expect(await screen.findByRole('heading', { name: 'Consultar' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: /¿En qué puedo ayudarte, claude/i })).toBeInTheDocument()
     expect(fetchStub).toHaveBeenCalledWith(
       expect.stringContaining('/api/v1/auth/register'),
       expect.objectContaining({ method: 'POST' }),
     )
-    expect(window.localStorage.getItem('sentinel.auth.session')).toContain(
+    expect(window.localStorage.getItem('claude.auth.session')).toContain(
       'header.payload.signature',
     )
   })
@@ -85,7 +99,7 @@ describe('Autenticación', () => {
     const user = userEvent.setup()
     renderAuthFlow('/login')
 
-    await user.type(screen.getByLabelText('Usuario'), 'sentinel.demo')
+    await user.type(screen.getByLabelText('Usuario'), 'claude.demo')
     await user.type(screen.getByLabelText('Contraseña'), 'WrongPass2026')
     await user.click(screen.getByRole('button', { name: 'Ingresar' }))
 

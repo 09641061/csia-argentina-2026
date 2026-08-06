@@ -12,7 +12,7 @@ export function NotFoundPage() {
         Página no encontrada
       </h1>
       <p className="mt-3 text-sm leading-6 text-[#96958d]">
-        La dirección que abriste no existe en Sentinel AI Guard.
+        La dirección que abriste no existe en Claude AI Guard.
       </p>
       <Button
         asChild

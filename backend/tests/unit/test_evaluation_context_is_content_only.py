@@ -29,7 +29,7 @@ from app.analysis.domain.model.valueobjects.vision_extraction_result import (
 from app.documents.domain.model.commands.create_document_command import (
     CreateDocumentCommand,
 )
-from tests.conftest import SentinelTestContext
+from tests.conftest import ClaudeTestContext
 
 INSULTING_FILENAME = "messi-hijo-de-puta-culo-feo-mierda.json"
 LONG_VISUAL_SUMMARY = (
@@ -41,7 +41,7 @@ LONG_VISUAL_SUMMARY = (
 
 @pytest.mark.asyncio
 async def test_filename_never_reaches_the_security_model(
-    context: SentinelTestContext,
+    context: ClaudeTestContext,
 ) -> None:
     """
     Renaming a file must not change its verdict.
@@ -56,7 +56,7 @@ async def test_filename_never_reaches_the_security_model(
         CreateDocumentCommand(
             original_filename=INSULTING_FILENAME,
             mime_type="application/json",
-            content=json.dumps({"project": "Sentinel", "stage": "demo"}).encode(
+            content=json.dumps({"project": "Claude", "stage": "demo"}).encode(
                 "utf-8"
             ),
         )
@@ -77,9 +77,9 @@ async def test_filename_never_reaches_the_security_model(
 
 @pytest.mark.asyncio
 async def test_analysis_is_identical_for_a_renamed_document(
-    context: SentinelTestContext,
+    context: ClaudeTestContext,
 ) -> None:
-    payload = json.dumps({"project": "Sentinel", "stage": "demo"}).encode("utf-8")
+    payload = json.dumps({"project": "Claude", "stage": "demo"}).encode("utf-8")
     service = context.analysis_command_service()
     command_service = context.document_command_service()
 

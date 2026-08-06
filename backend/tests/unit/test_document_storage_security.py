@@ -81,7 +81,7 @@ def test_cloudinary_storage_uses_an_allowed_extension_for_validated_content(
 
     monkeypatch.setattr("cloudinary.uploader.upload", fake_upload)
     adapter = object.__new__(CloudinaryDocumentStorage)
-    adapter._folder = "sentinel-ai-guard/documents"
+    adapter._folder = "claude-ai-guard/documents"
 
     adapter._store_sync(b"document", content_type)
 

@@ -6,7 +6,7 @@ class PasswordHashingService:
     def __init__(self) -> None:
         self._password_hash = PasswordHash.recommended()
         self._dummy_hash = self._password_hash.hash(
-            "sentinel-dummy-password-never-used-for-login-2026"
+            "claude-dummy-password-never-used-for-login-2026"
         )
 
     def hash(self, password: str) -> str:

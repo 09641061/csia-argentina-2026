@@ -28,11 +28,11 @@ from tests.conftest import (
     SAMPLES,
     CrashingFakeSecurityClient,
     InvalidResponseFakeSecurityClient,
-    SentinelTestContext,
+    ClaudeTestContext,
 )
 
 
-async def register_sample(context: SentinelTestContext, filename: str) -> int:
+async def register_sample(context: ClaudeTestContext, filename: str) -> int:
     document = await context.document_command_service().handle_create_document(
         CreateDocumentCommand(
             original_filename=filename,
@@ -45,7 +45,7 @@ async def register_sample(context: SentinelTestContext, filename: str) -> int:
 
 @pytest.mark.asyncio
 async def test_all_datasets_run_through_pipeline_and_history(
-    context: SentinelTestContext,
+    context: ClaudeTestContext,
 ) -> None:
     manifest = json.loads((SAMPLES / "expected-results.json").read_text(encoding="utf-8"))
     service = context.analysis_command_service()
@@ -98,7 +98,7 @@ async def test_all_datasets_run_through_pipeline_and_history(
 
 @pytest.mark.asyncio
 async def test_persistence_never_contains_complete_secrets(
-    context: SentinelTestContext,
+    context: ClaudeTestContext,
 ) -> None:
     document_id = await register_sample(context, "sample-03-credentials-dump.json")
     analysis = await context.analysis_command_service().handle_analyze_document(
@@ -131,7 +131,7 @@ async def test_persistence_never_contains_complete_secrets(
 
 @pytest.mark.asyncio
 async def test_no_sanitized_copy_of_the_document_is_ever_stored(
-    context: SentinelTestContext,
+    context: ClaudeTestContext,
 ) -> None:
     document_id = await register_sample(context, "sample-03-credentials-dump.json")
     await context.analysis_command_service().handle_analyze_document(
@@ -145,7 +145,7 @@ async def test_no_sanitized_copy_of_the_document_is_ever_stored(
 
 @pytest.mark.asyncio
 async def test_invalid_model_response_persists_a_failed_execution_without_low_risk(
-    context: SentinelTestContext,
+    context: ClaudeTestContext,
 ) -> None:
     context.security_client = InvalidResponseFakeSecurityClient()
     document_id = await register_sample(context, "sample-01-clean-inventory.json")
@@ -166,7 +166,7 @@ async def test_invalid_model_response_persists_a_failed_execution_without_low_ri
 
 @pytest.mark.asyncio
 async def test_unexpected_exception_never_leaves_the_execution_running(
-    context: SentinelTestContext,
+    context: ClaudeTestContext,
 ) -> None:
     context.security_client = CrashingFakeSecurityClient()
     document_id = await register_sample(context, "sample-01-clean-inventory.json")
@@ -195,7 +195,7 @@ async def test_unexpected_exception_never_leaves_the_execution_running(
 
 @pytest.mark.asyncio
 async def test_invalid_json_and_unsupported_mime_types_are_rejected_at_intake(
-    context: SentinelTestContext,
+    context: ClaudeTestContext,
 ) -> None:
     from app.documents.domain.exceptions import (
         InvalidDocumentContentError,

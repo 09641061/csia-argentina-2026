@@ -22,20 +22,20 @@ from app.shared.interfaces.rest.health_router import router as health_router
 logger = logging.getLogger(__name__)
 
 DESCRIPTION = """
-Sentinel AI Guard es un portal seguro de acceso a una IA local.
+Claude AI Guard es un portal seguro de acceso a una IA local.
 
-Cada mensaje de una conversación se revisa antes de que el modelo pueda responder.
-Solo los mensajes permitidos llegan al generador de respuestas.
+Una consulta y un archivo opcional se revisan antes de que el modelo pueda responder.
+Solo el contenido permitido llega al generador de respuestas.
 
 Contextos delimitados:
 
-* **Analysis** detecta datos sensibles en cada mensaje y exige una evaluación contextual
-  al modelo local de seguridad.
+* **Documents** recibe, valida y almacena JSON e imágenes (PNG/JPEG) en privado.
+* **Analysis** usa visión local cuando hace falta, detecta datos sensibles, enmascara la
+  evidencia y exige una evaluación contextual al modelo local de seguridad.
 * **Decision & Audit** aplica la política ALLOWED/BLOCKED, ejecuta la generación solo si
   el contenido fue permitido y conserva el historial explicable.
 * **IAM** registra usuarios locales, protege contraseñas con Argon2 y valida JWT Bearer.
-* **Chat** administra conversaciones y mensajes, y consume las capacidades de seguridad
-  mediante ACL.
+* **Chat** recibe preguntas y recursos y consume capacidades externas mediante ACL.
 """
 
 
@@ -57,7 +57,7 @@ def create_app() -> FastAPI:
     settings = get_settings()
 
     app = FastAPI(
-        title="Sentinel AI Guard",
+        title="Claude AI Guard",
         version="1.0.0",
         description=DESCRIPTION,
         lifespan=lifespan,

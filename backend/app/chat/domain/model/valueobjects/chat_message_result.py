@@ -11,6 +11,7 @@ class ChatMessageResult:
     answer: str | None
     answer_model: str | None
     generated_at: datetime | None
+    attachment_url: str | None = None
 
     def __post_init__(self) -> None:
         if self.interaction_id <= 0:

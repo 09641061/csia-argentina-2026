@@ -10,6 +10,7 @@ class SecureQueryResult:
 
     interaction: SecureInteraction
     answer: AssistantAnswer | None = None
+    attachment_url: str | None = None
 
     def __post_init__(self) -> None:
         if self.interaction.decision.value == "blocked" and self.answer is not None:

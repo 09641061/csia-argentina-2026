@@ -14,12 +14,12 @@ export function AuthShell({ children }: { readonly children: ReactNode }) {
             Consulta con IA sin perder el control del contenido.
           </h1>
           <p className="mt-6 max-w-lg text-[15px] leading-7 text-[#96958d]">
-            Sentinel revisa cada consulta y archivo antes de permitir que el modelo local genere
+            Claude revisa cada consulta y archivo antes de permitir que el modelo local genere
             una respuesta.
           </p>
         </div>
 
-        <p className="text-xs text-[#6f6e68]">Sentinel AI Guard · Acceso local protegido</p>
+        <p className="text-xs text-[#6f6e68]">Claude AI Guard · Acceso local protegido</p>
       </section>
       <section className="relative flex items-center justify-center px-5 py-12 sm:px-8">
         <div className="absolute left-5 top-6 lg:hidden">

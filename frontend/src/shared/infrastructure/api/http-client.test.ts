@@ -82,11 +82,11 @@ describe('http client', () => {
 
   it('sends the stored JWT as a Bearer token on protected requests', async () => {
     window.localStorage.setItem(
-      'sentinel.auth.session',
+      'claude.auth.session',
       JSON.stringify({
         accessToken: 'header.payload.signature',
         expiresAt: '2099-08-04T12:00:00Z',
-        username: 'sentinel.demo',
+        username: 'claude.demo',
       }),
     )
     const fetchStub = vi.fn(async (_input: RequestInfo | URL, init?: RequestInit) => {
@@ -101,11 +101,11 @@ describe('http client', () => {
 
   it('clears an expired server session after a protected 401 response', async () => {
     window.localStorage.setItem(
-      'sentinel.auth.session',
+      'claude.auth.session',
       JSON.stringify({
         accessToken: 'header.payload.signature',
         expiresAt: '2099-08-04T12:00:00Z',
-        username: 'sentinel.demo',
+        username: 'claude.demo',
       }),
     )
     vi.stubGlobal(
@@ -116,6 +116,6 @@ describe('http client', () => {
     )
 
     await expect(request('/api/v1/interactions')).rejects.toMatchObject({ kind: 'unauthorized' })
-    expect(window.localStorage.getItem('sentinel.auth.session')).toBeNull()
+    expect(window.localStorage.getItem('claude.auth.session')).toBeNull()
   })
 })

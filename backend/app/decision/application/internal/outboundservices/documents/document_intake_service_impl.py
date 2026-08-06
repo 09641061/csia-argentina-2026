@@ -46,7 +46,7 @@ class DocumentIntakeServiceImpl(DocumentIntakeService):
             )
         except UnsupportedDocumentContextTypeError as error:
             raise SecureQueryValidationError(
-                "Solo se admiten archivos JSON, PNG y JPEG."
+                "Solo se admiten archivos JSON, PNG, JPEG y WebP."
             ) from error
         except DocumentContextTooLargeError as error:
             raise SecureQueryValidationError(
@@ -60,6 +60,11 @@ class DocumentIntakeServiceImpl(DocumentIntakeService):
         return RegisteredDocument(
             document_id=int(document["document_id"]),
             display_name=str(document["display_name"]),
+            attachment_url=(
+                str(document["storage_url"])
+                if document.get("storage_url") is not None
+                else None
+            ),
         )
 
     async def read_allowed_document_content(

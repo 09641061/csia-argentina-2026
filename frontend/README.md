@@ -1,137 +1,74 @@
-# Sentinel AI Guard — Frontend
+# Claude AI Guard — Frontend
 
-Interfaz de consulta segura de una sola interacción: creas una cuenta local, escribes una consulta
-y opcionalmente adjuntas un JSON, PNG o JPEG. Sentinel lo revisa y solo entonces la IA local puede
-responder.
-
-No es un chatbot. No hay conversaciones, ni lista de mensajes, ni memoria. No hay dashboard.
-
-## Requisitos
-
-- Node.js estable (verificado con 24.11.1) y npm.
-- El backend en ejecución (por defecto `http://127.0.0.1:8000`).
+Interfaz conversacional protegida, inspirada en la estructura visual de Claude. Cada mensaje pasa
+por las políticas locales de Claude antes de llegar al modelo; además, la aplicación permite
+revisar contenido directamente y consultar la auditoría explicable.
 
 ## Ejecutar
+
+Requiere Node.js estable, npm y el backend en `http://127.0.0.1:8000` (configurable con
+`VITE_API_BASE_URL`).
 
 ```powershell
 npm install
 npm run dev
 ```
 
-- Aplicación: `http://localhost:5173`
+La aplicación se sirve por defecto en `http://localhost:5173`.
 
-Copia [.env.example](.env.example) a `.env` si tu backend no está en el puerto por defecto:
+## Experiencia
+
+- **Nuevo chat**: compositor central y conversaciones persistentes.
+- **Chats**: búsqueda, selección visual y listado completo de conversaciones.
+- **Sidebar**: chats recientes, acceso a todos los chats, estado del backend y perfil IAM.
+- **Consulta segura**: mensaje y adjunto opcional JSON, PNG o JPEG con decisión ALLOWED/BLOCKED.
+- **Análisis**: revisión directa de mensajes o de un documento registrado, historial y detalle.
+- **Auditoría**: decisiones, riesgo, generación, evidencia enmascarada y enlaces a los análisis.
+- **IAM**: registro, login, restauración de sesión con `/auth/me` y logout local.
+
+## Arquitectura DDD
+
+Los componentes React viven exclusivamente en `interfaces`. Cada bounded context mantiene sus
+capas de dominio, aplicación, interfaces e infraestructura:
 
 ```text
-VITE_API_BASE_URL=http://127.0.0.1:8000
+src/contexts/
+  analysis/
+    domain/ application/ interfaces/ infrastructure/
+  chat/
+    domain/ application/ interfaces/ infrastructure/
+  decision/
+    domain/ application/ interfaces/ infrastructure/
+  iam/
+    domain/ application/ interfaces/ infrastructure/
 ```
 
-El backend debe permitir este origen con `FRONTEND_ORIGIN`.
+`domain` define modelos y puertos, `application` contiene casos de uso, `infrastructure` adapta el
+contrato REST y `interfaces` contiene páginas, componentes y hooks. El cliente HTTP y los recursos
+wire compartidos viven en `shared/infrastructure`.
 
-## Comandos
+## Cobertura del backend
+
+El frontend conecta los 16 endpoints expuestos actualmente:
+
+- Health: `GET /api/v1/health`.
+- IAM: `POST /auth/login`, `POST /auth/register`, `GET /auth/me`.
+- Chat: crear/listar conversaciones, obtener detalle y enviar mensajes.
+- Analysis: analizar mensaje/documento, listar análisis, obtener detalle y hallazgos.
+- Decision: consulta segura, listado de interacciones y detalle de auditoría.
+
+La prueba `src/contexts/backend-contract-coverage.test.ts` ejecuta los repositorios y compara el
+conjunto completo de método + ruta para evitar que un endpoint del backend quede sin adaptador.
+
+## Calidad
 
 ```powershell
-npm run lint     # ESLint
-npm run test     # Vitest + Testing Library
-npm run build    # tsc -b && vite build
-npm run preview  # sirve el build de producción
+npm run lint
+npm run test
+npm run build
 ```
 
-## Pantallas
-
-**Acceso** — registro e inicio de sesión local. La sesión usa el JWT Bearer emitido por el backend;
-las pantallas funcionales no son accesibles sin un token válido.
-
-**Consultar** — campo de consulta con contador de caracteres, zona opcional para adjuntar un archivo
-(nombre, tamaño y opción de retirarlo), y un botón que se adapta: `Analizar y consultar` cuando hay
-pregunta, `Analizar documento` cuando solo hay archivo.
-
-- Resultado permitido con pregunta: veredicto, nivel de riesgo, explicación, respuesta del modelo,
-  fecha y opción de nueva consulta.
-- Resultado permitido sin pregunta: veredicto y riesgo, sin respuesta de IA, porque no se preguntó
-  nada.
-- Resultado bloqueado: motivo, riesgo, tipos de información detectados, hallazgos enmascarados,
-  aviso explícito de que el contenido no se envió al generador y opción de editar y reintentar.
-
-**Historial** — tabla con tipo, referencia, fecha, riesgo, decisión, estado de generación y acceso
-al detalle. Incluye paginación, estado vacío, estado de carga y error recuperable.
-
-**Detalle** — explica por qué una interacción fue permitida o bloqueada, con las revisiones
-asociadas (consulta y documento), su vista previa enmascarada y sus hallazgos.
-
-## Lo que la interfaz nunca hace
-
-- No calcula la decisión: la autoridad es el backend. El frontend solo la representa.
-- No ofrece una versión segura o sanitizada del contenido bloqueado, ni botones para copiarla o
-  descargarla.
-- No muestra valores originales: solo la evidencia enmascarada que envía el backend.
-- No expone stack traces, rutas internas ni configuración. Todo fallo se traduce a un mensaje en
-  español comprensible para una persona no técnica.
-
-## Arquitectura
-
-DDD pragmático alineado con los bounded contexts públicos del backend. Los componentes React viven
-exclusivamente en capas `interfaces`; `application` coordina casos de uso, `domain` conserva las
-reglas y contratos, e `infrastructure` implementa HTTP, almacenamiento y mapeadores.
-
-```text
-src/
-  app/                          composición, rutas, interfaces del shell y estilos
-  contexts/
-    iam/
-      domain/                   AuthSession
-      application/              coordinación de identidad dentro del provider
-      infrastructure/           repositorio HTTP y persistencia local del token
-      interfaces/               acceso, registro, guardas, perfil y sesión
-    analysis-and-decision/
-      domain/                   análisis, decisiones, consulta segura e historial
-      application/              SubmitSecureQuery, GetInteractionHistory, GetInteraction
-      infrastructure/           repositorios HTTP y mapeadores REST
-      interfaces/               compositor, resultado, historial, detalle y sidebar
-  shared/
-    infrastructure/             cliente HTTP, recursos REST y configuración
-    interfaces/                 primitivas y componentes visuales compartidos
-    lib/                        formato de fechas y tamaños
-```
-
-No hay módulo `documents`: en el MVP el documento se envía dentro de la consulta segura y no existe
-una pantalla propia de documentos. Crear ese módulo sería una carpeta sin función.
-
-## Integración
-
-Un único punto de entrada (`shared/infrastructure/api/http-client.ts`) hacia el backend. Traduce cada resultado de
-red a un `ApiError` con mensaje para personas, aplica timeout, cancela con `AbortController` al
-desmontar y evita solicitudes duplicadas mientras una consulta está en curso.
-
-Endpoints consumidos:
-
-- `POST /api/v1/auth/register`
-- `POST /api/v1/auth/login`
-- `GET /api/v1/auth/me`
-- `POST /api/v1/secure-queries`
-- `GET /api/v1/interactions`
-- `GET /api/v1/interactions/{id}`
-- `GET /api/v1/analyses/{id}`
-
-## Pruebas
-
-47 pruebas con Vitest y Testing Library, sin red: `fetch` siempre está sustituido por un doble.
-
-Cubren consulta sin documento, documento sin consulta, consulta con documento, formatos admitidos,
-retirada del archivo, estado de análisis, resultado permitido, resultado bloqueado, respuesta del
-modelo, bloqueo sin respuesta, hallazgos enmascarados, error de análisis, error de generación,
-historial, paginación, navegación, ausencia de contenido sanitizado, ausencia de dashboard,
-ausencia de interfaz de chat y backend caído.
-
-## Diseño
-
-Sistema visual construido con Tailwind CSS y componentes shadcn/ui sobre Radix: tipografía Geist,
-paleta monocromática, foco visible, navegación por teclado y componentes reutilizables para
-formularios, alertas, tablas, menús y navegación móvil.
-
-## Nota de dependencias
-
-`npm audit` reporta un aviso alto sobre `react-router` referido a su **modo RSC** (React Server
-Components). Esta aplicación es un SPA con `BrowserRouter` y no usa RSC, por lo que el aviso no
-aplica. Todas las versiones 7.x publicadas están dentro de algún rango afectado, así que se usa la
-más reciente en lugar de fijar una versión antigua con más avisos.
+Las pruebas no acceden a la red: sustituyen `fetch` y cubren navegación, IAM, manejo seguro de
+errores y el contrato completo de endpoints. El frontend nunca recalcula una decisión de seguridad
+ni intenta reconstruir valores sensibles; sólo presenta el veredicto y la evidencia enmascarada que
+devuelve el backend.

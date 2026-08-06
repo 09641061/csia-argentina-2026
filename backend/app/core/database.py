@@ -54,6 +54,16 @@ async def initialize_database() -> None:
 
     async with engine.begin() as connection:
         await connection.run_sync(Base.metadata.create_all)
+        if connection.dialect.name == "postgresql":
+            await connection.execute(
+                text("ALTER TABLE chat_messages ADD COLUMN IF NOT EXISTS attachment_url TEXT")
+            )
+            await connection.execute(
+                text("ALTER TABLE chat_messages ADD COLUMN IF NOT EXISTS attachment_name VARCHAR(255)")
+            )
+            await connection.execute(
+                text("ALTER TABLE chat_messages ADD COLUMN IF NOT EXISTS attachment_mime_type VARCHAR(100)")
+            )
     logger.info("Database schema is ready")
 
 
