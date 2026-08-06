@@ -1,271 +1,90 @@
-from datetime import UTC, datetime
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
-from sqlalchemy import select
+from fastapi import APIRouter, Body, Depends, HTTPException, Query, status
+from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.chat.application.internal.commandservices.chat_command_service_impl import ChatCommandServiceImpl
-from app.chat.domain.model.commands.send_chat_message_command import SendChatMessageCommand
-from app.chat.infrastructure.ollama.conversation_title_generator import ConversationTitleGenerator
-from app.chat.infrastructure.persistence.sqlalchemy.models.conversation_model import ConversationModel
-from app.chat.infrastructure.persistence.sqlalchemy.models.message_model import MessageModel
+from app.chat.application.internal.conversation_application_service import (
+    AssistantUnavailableError,
+    ContentBlockedError,
+    ConversationApplicationService,
+    ConversationNotFoundError,
+)
 from app.chat.interfaces.rest.resources.chat_message_response import ChatMessageResponse
-from app.core.composition import build_chat_command_service, build_conversation_title_generator
+from app.chat.interfaces.rest.resources.conversation_resource import (
+    ConversationDetailResource,
+    ConversationMessageResource,
+    ConversationSummaryResource,
+)
+from app.core.composition import (
+    build_chat_command_service,
+    build_conversation_title_generator,
+)
 from app.core.database import get_session
-from app.core.settings import get_settings
-from app.decision.interfaces.acl.decision_context_facade import DecisionContextValidationError
 from app.iam.domain.model.valueobjects.authenticated_user import AuthenticatedUser
-from app.iam.infrastructure.persistence.sqlalchemy.models.user_account_model import UserAccountModel
-from app.iam.interfaces.rest.controllers.authentication_router import require_authenticated_user
-
-router = APIRouter(prefix="/api/v1/chat", tags=["Chat"])
-
-
-async def get_chat_command_service(
-    session: Annotated[AsyncSession, Depends(get_session)],
-) -> ChatCommandServiceImpl:
-    return build_chat_command_service(session)
-
-
-async def _user_id(session: AsyncSession, authenticated_user: AuthenticatedUser) -> int:
-    user_id = await session.scalar(
-        select(UserAccountModel.id).where(
-            UserAccountModel.username == authenticated_user.identity
-        )
-    )
-    if user_id is None:
-        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Authenticated user was not found")
-    return user_id
-
-
-async def _answer_and_store(
-    *,
-    session: AsyncSession,
-    command_service: ChatCommandServiceImpl,
-    conversation: ConversationModel,
-    prompt: str | None,
-    attachment: UploadFile | None,
-) -> ChatMessageResponse:
-    now = datetime.now(UTC)
-    content = await attachment.read() if attachment is not None else None
-    filename = attachment.filename if attachment is not None else None
-    mime_type = attachment.content_type if attachment is not None else None
-    if content is not None and len(content) > get_settings().max_document_size_bytes:
-        raise HTTPException(status.HTTP_413_REQUEST_ENTITY_TOO_LARGE, "Attachment is too large")
-    display_content = (prompt or "").strip() or f"Adjunto: {filename or 'archivo'}"
-    effective_prompt = (prompt or "").strip() or "Describe y analiza el archivo adjunto."
-    session.add(
-        MessageModel(
-            conversation_id=conversation.id,
-            role="user",
-            content=display_content,
-            attachment_name=filename,
-            attachment_mime_type=mime_type,
-            created_at=now,
-        )
-    )
-    try:
-        result = await command_service.handle_send_chat_message(
-            SendChatMessageCommand(
-                prompt=effective_prompt,
-                resource_filename=filename,
-                resource_mime_type=mime_type,
-                resource_content=content,
-            )
-        )
-    except (DecisionContextValidationError, ValueError) as error:
-        await session.rollback()
-        raise HTTPException(status.HTTP_400_BAD_REQUEST, str(error)) from error
-
-    if result.decision == "blocked":
-        alert = f"Lo siento, no puedo procesar este mensaje. {result.reason}"
-        session.add(
-            MessageModel(
-                conversation_id=conversation.id,
-                role="assistant",
-                content=alert,
-                secure_interaction_id=result.interaction_id,
-                created_at=now,
-            )
-        )
-        user_message = await session.scalar(
-            select(MessageModel)
-            .where(MessageModel.conversation_id == conversation.id, MessageModel.role == "user")
-            .order_by(MessageModel.id.desc())
-        )
-        if user_message is not None:
-            user_message.attachment_url = result.attachment_url
-        conversation.updated_at = now
-        await session.commit()
-        return ChatMessageResponse(
-            conversation_id=conversation.id,
-            answer=alert,
-            model_name="security-policy",
-            generated_at=now,
-        )
-    if result.answer is None or result.answer_model is None or result.generated_at is None:
-        await session.rollback()
-        raise HTTPException(
-            status.HTTP_503_SERVICE_UNAVAILABLE,
-            "The assistant could not generate a response",
-        )
-
-    session.add(
-        MessageModel(
-            conversation_id=conversation.id,
-            role="assistant",
-            content=result.answer,
-            secure_interaction_id=result.interaction_id,
-            created_at=result.generated_at,
-        )
-    )
-    user_message = await session.scalar(
-        select(MessageModel)
-        .where(MessageModel.conversation_id == conversation.id, MessageModel.role == "user")
-        .order_by(MessageModel.id.desc())
-    )
-    if user_message is not None:
-        user_message.attachment_url = result.attachment_url
-    conversation.updated_at = result.generated_at
-    await session.commit()
-    return ChatMessageResponse(
-        conversation_id=conversation.id,
-        answer=result.answer,
-        model_name=result.answer_model,
-        generated_at=result.generated_at,
-    )
-
-
-@router.post(
-    "/conversations",
-    response_model=ChatMessageResponse,
-    summary="Create a conversation with its first message",
+from app.iam.interfaces.rest.controllers.authentication_router import (
+    require_authenticated_user,
 )
-async def create_conversation(
-    session: Annotated[AsyncSession, Depends(get_session)],
-    command_service: Annotated[ChatCommandServiceImpl, Depends(get_chat_command_service)],
-    title_generator: Annotated[ConversationTitleGenerator, Depends(build_conversation_title_generator)],
-    authenticated_user: Annotated[AuthenticatedUser, Depends(require_authenticated_user)],
-    prompt: Annotated[str | None, Form(description="Optional first message")] = None,
-    attachment: Annotated[UploadFile | None, File(description="Optional JSON, PNG, JPEG or WebP attachment")] = None,
-) -> ChatMessageResponse:
-    user_id = await _user_id(session, authenticated_user)
-    title_source = prompt or (attachment.filename if attachment else None) or "New conversation"
+
+
+class ChatPromptRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    prompt: str = Field(min_length=3, max_length=8000)
+
+
+router = APIRouter(prefix="/api/v1/chat", tags=["Chat"], dependencies=[Depends(require_authenticated_user)])
+
+
+def get_conversation_service(session: Annotated[AsyncSession, Depends(get_session)]) -> ConversationApplicationService:
+    return ConversationApplicationService(session, build_chat_command_service(session), build_conversation_title_generator())
+
+
+def _user_id(user: AuthenticatedUser) -> int:
+    if user.account_id is None:
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Authenticated account was not found")
+    return user.account_id
+
+
+def _translate(error: Exception) -> None:
+    if isinstance(error, ConversationNotFoundError):
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Conversation not found") from error
+    if isinstance(error, ContentBlockedError):
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "El mensaje fue bloqueado por la política de seguridad.") from error
+    if isinstance(error, AssistantUnavailableError):
+        raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, "El asistente no pudo generar una respuesta.") from error
+
+
+@router.post("/conversations/{conversation_id}/messages", response_model=ChatMessageResponse, responses={403: {"description": "Content blocked"}, 404: {"description": "Conversation not found"}, 503: {"description": "Assistant unavailable"}})
+async def send_chat_message(conversation_id: int, payload: Annotated[ChatPromptRequest, Body()], service: Annotated[ConversationApplicationService, Depends(get_conversation_service)], user: Annotated[AuthenticatedUser, Depends(require_authenticated_user)]) -> ChatMessageResponse:
     try:
-        title = await title_generator.generate(title_source)
-    except Exception:
-        title = "New conversation"
-    now = datetime.now(UTC)
-    conversation = ConversationModel(
-        user_id=user_id,
-        title=title,
-        created_at=now,
-        updated_at=now,
-    )
-    session.add(conversation)
-    await session.flush()
-    return await _answer_and_store(
-        session=session,
-        command_service=command_service,
-        conversation=conversation,
-        prompt=prompt,
-        attachment=attachment,
-    )
+        result = await service.send_message(user_id=_user_id(user), username=user.identity, conversation_id=conversation_id, prompt=payload.prompt)
+    except (ConversationNotFoundError, ContentBlockedError, AssistantUnavailableError) as error:
+        _translate(error)
+        raise AssertionError("unreachable")
+    return ChatMessageResponse(answer=result.answer or "", conversation_id=conversation_id, model_name=result.answer_model or "", generated_at=result.generated_at)
 
 
-@router.post(
-    "/conversations/{conversation_id}/messages",
-    response_model=ChatMessageResponse,
-    summary="Send a message to an existing conversation",
-)
-async def send_message(
-    conversation_id: int,
-    session: Annotated[AsyncSession, Depends(get_session)],
-    command_service: Annotated[ChatCommandServiceImpl, Depends(get_chat_command_service)],
-    authenticated_user: Annotated[AuthenticatedUser, Depends(require_authenticated_user)],
-    prompt: Annotated[str | None, Form(description="Optional message for the assistant")] = None,
-    attachment: Annotated[UploadFile | None, File(description="Optional JSON, PNG, JPEG or WebP attachment")] = None,
-) -> ChatMessageResponse:
-    user_id = await _user_id(session, authenticated_user)
-    conversation = await session.scalar(
-        select(ConversationModel).where(
-            ConversationModel.id == conversation_id,
-            ConversationModel.user_id == user_id,
-        )
-    )
-    if conversation is None:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, "Conversation not found")
-    return await _answer_and_store(
-        session=session,
-        command_service=command_service,
-        conversation=conversation,
-        prompt=prompt,
-        attachment=attachment,
-    )
+@router.post("/conversations", response_model=ChatMessageResponse, status_code=status.HTTP_201_CREATED, responses={403: {"description": "Content blocked"}, 503: {"description": "Assistant unavailable"}})
+async def create_conversation(payload: Annotated[ChatPromptRequest, Body()], service: Annotated[ConversationApplicationService, Depends(get_conversation_service)], user: Annotated[AuthenticatedUser, Depends(require_authenticated_user)]) -> ChatMessageResponse:
+    try:
+        conversation, result = await service.create_conversation(user_id=_user_id(user), username=user.identity, prompt=payload.prompt)
+    except (ContentBlockedError, AssistantUnavailableError) as error:
+        _translate(error)
+        raise AssertionError("unreachable")
+    return ChatMessageResponse(conversation_id=conversation.id, answer=result.answer or "", model_name=result.answer_model or "", generated_at=result.generated_at)
 
 
-@router.get("/conversations", summary="List the authenticated user's conversations")
-async def list_conversations(
-    session: Annotated[AsyncSession, Depends(get_session)],
-    authenticated_user: Annotated[AuthenticatedUser, Depends(require_authenticated_user)],
-) -> list[dict[str, object]]:
-    user_id = await _user_id(session, authenticated_user)
-    conversations = (
-        await session.scalars(
-            select(ConversationModel)
-            .where(ConversationModel.user_id == user_id)
-            .order_by(ConversationModel.updated_at.desc())
-        )
-    ).all()
-    return [
-        {
-            "id": conversation.id,
-            "title": conversation.title,
-            "created_at": conversation.created_at,
-            "updated_at": conversation.updated_at,
-        }
-        for conversation in conversations
-    ]
+@router.get("/conversations", response_model=list[ConversationSummaryResource])
+async def list_conversations(service: Annotated[ConversationApplicationService, Depends(get_conversation_service)], user: Annotated[AuthenticatedUser, Depends(require_authenticated_user)], page: Annotated[int, Query(ge=1)] = 1, page_size: Annotated[int, Query(ge=1, le=100)] = 20) -> list[ConversationSummaryResource]:
+    rows = await service.list_conversations(user_id=_user_id(user), page=page, page_size=page_size)
+    return [ConversationSummaryResource.model_validate(row, from_attributes=True) for row in rows]
 
 
-@router.get("/conversations/{conversation_id}", summary="Get a conversation and its messages")
-async def get_conversation(
-    conversation_id: int,
-    session: Annotated[AsyncSession, Depends(get_session)],
-    authenticated_user: Annotated[AuthenticatedUser, Depends(require_authenticated_user)],
-) -> dict[str, object]:
-    user_id = await _user_id(session, authenticated_user)
-    conversation = await session.scalar(
-        select(ConversationModel).where(
-            ConversationModel.id == conversation_id,
-            ConversationModel.user_id == user_id,
-        )
-    )
-    if conversation is None:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, "Conversation not found")
-    messages = (
-        await session.scalars(
-            select(MessageModel)
-            .where(MessageModel.conversation_id == conversation.id)
-            .order_by(MessageModel.created_at, MessageModel.id)
-        )
-    ).all()
-    return {
-        "id": conversation.id,
-        "title": conversation.title,
-        "created_at": conversation.created_at,
-        "updated_at": conversation.updated_at,
-        "messages": [
-            {
-                "id": message.id,
-                "role": message.role,
-                "content": message.content,
-                "attachment_url": message.attachment_url,
-                "attachment_name": message.attachment_name,
-                "attachment_mime_type": message.attachment_mime_type,
-                "created_at": message.created_at,
-            }
-            for message in messages
-        ],
-    }
+@router.get("/conversations/{conversation_id}", response_model=ConversationDetailResource)
+async def get_conversation(conversation_id: int, service: Annotated[ConversationApplicationService, Depends(get_conversation_service)], user: Annotated[AuthenticatedUser, Depends(require_authenticated_user)], message_page: Annotated[int, Query(ge=1)] = 1, message_page_size: Annotated[int, Query(ge=1, le=100)] = 50) -> ConversationDetailResource:
+    try:
+        conversation, messages = await service.get_conversation(user_id=_user_id(user), conversation_id=conversation_id, page=message_page, page_size=message_page_size)
+    except ConversationNotFoundError as error:
+        _translate(error)
+        raise AssertionError("unreachable")
+    return ConversationDetailResource(id=conversation.id, title=conversation.title, created_at=conversation.created_at, updated_at=conversation.updated_at, message_page=message_page, message_page_size=message_page_size, messages=[ConversationMessageResource.model_validate(message, from_attributes=True) for message in messages])

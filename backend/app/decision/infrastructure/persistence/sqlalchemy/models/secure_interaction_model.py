@@ -18,6 +18,7 @@ class SecureInteractionModel(Base):
     __tablename__ = "secure_interactions"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    requested_by: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
     content_type: Mapped[str] = mapped_column(String(32), nullable=False, index=True)
     decision: Mapped[str] = mapped_column(String(16), nullable=False, index=True)
     reason_code: Mapped[str] = mapped_column(String(64), nullable=False)

@@ -2,10 +2,14 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 
 from app.analysis.domain.model.entities.analysis_finding import AnalysisFinding
-from app.analysis.domain.model.valueobjects.analysis_confidence import AnalysisConfidence
+from app.analysis.domain.model.valueobjects.analysis_confidence import (
+    AnalysisConfidence,
+)
 from app.analysis.domain.model.valueobjects.analysis_risk_level import AnalysisRiskLevel
 from app.analysis.domain.model.valueobjects.analysis_status import AnalysisStatus
-from app.analysis.domain.model.valueobjects.analyzed_content_type import AnalyzedContentType
+from app.analysis.domain.model.valueobjects.analyzed_content_type import (
+    AnalyzedContentType,
+)
 from app.analysis.domain.model.valueobjects.estimated_subjects import EstimatedSubjects
 from app.analysis.domain.model.valueobjects.secrets_risk_level import SecretsRiskLevel
 
@@ -28,6 +32,7 @@ class SecurityAnalysis:
     content_length: int
     masked_preview: str
     model_name: str
+    requested_by: str
     document_id: int | None = None
     status: AnalysisStatus = AnalysisStatus.RUNNING
     risk_level: AnalysisRiskLevel | None = None
@@ -57,6 +62,8 @@ class SecurityAnalysis:
             raise ValueError("Content length must be a positive number")
         if not self.model_name.strip():
             raise ValueError("Model name is required")
+        if not self.requested_by.strip():
+            raise ValueError("Authenticated user is required")
         if self.content_type == AnalyzedContentType.DOCUMENT and not self.document_id:
             raise ValueError("A document analysis requires its document identifier")
         if self.content_type == AnalyzedContentType.PROMPT and self.document_id is not None:
@@ -83,6 +90,7 @@ class SecurityAnalysis:
         content_length: int,
         masked_preview: str,
         model_name: str,
+        requested_by: str,
     ) -> "SecurityAnalysis":
         return cls(
             id=None,
@@ -92,6 +100,7 @@ class SecurityAnalysis:
             content_length=content_length,
             masked_preview=masked_preview,
             model_name=model_name,
+            requested_by=requested_by,
         )
 
     @classmethod
@@ -104,6 +113,7 @@ class SecurityAnalysis:
         content_length: int,
         masked_preview: str,
         model_name: str,
+        requested_by: str,
     ) -> "SecurityAnalysis":
         return cls(
             id=None,
@@ -114,6 +124,7 @@ class SecurityAnalysis:
             content_length=content_length,
             masked_preview=masked_preview,
             model_name=model_name,
+            requested_by=requested_by,
         )
 
     def complete(

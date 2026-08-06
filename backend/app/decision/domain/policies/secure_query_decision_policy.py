@@ -2,7 +2,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from app.decision.domain.model.valueobjects.decision_reason_code import DecisionReasonCode
+from app.decision.domain.model.valueobjects.decision_reason_code import (
+    DecisionReasonCode,
+)
 from app.decision.domain.model.valueobjects.reviewed_content_assessment import (
     ReviewedContentAssessment,
 )

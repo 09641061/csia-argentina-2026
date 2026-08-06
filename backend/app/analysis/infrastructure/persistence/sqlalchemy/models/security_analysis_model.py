@@ -18,6 +18,7 @@ class SecurityAnalysisModel(Base):
     __tablename__ = "security_analyses"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    requested_by: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
     content_type: Mapped[str] = mapped_column(String(32), nullable=False, index=True)
     document_id: Mapped[int | None] = mapped_column(Integer, nullable=True, index=True)
     content_reference: Mapped[str] = mapped_column(String(255), nullable=False)

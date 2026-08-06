@@ -4,26 +4,11 @@ import hashlib
 import logging
 from dataclasses import replace
 
-from app.analysis.application.internal.outboundservices.document_source_service import (
-    DocumentSourceService,
-)
-from app.analysis.application.internal.outboundservices.document_text_extractor import (
-    DocumentTextExtractor,
-)
 from app.analysis.application.internal.outboundservices.ollama_security_analysis_client import (
     OllamaSecurityAnalysisClient,
 )
 from app.analysis.application.internal.outboundservices.ollama_sensitive_content_discovery_client import (
     OllamaSensitiveContentDiscoveryClient,
-)
-from app.analysis.application.internal.services.content_sanitization_service import (
-    ContentSanitizationService,
-)
-from app.analysis.application.internal.services.document_free_text_sensitive_data_detection_service import (
-    DocumentFreeTextSensitiveDataDetectionService,
-)
-from app.analysis.application.internal.services.document_structure_summarizer import (
-    DocumentStructureSummarizer,
 )
 from app.analysis.application.internal.services.prompt_content_summarizer import (
     PromptContentSummarizer,
@@ -34,21 +19,12 @@ from app.analysis.application.internal.services.prompt_sensitive_data_detection_
 from app.analysis.application.internal.services.risk_calculation_service import (
     RiskCalculationService,
 )
-from app.analysis.application.internal.services.sensitive_data_detection_service import (
-    SensitiveDataDetectionService,
-)
 from app.analysis.domain.exceptions import (
     AnalysisExecutionError,
     AnalysisModelError,
     AnalysisModelTimeoutError,
     AnalysisModelUnavailableError,
-    DocumentContentExtractionError,
-    DocumentContentReadError,
-    DocumentSourceNotFoundError,
     InvalidPromptError,
-)
-from app.analysis.domain.model.commands.analyze_document_command import (
-    AnalyzeDocumentCommand,
 )
 from app.analysis.domain.model.commands.analyze_prompt_command import (
     AnalyzePromptCommand,
@@ -79,7 +55,6 @@ from app.analysis.domain.repositories.security_analysis_repository import (
 from app.analysis.domain.services.security_analysis_command_service import (
     SecurityAnalysisCommandService,
 )
-from app.shared.domain.text_masking import mask_free_text
 
 logger = logging.getLogger(__name__)
 
@@ -88,7 +63,6 @@ MASKED_PREVIEW_MAX_CHARACTERS = 280
 # with no evidentiary value: renaming a document changes nothing about what is
 # inside it. The masked name stays in the audit trail, but the models are given a
 # fixed label instead, so a verdict can never depend on how a file was called.
-DOCUMENT_EVALUATION_LABEL = "Documento adjunto"
 
 
 class SecurityAnalysisCommandServiceImpl(SecurityAnalysisCommandService):
@@ -109,16 +83,9 @@ class SecurityAnalysisCommandServiceImpl(SecurityAnalysisCommandService):
         ollama_security_analysis_client: OllamaSecurityAnalysisClient,
         ollama_sensitive_content_discovery_client: OllamaSensitiveContentDiscoveryClient,
         security_model_name: str,
-        document_source_service: DocumentSourceService | None = None,
-        document_text_extractor: DocumentTextExtractor | None = None,
         prompt_max_length: int = 8000,
         prompt_min_length: int = 3,
-        sensitive_data_detection_service: SensitiveDataDetectionService | None = None,
         prompt_detection_service: PromptSensitiveDataDetectionService | None = None,
-        document_free_text_detection_service: DocumentFreeTextSensitiveDataDetectionService
-        | None = None,
-        content_sanitization_service: ContentSanitizationService | None = None,
-        document_structure_summarizer: DocumentStructureSummarizer | None = None,
         prompt_content_summarizer: PromptContentSummarizer | None = None,
         risk_calculation_service: RiskCalculationService | None = None,
     ) -> None:
@@ -126,18 +93,9 @@ class SecurityAnalysisCommandServiceImpl(SecurityAnalysisCommandService):
         self._ollama_client = ollama_security_analysis_client
         self._discovery_client = ollama_sensitive_content_discovery_client
         self._security_model_name = security_model_name
-        self._document_source_service = document_source_service
-        self._document_text_extractor = document_text_extractor
         self._prompt_max_length = prompt_max_length
         self._prompt_min_length = prompt_min_length
-        self._detector = sensitive_data_detection_service or SensitiveDataDetectionService()
         self._prompt_detector = prompt_detection_service or PromptSensitiveDataDetectionService()
-        self._document_free_text_detector = (
-            document_free_text_detection_service
-            or DocumentFreeTextSensitiveDataDetectionService(self._prompt_detector)
-        )
-        self._sanitizer = content_sanitization_service or ContentSanitizationService()
-        self._summarizer = document_structure_summarizer or DocumentStructureSummarizer()
         self._prompt_summarizer = prompt_content_summarizer or PromptContentSummarizer(
             self._prompt_detector
         )
@@ -156,6 +114,7 @@ class SecurityAnalysisCommandServiceImpl(SecurityAnalysisCommandService):
             content_length=len(prompt),
             masked_preview=self._masked_preview(prompt),
             model_name=self._security_model_name,
+            requested_by=command.requested_by,
         )
         analysis = await self._analysis_repository.save(analysis)
         self._publish_started(analysis)
@@ -194,93 +153,6 @@ class SecurityAnalysisCommandServiceImpl(SecurityAnalysisCommandService):
 
         return await self._execute(analysis, run)
 
-    async def handle_analyze_document(self, command: AnalyzeDocumentCommand) -> SecurityAnalysis:
-        if self._document_source_service is None or self._document_text_extractor is None:
-            raise DocumentSourceNotFoundError("Document analysis is not available in this context")
-
-        source = await self._document_source_service.get_document_source(command.document_id)
-        if source is None:
-            raise DocumentSourceNotFoundError("Document not found")
-
-        analysis = SecurityAnalysis.start_for_document(
-            document_id=source.document_id,
-            content_reference=mask_free_text(source.display_name),
-            content_fingerprint=self._fingerprint(
-                f"document:{source.document_id}".encode()
-            ),
-            content_length=source.size_bytes,
-            masked_preview=mask_free_text(source.display_name),
-            model_name=self._security_model_name,
-        )
-        analysis = await self._analysis_repository.save(analysis)
-        self._publish_started(analysis)
-
-        async def run() -> SecurityAnalysis:
-            content = await self._document_source_service.read_document_content(
-                source.document_id
-            )
-            extracted_document = await self._document_text_extractor.extract_content(
-                content,
-                source.mime_type,
-                source.display_name,
-            )
-            analysis.content_fingerprint = self._fingerprint(content)
-            discovery = await self._discovery_client.inspect(
-                content=extracted_document,
-                reference_label=DOCUMENT_EVALUATION_LABEL,
-            )
-            findings = self._merge_findings(
-                self._detector.scan(extracted_document),
-                self._document_free_text_detector.scan(extracted_document),
-            )
-            sanitized_content = self._sanitizer.sanitize(extracted_document, findings)
-            structure = self._summarizer.summarize(
-                content=extracted_document,
-                sanitized_content=sanitized_content,
-                findings=findings,
-                approximate_size_bytes=len(content),
-            )
-            context = SecurityEvaluationContext(
-                content_type=AnalyzedContentType.DOCUMENT,
-                reference_label=DOCUMENT_EVALUATION_LABEL,
-                approximate_size=structure.approximate_size_bytes,
-                estimated_subjects=structure.estimated_subjects,
-                truncated=structure.truncated,
-                structure=structure.to_prompt_payload(),
-            )
-            interpretation = await self._ollama_client.evaluate(context=context, findings=findings)
-            assessment = self._risk_calculator.calculate(
-                findings=findings,
-                estimated_subjects=structure.estimated_subjects,
-                interpretation=interpretation,
-                discovery=discovery,
-            )
-            confirmed_discovery = discovery if assessment.discovery_confirmed else None
-            analysis.complete(
-                risk_level=assessment.risk_level,
-                secrets_risk=assessment.secrets_risk,
-                personal_data_risk=assessment.personal_data_risk,
-                confidence=assessment.confidence,
-                tampering_suspected=assessment.tampering_suspected,
-                data_categories=list(assessment.data_categories),
-                estimated_subjects=assessment.estimated_subjects,
-                summary=self._build_summary(
-                    interpretation.summary,
-                    assessment.risk_level.value,
-                    confirmed_discovery,
-                ),
-                rationale=self._build_rationale(
-                    interpretation.rationale,
-                    findings,
-                    confirmed_discovery,
-                ),
-                findings=findings,
-                content_truncated=structure.truncated,
-            )
-            return await self._analysis_repository.save(analysis)
-
-        return await self._execute(analysis, run)
-
     async def _execute(self, analysis: SecurityAnalysis, run) -> SecurityAnalysis:
         try:
             completed = await run()
@@ -288,11 +160,7 @@ class SecurityAnalysisCommandServiceImpl(SecurityAnalysisCommandService):
             failed = await self._record_failure(analysis, error)
             if isinstance(
                 error,
-                (
-                    AnalysisModelError,
-                    DocumentContentExtractionError,
-                    DocumentContentReadError,
-                ),
+                AnalysisModelError,
             ):
                 raise
             logger.exception("Unexpected failure while analyzing content")
@@ -430,8 +298,4 @@ class SecurityAnalysisCommandServiceImpl(SecurityAnalysisCommandService):
             return "El analizador de seguridad local no está disponible."
         if isinstance(error, AnalysisModelError):
             return "El analizador de seguridad no devolvió una respuesta válida."
-        if isinstance(error, DocumentContentReadError):
-            return "El contenido almacenado del documento no pudo leerse de forma segura."
-        if isinstance(error, DocumentContentExtractionError):
-            return "El documento almacenado no pudo convertirse en contenido analizable."
         return "La revisión de seguridad no pudo completarse."

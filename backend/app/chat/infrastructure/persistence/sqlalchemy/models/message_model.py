@@ -1,9 +1,15 @@
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from sqlalchemy import DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.shared.infrastructure.persistence.sqlalchemy.base import Base
+
+if TYPE_CHECKING:
+    from app.chat.infrastructure.persistence.sqlalchemy.models.conversation_model import (
+        ConversationModel,
+    )
 
 
 class MessageModel(Base):

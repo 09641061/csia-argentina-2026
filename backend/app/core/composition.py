@@ -7,19 +7,16 @@ themselves, which keeps the wiring — and the security-critical order of the
 steps — in one auditable place.
 """
 
+from functools import lru_cache
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.chat.application.internal.commandservices.chat_command_service_impl import (
-    ChatCommandServiceImpl,
+from app.analysis.application.acl.analysis_context_facade_impl import (
+    AnalysisContextFacadeImpl,
 )
-from app.chat.application.internal.outboundservices.acl.decision_context_response_service import (
-    DecisionContextResponseService,
-)
-from app.chat.infrastructure.ollama.conversation_title_generator import ConversationTitleGenerator
 from app.analysis.application.internal.commandservices.security_analysis_command_service_impl import (
     SecurityAnalysisCommandServiceImpl,
 )
-from app.analysis.application.acl.analysis_context_facade_impl import AnalysisContextFacadeImpl
 from app.analysis.application.internal.queryservices.security_analysis_query_service_impl import (
     SecurityAnalysisQueryServiceImpl,
 )
@@ -32,12 +29,21 @@ from app.analysis.infrastructure.ollama.ollama_sensitive_content_discovery_clien
 from app.analysis.infrastructure.persistence.sqlalchemy.repositories.sqlalchemy_security_analysis_repository import (
     SqlAlchemySecurityAnalysisRepository,
 )
-from app.core.settings import get_settings
-from app.decision.application.internal.commandservices.submit_secure_query_command_service_impl import (
-    SubmitSecureQueryCommandServiceImpl,
+from app.chat.application.internal.commandservices.chat_command_service_impl import (
+    ChatCommandServiceImpl,
 )
+from app.chat.application.internal.outboundservices.acl.decision_context_response_service import (
+    DecisionContextResponseService,
+)
+from app.chat.infrastructure.ollama.conversation_title_generator import (
+    ConversationTitleGenerator,
+)
+from app.core.settings import get_settings
 from app.decision.application.acl.decision_context_facade_impl import (
     DecisionContextFacadeImpl,
+)
+from app.decision.application.internal.commandservices.submit_secure_query_command_service_impl import (
+    SubmitSecureQueryCommandServiceImpl,
 )
 from app.decision.application.internal.outboundservices.analysis.content_review_service_impl import (
     ContentReviewServiceImpl,
@@ -53,6 +59,7 @@ from app.decision.infrastructure.persistence.sqlalchemy.repositories.sqlalchemy_
 )
 
 
+@lru_cache(maxsize=1)
 def build_security_analysis_client() -> OllamaSecurityAnalysisClientImpl:
     settings = get_settings()
     return OllamaSecurityAnalysisClientImpl(
@@ -64,6 +71,7 @@ def build_security_analysis_client() -> OllamaSecurityAnalysisClientImpl:
     )
 
 
+@lru_cache(maxsize=1)
 def build_answer_generation_client() -> OllamaAnswerGenerationClientImpl:
     settings = get_settings()
     return OllamaAnswerGenerationClientImpl(
@@ -72,10 +80,10 @@ def build_answer_generation_client() -> OllamaAnswerGenerationClientImpl:
         request_timeout_seconds=settings.ollama_generation_timeout_seconds,
         context_tokens=settings.ollama_generation_context_tokens,
         max_output_tokens=settings.ollama_generation_max_output_tokens,
-        max_document_characters=settings.ollama_generation_max_document_chars,
     )
 
 
+@lru_cache(maxsize=1)
 def build_sensitive_content_discovery_client() -> OllamaSensitiveContentDiscoveryClientImpl:
     settings = get_settings()
     return OllamaSensitiveContentDiscoveryClientImpl(
@@ -136,6 +144,7 @@ def build_chat_command_service(session: AsyncSession) -> ChatCommandServiceImpl:
     return ChatCommandServiceImpl(DecisionContextResponseService(decision_facade))
 
 
+@lru_cache(maxsize=1)
 def build_conversation_title_generator() -> ConversationTitleGenerator:
     settings = get_settings()
     return ConversationTitleGenerator(

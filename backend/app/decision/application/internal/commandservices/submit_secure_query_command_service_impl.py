@@ -5,14 +5,10 @@ import logging
 from app.decision.application.internal.outboundservices.content_review_service import (
     ContentReviewService,
 )
-from app.decision.application.internal.outboundservices.document_intake_service import (
-    DocumentIntakeService,
-)
 from app.decision.application.internal.outboundservices.ollama_answer_generation_client import (
     OllamaAnswerGenerationClient,
 )
 from app.decision.domain.exceptions import (
-    AnswerGenerationContextTooLargeError,
     AnswerGenerationEmptyError,
     AnswerGenerationError,
     AnswerGenerationTimeoutError,
@@ -32,16 +28,17 @@ from app.decision.domain.model.valueobjects.generation_authorization import (
 from app.decision.domain.model.valueobjects.interaction_content_type import (
     InteractionContentType,
 )
-from app.decision.domain.model.valueobjects.reviewed_content_assessment import (
-    ReviewedContentAssessment,
-)
-from app.decision.domain.model.valueobjects.security_decision import SecurityDecision
 from app.decision.domain.model.valueobjects.secure_query_result import SecureQueryResult
-from app.decision.domain.policies.secure_query_decision_policy import SecureQueryDecisionPolicy
+from app.decision.domain.model.valueobjects.security_decision import SecurityDecision
+from app.decision.domain.policies.secure_query_decision_policy import (
+    SecureQueryDecisionPolicy,
+)
 from app.decision.domain.repositories.secure_interaction_repository import (
     SecureInteractionRepository,
 )
-from app.decision.domain.services.secure_query_command_service import SecureQueryCommandService
+from app.decision.domain.services.secure_query_command_service import (
+    SecureQueryCommandService,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -62,13 +59,11 @@ class SubmitSecureQueryCommandServiceImpl(SecureQueryCommandService):
         interaction_repository: SecureInteractionRepository,
         content_review_service: ContentReviewService,
         answer_generation_client: OllamaAnswerGenerationClient,
-        document_intake_service: DocumentIntakeService | None = None,
         decision_policy: SecureQueryDecisionPolicy | None = None,
     ) -> None:
         self._interaction_repository = interaction_repository
         self._content_review_service = content_review_service
         self._answer_generation_client = answer_generation_client
-        self._document_intake_service = document_intake_service
         self._policy = decision_policy or SecureQueryDecisionPolicy()
         self.published_events: list[object] = []
 
@@ -76,86 +71,42 @@ class SubmitSecureQueryCommandServiceImpl(SecureQueryCommandService):
         self,
         command: SubmitSecureQueryCommand,
     ) -> SecureQueryResult:
-        document_id: int | None = None
-        document_reference: str | None = None
-        attachment_url: str | None = None
-
-        if command.has_document:
-            if self._document_intake_service is None:
-                raise ValueError("Document intake is not available in this context")
-            registered = await self._document_intake_service.register_document(
-                filename=command.document_filename or "document.json",
-                mime_type=command.document_mime_type or "application/json",
-                content=command.document_content or b"",
-            )
-            document_id = registered.document_id
-            document_reference = registered.display_name
-            attachment_url = registered.attachment_url
-
-        prompt_assessment: ReviewedContentAssessment | None = None
-        document_assessment: ReviewedContentAssessment | None = None
-
-        if command.has_prompt:
-            prompt_assessment = await self._content_review_service.review_prompt(
-                (command.prompt or "").strip()
-            )
-        if document_id is not None:
-            document_assessment = await self._content_review_service.review_document(document_id)
+        prompt_assessment = await self._content_review_service.review_prompt(
+            (command.prompt or "").strip(), command.requested_by
+        )
 
         outcome = self._policy.evaluate(
             prompt_assessment=prompt_assessment,
-            document_assessment=document_assessment,
+            document_assessment=None,
         )
 
         interaction = SecureInteraction.record(
-            content_type=self._content_type(command),
+            content_type=InteractionContentType.PROMPT,
             decision=outcome.decision,
             reason_code=outcome.reason_code,
             reason=outcome.reason,
-            content_reference=self._content_reference(
-                command, document_reference, prompt_assessment, document_assessment
-            ),
+            content_reference=prompt_assessment.reference,
             risk_level=outcome.risk_level,
             prompt_analysis_id=prompt_assessment.analysis_id if prompt_assessment else None,
-            document_analysis_id=document_assessment.analysis_id if document_assessment else None,
-            document_id=document_id,
-            masked_findings=[
-                finding
-                for assessment in (prompt_assessment, document_assessment)
-                if assessment is not None
-                for finding in assessment.findings
-            ],
-            data_categories=[
-                category
-                for assessment in (prompt_assessment, document_assessment)
-                if assessment is not None
-                for category in assessment.data_categories
-            ],
-            answer_expected=command.has_prompt,
+            document_analysis_id=None,
+            document_id=None,
+            masked_findings=list(prompt_assessment.findings),
+            data_categories=list(prompt_assessment.data_categories),
+            answer_expected=True,
+            requested_by=command.requested_by,
         )
 
         answer: AssistantAnswer | None = None
-        if outcome.decision == SecurityDecision.ALLOWED and command.has_prompt:
+        if outcome.decision == SecurityDecision.ALLOWED:
             authorization = GenerationAuthorization(
                 decision=outcome.decision,
                 prompt_analysis_id=prompt_assessment.analysis_id,  # type: ignore[union-attr]
-                document_analysis_id=(
-                    document_assessment.analysis_id if document_assessment else None
-                ),
+                document_analysis_id=None,
             )
             answer = await self._generate_answer(
                 interaction=interaction,
                 authorization=authorization,
                 prompt=(command.prompt or "").strip(),
-                document_id=document_id,
-                document_reference=document_reference,
-            )
-
-        if document_id is not None and self._document_intake_service is not None:
-            await self._document_intake_service.record_review_outcome(
-                document_id=document_id,
-                decision=outcome.decision,
-                reason=outcome.reason,
             )
 
         saved = await self._interaction_repository.save(interaction)
@@ -165,11 +116,7 @@ class SubmitSecureQueryCommandServiceImpl(SecureQueryCommandService):
                 decision=saved.decision,
             )
         )
-        return SecureQueryResult(
-            interaction=saved,
-            answer=answer,
-            attachment_url=attachment_url,
-        )
+        return SecureQueryResult(interaction=saved, answer=answer)
 
     async def _generate_answer(
         self,
@@ -177,28 +124,19 @@ class SubmitSecureQueryCommandServiceImpl(SecureQueryCommandService):
         interaction: SecureInteraction,
         authorization: GenerationAuthorization,
         prompt: str,
-        document_id: int | None,
-        document_reference: str | None,
     ) -> AssistantAnswer | None:
-        allowed_document: dict[str, object] | list[object] | None = None
         model_name = self._answer_generation_client.model_name
         try:
-            if document_id is not None and self._document_intake_service is not None:
-                allowed_document = await self._document_intake_service.read_allowed_document_content(
-                    document_id
-                )
             answer = await self._answer_generation_client.generate(
                 authorization=authorization,
                 prompt=prompt,
-                allowed_document=allowed_document,
-                document_reference=document_reference,
             )
         except AnswerGenerationError as error:
             interaction.record_failed_generation(
                 authorization, model_name, self._safe_generation_error(error)
             )
             return None
-        except Exception as error:  # noqa: BLE001 - a generation failure never changes the verdict
+        except Exception as error:
             logger.exception("Unexpected failure while generating the answer")
             interaction.record_failed_generation(
                 authorization,
@@ -211,31 +149,6 @@ class SubmitSecureQueryCommandServiceImpl(SecureQueryCommandService):
         interaction.record_successful_generation(authorization, answer.model_name)
         return answer
 
-    def _content_type(self, command: SubmitSecureQueryCommand) -> InteractionContentType:
-        if command.has_prompt and command.has_document:
-            return InteractionContentType.PROMPT_WITH_DOCUMENT
-        if command.has_document:
-            return InteractionContentType.DOCUMENT
-        return InteractionContentType.PROMPT
-
-    def _content_reference(
-        self,
-        command: SubmitSecureQueryCommand,
-        document_reference: str | None,
-        prompt_assessment: ReviewedContentAssessment | None,
-        document_assessment: ReviewedContentAssessment | None,
-    ) -> str:
-        if command.has_document:
-            reference = document_reference or (
-                document_assessment.reference if document_assessment else None
-            )
-            if command.has_prompt:
-                return f"Consulta con {reference or 'documento adjunto'}"
-            return reference or "Documento adjunto"
-        if prompt_assessment is not None:
-            return prompt_assessment.reference
-        return "Consulta escrita"
-
     def _safe_generation_error(self, error: AnswerGenerationError) -> str:
         if isinstance(error, AnswerGenerationTimeoutError):
             return "El asistente local no respondió dentro del tiempo configurado."
@@ -243,6 +156,4 @@ class SubmitSecureQueryCommandServiceImpl(SecureQueryCommandService):
             return "El asistente local no está disponible en este momento."
         if isinstance(error, AnswerGenerationEmptyError):
             return "El asistente local devolvió una respuesta vacía."
-        if isinstance(error, AnswerGenerationContextTooLargeError):
-            return str(error)
         return "No fue posible generar la respuesta."

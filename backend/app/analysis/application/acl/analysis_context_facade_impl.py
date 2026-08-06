@@ -1,13 +1,21 @@
 from collections.abc import Awaitable, Callable
 
-from app.analysis.domain.model.commands.analyze_document_command import AnalyzeDocumentCommand
-from app.analysis.domain.model.commands.analyze_prompt_command import AnalyzePromptCommand
+from app.analysis.domain.model.commands.analyze_document_command import (
+    AnalyzeDocumentCommand,
+)
+from app.analysis.domain.model.commands.analyze_prompt_command import (
+    AnalyzePromptCommand,
+)
 from app.analysis.domain.model.entities.security_analysis import SecurityAnalysis
-from app.analysis.domain.model.queries.get_analysis_by_id_query import GetAnalysisByIdQuery
+from app.analysis.domain.model.queries.get_analysis_by_id_query import (
+    GetAnalysisByIdQuery,
+)
 from app.analysis.domain.services.security_analysis_command_service import (
     SecurityAnalysisCommandService,
 )
-from app.analysis.domain.services.security_analysis_query_service import SecurityAnalysisQueryService
+from app.analysis.domain.services.security_analysis_query_service import (
+    SecurityAnalysisQueryService,
+)
 from app.analysis.interfaces.acl.analysis_context_facade import AnalysisContextFacade
 
 
@@ -20,13 +28,14 @@ class AnalysisContextFacadeImpl(AnalysisContextFacade):
         self._command_service = command_service
         self._query_service = query_service
 
-    async def review_prompt(self, prompt: str) -> dict[str, object | None]:
+    async def review_prompt(self, prompt: str, requested_by: str) -> dict[str, object | None]:
         return await self._review(
             operation=lambda: self._command_service.handle_analyze_prompt(
-                AnalyzePromptCommand(prompt=prompt)
+                AnalyzePromptCommand(prompt=prompt, requested_by=requested_by)
             ),
             origin="prompt",
             fallback_reference="Consulta escrita",
+            requested_by=requested_by,
         )
 
     async def review_document(self, document_id: int) -> dict[str, object | None]:
@@ -36,6 +45,7 @@ class AnalysisContextFacadeImpl(AnalysisContextFacade):
             ),
             origin="document",
             fallback_reference="Documento adjunto",
+            requested_by="legacy-document",
         )
 
     async def _review(
@@ -44,6 +54,7 @@ class AnalysisContextFacadeImpl(AnalysisContextFacade):
         operation: Callable[[], Awaitable[SecurityAnalysis]],
         origin: str,
         fallback_reference: str,
+        requested_by: str,
     ) -> dict[str, object | None]:
         try:
             analysis = await operation()
@@ -52,7 +63,7 @@ class AnalysisContextFacadeImpl(AnalysisContextFacade):
             stored = None
             if analysis_id > 0:
                 stored = await self._query_service.handle_get_analysis_by_id(
-                    GetAnalysisByIdQuery(analysis_id=analysis_id)
+                    GetAnalysisByIdQuery(analysis_id=analysis_id, requested_by=requested_by)
                 )
             if stored is not None:
                 return self._to_payload(stored, origin)

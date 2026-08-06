@@ -1,7 +1,9 @@
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 
-from app.decision.domain.model.valueobjects.decision_reason_code import DecisionReasonCode
+from app.decision.domain.model.valueobjects.decision_reason_code import (
+    DecisionReasonCode,
+)
 from app.decision.domain.model.valueobjects.generation_authorization import (
     GenerationAuthorization,
 )
@@ -9,7 +11,9 @@ from app.decision.domain.model.valueobjects.generation_status import GenerationS
 from app.decision.domain.model.valueobjects.interaction_content_type import (
     InteractionContentType,
 )
-from app.decision.domain.model.valueobjects.masked_finding_summary import MaskedFindingSummary
+from app.decision.domain.model.valueobjects.masked_finding_summary import (
+    MaskedFindingSummary,
+)
 from app.decision.domain.model.valueobjects.security_decision import SecurityDecision
 
 
@@ -30,6 +34,7 @@ class SecureInteraction:
     reason_code: DecisionReasonCode
     reason: str
     content_reference: str
+    requested_by: str
     risk_level: str | None = None
     prompt_analysis_id: int | None = None
     document_analysis_id: int | None = None
@@ -49,6 +54,8 @@ class SecureInteraction:
             raise ValueError("A decision reason is required")
         if not self.content_reference.strip():
             raise ValueError("A safe content reference is required")
+        if not self.requested_by.strip():
+            raise ValueError("Authenticated user is required")
         if self.decision == SecurityDecision.BLOCKED and self.generation_status in {
             GenerationStatus.SUCCEEDED,
             GenerationStatus.FAILED,
@@ -71,6 +78,7 @@ class SecureInteraction:
         masked_findings: list[MaskedFindingSummary],
         data_categories: list[str],
         answer_expected: bool,
+        requested_by: str,
     ) -> "SecureInteraction":
         if decision == SecurityDecision.BLOCKED:
             generation_status = GenerationStatus.SKIPPED
@@ -86,6 +94,7 @@ class SecureInteraction:
             reason_code=reason_code,
             reason=reason,
             content_reference=content_reference,
+            requested_by=requested_by,
             risk_level=risk_level,
             prompt_analysis_id=prompt_analysis_id,
             document_analysis_id=document_analysis_id,

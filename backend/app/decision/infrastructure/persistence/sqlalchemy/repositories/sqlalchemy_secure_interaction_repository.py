@@ -2,12 +2,16 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.decision.domain.model.entities.secure_interaction import SecureInteraction
-from app.decision.domain.model.valueobjects.decision_reason_code import DecisionReasonCode
+from app.decision.domain.model.valueobjects.decision_reason_code import (
+    DecisionReasonCode,
+)
 from app.decision.domain.model.valueobjects.generation_status import GenerationStatus
 from app.decision.domain.model.valueobjects.interaction_content_type import (
     InteractionContentType,
 )
-from app.decision.domain.model.valueobjects.masked_finding_summary import MaskedFindingSummary
+from app.decision.domain.model.valueobjects.masked_finding_summary import (
+    MaskedFindingSummary,
+)
 from app.decision.domain.model.valueobjects.security_decision import SecurityDecision
 from app.decision.domain.repositories.secure_interaction_repository import (
     SecureInteractionRepository,
@@ -35,6 +39,7 @@ class SqlAlchemySecureInteractionRepository(SecureInteractionRepository):
             self._session.add(model)
 
         model.content_type = interaction.content_type.value
+        model.requested_by = interaction.requested_by
         model.decision = interaction.decision.value
         model.reason_code = interaction.reason_code.value
         model.reason = interaction.reason
@@ -56,16 +61,17 @@ class SqlAlchemySecureInteractionRepository(SecureInteractionRepository):
         await self._session.refresh(model)
         return self._to_domain(model)
 
-    async def find_by_id(self, interaction_id: int) -> SecureInteraction | None:
+    async def find_by_id(self, interaction_id: int, requested_by: str) -> SecureInteraction | None:
         model = await self._session.scalar(
-            select(SecureInteractionModel).where(SecureInteractionModel.id == interaction_id)
+            select(SecureInteractionModel).where(SecureInteractionModel.id == interaction_id, SecureInteractionModel.requested_by == requested_by)
         )
         return self._to_domain(model) if model is not None else None
 
-    async def list(self, page: int, page_size: int) -> tuple[list[SecureInteraction], int]:
-        total = await self._session.scalar(select(func.count(SecureInteractionModel.id)))
+    async def list(self, requested_by: str, page: int, page_size: int) -> tuple[list[SecureInteraction], int]:
+        total = await self._session.scalar(select(func.count(SecureInteractionModel.id)).where(SecureInteractionModel.requested_by == requested_by))
         result = await self._session.execute(
             select(SecureInteractionModel)
+            .where(SecureInteractionModel.requested_by == requested_by)
             .order_by(SecureInteractionModel.id.desc())
             .offset((page - 1) * page_size)
             .limit(page_size)
@@ -99,6 +105,7 @@ class SqlAlchemySecureInteractionRepository(SecureInteractionRepository):
     def _to_domain(self, model: SecureInteractionModel) -> SecureInteraction:
         return SecureInteraction(
             id=model.id,
+            requested_by=model.requested_by,
             content_type=InteractionContentType(model.content_type),
             decision=SecurityDecision(model.decision),
             reason_code=DecisionReasonCode(model.reason_code),

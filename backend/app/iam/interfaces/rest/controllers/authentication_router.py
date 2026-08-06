@@ -84,6 +84,7 @@ async def require_authenticated_user(
     query_service: Annotated[
         AuthenticationQueryServiceImpl, Depends(get_authentication_query_service)
     ],
+    session: Annotated[AsyncSession, Depends(get_session)],
 ) -> AuthenticatedUser:
     if credentials is None or credentials.scheme.lower() != "bearer":
         raise HTTPException(
@@ -92,9 +93,13 @@ async def require_authenticated_user(
             headers={"WWW-Authenticate": "Bearer"},
         )
     try:
-        return await query_service.handle_validate_access_token(
+        user = await query_service.handle_validate_access_token(
             ValidateAccessTokenQuery(access_token=credentials.credentials)
         )
+        account = await SqlAlchemyUserAccountRepository(session).find_by_username(user.username)
+        if account is None:
+            raise InvalidAccessTokenError("Account no longer exists")
+        return AuthenticatedUser(username=user.username, account_id=account.id)
     except (InvalidAccessTokenError, ValueError) as error:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

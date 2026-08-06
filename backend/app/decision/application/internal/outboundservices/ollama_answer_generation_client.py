@@ -23,6 +23,4 @@ class OllamaAnswerGenerationClient(Protocol):
         *,
         authorization: GenerationAuthorization,
         prompt: str,
-        allowed_document: dict[str, object] | list[object] | None = None,
-        document_reference: str | None = None,
     ) -> AssistantAnswer: ...

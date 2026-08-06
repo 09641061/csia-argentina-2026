@@ -1,7 +1,9 @@
 from app.chat.application.internal.outboundservices.authorized_context_response_service import (
     AuthorizedContextResponseService,
 )
-from app.chat.domain.model.commands.send_chat_message_command import SendChatMessageCommand
+from app.chat.domain.model.commands.send_chat_message_command import (
+    SendChatMessageCommand,
+)
 from app.chat.domain.model.valueobjects.chat_message_result import ChatMessageResult
 from app.chat.domain.services.chat_command_service import ChatCommandService
 
