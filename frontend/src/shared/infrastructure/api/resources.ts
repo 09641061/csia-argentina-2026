@@ -111,7 +111,46 @@ export interface HealthResource {
   status: string
   database: boolean
   security_model_available: boolean
+  discovery_model_available: boolean
   generation_model_available: boolean
+  vision_model_available: boolean
   security_model: string
+  discovery_model: string
   generation_model: string
+  vision_model: string
+}
+
+export interface ChatMessageResource {
+  id: number
+  role: 'user' | 'assistant'
+  content: string
+  created_at: string
+}
+
+export interface ConversationSummaryResource {
+  id: number
+  title: string
+  created_at: string
+  updated_at: string
+}
+
+export interface ConversationResource extends ConversationSummaryResource {
+  messages: ChatMessageResource[]
+}
+
+export interface ChatMessageResponseResource {
+  answer: string
+  conversation_id: number
+  model_name: string
+  generated_at: string
+}
+
+export interface SecurityAnalysisListResource {
+  items: SecurityAnalysisResource[]
+  page: PageMetadataResource
+}
+
+export interface AnalysisFindingsResource {
+  analysis_id: number
+  items: AnalysisFindingResource[]
 }

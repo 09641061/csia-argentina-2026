@@ -1,5 +1,13 @@
 import { Badge } from '@/shared/interfaces/ui/badge'
-import { riskLevelLabel, type RiskLevel } from '@/contexts/analysis-and-decision/domain/analysis/risk-level'
+
+type RiskLevel = 'low' | 'medium' | 'high' | 'critical'
+
+const LABELS: Record<RiskLevel, string> = {
+  low: 'Riesgo bajo',
+  medium: 'Riesgo medio',
+  high: 'Riesgo alto',
+  critical: 'Riesgo crítico',
+}
 
 interface RiskLabelProps {
   readonly risk: RiskLevel | null
@@ -16,7 +24,7 @@ export function RiskLabel({ risk }: RiskLabelProps) {
 
   return (
     <Badge variant="outline" className={style ?? 'border-white/10 bg-transparent text-[#aaa89f]'}>
-      {riskLevelLabel(risk)}
+      {risk === null ? 'Riesgo no verificado' : LABELS[risk]}
     </Badge>
   )
 }
