@@ -20,9 +20,6 @@ from app.analysis.application.internal.commandservices.security_analysis_command
     SecurityAnalysisCommandServiceImpl,
 )
 from app.analysis.application.acl.analysis_context_facade_impl import AnalysisContextFacadeImpl
-from app.analysis.application.internal.outboundservices.documents.document_source_service_impl import (
-    DocumentSourceServiceImpl,
-)
 from app.analysis.application.internal.queryservices.security_analysis_query_service_impl import (
     SecurityAnalysisQueryServiceImpl,
 )
@@ -32,14 +29,8 @@ from app.analysis.infrastructure.ollama.ollama_security_analysis_client_impl imp
 from app.analysis.infrastructure.ollama.ollama_sensitive_content_discovery_client_impl import (
     OllamaSensitiveContentDiscoveryClientImpl,
 )
-from app.analysis.infrastructure.ollama.ollama_vision_extraction_client_impl import (
-    OllamaVisionExtractionClientImpl,
-)
 from app.analysis.infrastructure.persistence.sqlalchemy.repositories.sqlalchemy_security_analysis_repository import (
     SqlAlchemySecurityAnalysisRepository,
-)
-from app.analysis.infrastructure.text_extraction.multi_format_document_text_extractor import (
-    MultiFormatDocumentTextExtractor,
 )
 from app.core.settings import get_settings
 from app.decision.application.internal.commandservices.submit_secure_query_command_service_impl import (
@@ -51,9 +42,6 @@ from app.decision.application.acl.decision_context_facade_impl import (
 from app.decision.application.internal.outboundservices.analysis.content_review_service_impl import (
     ContentReviewServiceImpl,
 )
-from app.decision.application.internal.outboundservices.documents.document_intake_service_impl import (
-    DocumentIntakeServiceImpl,
-)
 from app.decision.application.internal.queryservices.secure_interaction_query_service_impl import (
     SecureInteractionQueryServiceImpl,
 )
@@ -62,21 +50,6 @@ from app.decision.infrastructure.ollama.ollama_answer_generation_client_impl imp
 )
 from app.decision.infrastructure.persistence.sqlalchemy.repositories.sqlalchemy_secure_interaction_repository import (
     SqlAlchemySecureInteractionRepository,
-)
-from app.documents.application.internal.commandservices.document_command_service_impl import (
-    DocumentCommandServiceImpl,
-)
-from app.documents.application.acl.documents_context_facade_impl import (
-    DocumentsContextFacadeImpl,
-)
-from app.documents.application.internal.queryservices.document_query_service_impl import (
-    DocumentQueryServiceImpl,
-)
-from app.documents.infrastructure.persistence.sqlalchemy.repositories.sqlalchemy_document_repository import (
-    SqlAlchemyDocumentRepository,
-)
-from app.documents.infrastructure.storage.document_storage_provider import (
-    get_document_storage,
 )
 
 
@@ -115,44 +88,6 @@ def build_sensitive_content_discovery_client() -> OllamaSensitiveContentDiscover
     )
 
 
-def build_vision_extraction_client() -> OllamaVisionExtractionClientImpl:
-    settings = get_settings()
-    return OllamaVisionExtractionClientImpl(
-        base_url=settings.ollama_base_url,
-        model_name=settings.ollama_vision_model,
-        request_timeout_seconds=settings.ollama_vision_timeout_seconds,
-        context_tokens=settings.ollama_vision_context_tokens,
-        max_output_tokens=settings.ollama_vision_max_output_tokens,
-    )
-
-
-def build_document_text_extractor() -> MultiFormatDocumentTextExtractor:
-    return MultiFormatDocumentTextExtractor(build_vision_extraction_client())
-
-
-def build_document_query_service(session: AsyncSession) -> DocumentQueryServiceImpl:
-    return DocumentQueryServiceImpl(
-        document_repository=SqlAlchemyDocumentRepository(session),
-        document_storage=get_document_storage(),
-    )
-
-
-def build_document_command_service(session: AsyncSession) -> DocumentCommandServiceImpl:
-    settings = get_settings()
-    return DocumentCommandServiceImpl(
-        document_repository=SqlAlchemyDocumentRepository(session),
-        document_storage=get_document_storage(),
-        max_document_size_bytes=settings.max_document_size_bytes,
-    )
-
-
-def build_documents_context_facade(session: AsyncSession) -> DocumentsContextFacadeImpl:
-    return DocumentsContextFacadeImpl(
-        command_service=build_document_command_service(session),
-        query_service=build_document_query_service(session),
-    )
-
-
 def build_security_analysis_command_service(
     session: AsyncSession,
 ) -> SecurityAnalysisCommandServiceImpl:
@@ -164,8 +99,6 @@ def build_security_analysis_command_service(
             build_sensitive_content_discovery_client()
         ),
         security_model_name=settings.ollama_security_model,
-        document_source_service=DocumentSourceServiceImpl(build_documents_context_facade(session)),
-        document_text_extractor=build_document_text_extractor(),
         prompt_max_length=settings.prompt_max_length,
         prompt_min_length=settings.prompt_min_length,
     )
@@ -189,10 +122,6 @@ def build_secure_query_command_service(
             )
         ),
         answer_generation_client=build_answer_generation_client(),
-        document_intake_service=DocumentIntakeServiceImpl(
-            documents_facade=build_documents_context_facade(session),
-            document_content_extractor=build_document_text_extractor(),
-        ),
     )
 
 

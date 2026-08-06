@@ -7,10 +7,13 @@ from fastapi.responses import JSONResponse
 
 from app.chat.interfaces.rest.controllers.chat_router import router as chat_router
 from app.analysis.interfaces.rest.controllers.security_analysis_router import (
-    query_router as analysis_query_router,
+    router as analysis_router,
 )
 from app.core.database import initialize_database
 from app.core.settings import get_settings
+from app.decision.interfaces.rest.controllers.secure_query_router import (
+    router as secure_query_router,
+)
 from app.iam.interfaces.rest.controllers.authentication_router import (
     router as authentication_router,
 )
@@ -71,7 +74,8 @@ def create_app() -> FastAPI:
     app.include_router(health_router)
     app.include_router(authentication_router)
     app.include_router(chat_router)
-    app.include_router(analysis_query_router)
+    app.include_router(analysis_router)
+    app.include_router(secure_query_router)
 
     @app.exception_handler(Exception)
     async def handle_unexpected_error(request: Request, error: Exception) -> JSONResponse:

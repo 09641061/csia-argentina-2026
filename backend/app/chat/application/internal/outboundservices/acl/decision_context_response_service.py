@@ -15,9 +15,9 @@ class DecisionContextResponseService(AuthorizedContextResponseService):
     async def answer(self, command: SendChatMessageCommand) -> ChatMessageResult:
         outcome = await self._decision_facade.execute_authorized_query(
             prompt=command.prompt,
-            document_filename=command.resource_filename,
-            document_mime_type=command.resource_mime_type,
-            document_content=command.resource_content,
+            document_filename=None,
+            document_mime_type=None,
+            document_content=None,
         )
         generated_at = outcome["generated_at"]
         return ChatMessageResult(
