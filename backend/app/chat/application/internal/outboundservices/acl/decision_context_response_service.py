@@ -32,4 +32,9 @@ class DecisionContextResponseService(AuthorizedContextResponseService):
                 else None
             ),
             generated_at=generated_at if isinstance(generated_at, datetime) else None,
+            attachment_url=(
+                str(outcome["attachment_url"])
+                if outcome.get("attachment_url") is not None
+                else None
+            ),
         )

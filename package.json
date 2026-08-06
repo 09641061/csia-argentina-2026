@@ -1,5 +1,5 @@
 {
-  "name": "sentinel-ai-guard",
+  "name": "claude-ai-guard",
   "private": true,
   "scripts": {
     "dev": "npm --prefix frontend run dev",

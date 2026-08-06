@@ -2,4 +2,4 @@ from sqlalchemy.orm import DeclarativeBase
 
 
 class Base(DeclarativeBase):
-    """Declarative base shared by every bounded context of Sentinel AI Guard."""
+    """Declarative base shared by every bounded context of Claude AI Guard."""

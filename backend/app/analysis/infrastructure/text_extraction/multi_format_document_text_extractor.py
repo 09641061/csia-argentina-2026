@@ -14,7 +14,7 @@ from app.analysis.infrastructure.text_extraction.json_document_text_extractor im
 
 _MAX_EXTRACTED_CHARACTERS = 200_000
 _JSON_MIME_TYPE = "application/json"
-_IMAGE_MIME_TYPES = frozenset({"image/png", "image/jpeg"})
+_IMAGE_MIME_TYPES = frozenset({"image/png", "image/jpeg", "image/webp"})
 
 
 class MultiFormatDocumentTextExtractor(DocumentTextExtractor):

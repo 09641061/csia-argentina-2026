@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "csia-argentina-2026"
 version = "0.1.0"
-description = "Sentinel AI Guard"
+description = "Claude AI Guard"
 requires-python = ">=3.11"
 dependencies = [
     "fastapi>=0.115.0",

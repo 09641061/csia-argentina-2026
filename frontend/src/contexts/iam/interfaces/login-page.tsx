@@ -49,7 +49,7 @@ export function LoginPage() {
           <CardTitle>
             <h1 className="font-serif text-3xl font-normal tracking-[-0.025em]">Iniciar sesión</h1>
           </CardTitle>
-          <CardDescription>Accede al portal protegido de Sentinel AI Guard.</CardDescription>
+          <CardDescription>Accede al portal protegido de Claude AI Guard.</CardDescription>
         </CardHeader>
         <CardContent>
           <form className="flex flex-col gap-5" onSubmit={submit}>

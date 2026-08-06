@@ -6,33 +6,33 @@ from app.iam.application.internal.tokens.jwt_access_token_service import (
 )
 from app.iam.domain.exceptions import InvalidAccessTokenError
 
-SECRET = "sentinel-test-secret-with-at-least-thirty-two-characters"
+SECRET = "claude-test-secret-with-at-least-thirty-two-characters"
 
 
 def service(secret_key: str = SECRET) -> JwtAccessTokenService:
     return JwtAccessTokenService(
         secret_key=secret_key,
-        issuer="sentinel-test",
-        audience="sentinel-web-test",
+        issuer="claude-test",
+        audience="claude-web-test",
         lifetime_minutes=30,
     )
 
 
 def test_issued_token_is_a_standard_jwt_and_survives_service_recreation() -> None:
-    token = service().issue("Sentinel.Demo")
+    token = service().issue("Claude.Demo")
 
     header = jwt.get_unverified_header(token.value)
     authenticated = service().validate(token.value)
 
     assert header["alg"] == "HS256"
     assert token.value.count(".") == 2
-    assert authenticated.identity == "sentinel.demo"
+    assert authenticated.identity == "claude.demo"
 
 
 def test_token_signed_with_another_secret_is_rejected() -> None:
-    token = service().issue("sentinel.demo")
+    token = service().issue("claude.demo")
 
     with pytest.raises(InvalidAccessTokenError):
-        service("another-sentinel-test-secret-with-thirty-two-characters").validate(
+        service("another-claude-test-secret-with-thirty-two-characters").validate(
             token.value
         )

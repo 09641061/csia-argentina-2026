@@ -21,6 +21,9 @@ class MessageModel(Base):
     )
     role: Mapped[str] = mapped_column(String(20), nullable=False)
     content: Mapped[str] = mapped_column(Text, nullable=False)
+    attachment_url: Mapped[str | None] = mapped_column(Text, nullable=True)
+    attachment_name: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    attachment_mime_type: Mapped[str | None] = mapped_column(String(100), nullable=True)
     secure_interaction_id: Mapped[int | None] = mapped_column(
         ForeignKey("secure_interactions.id", ondelete="SET NULL"), nullable=True
     )

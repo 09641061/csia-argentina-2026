@@ -60,6 +60,12 @@ router = APIRouter(
     dependencies=[Depends(require_authenticated_user)],
     responses={401: {"description": "Authentication required"}},
 )
+query_router = APIRouter(
+    prefix="/api/v1",
+    tags=["Analysis"],
+    dependencies=[Depends(require_authenticated_user)],
+    responses={401: {"description": "Authentication required"}},
+)
 
 
 async def get_analysis_command_service(
@@ -195,7 +201,7 @@ async def analyze_prompt(
     return to_analysis_resource(analysis)
 
 
-@router.get(
+@query_router.get(
     "/analyses",
     response_model=SecurityAnalysisListResponse,
     summary="List security reviews",
@@ -223,7 +229,7 @@ async def list_analyses(
     )
 
 
-@router.get(
+@query_router.get(
     "/analyses/{analysis_id}",
     response_model=SecurityAnalysisResource,
     summary="Get a security review by ID",
@@ -250,7 +256,7 @@ async def get_analysis_by_id(
     return to_analysis_resource(analysis)
 
 
-@router.get(
+@query_router.get(
     "/analyses/{analysis_id}/findings",
     response_model=AnalysisFindingsResponse,
     summary="Get masked findings",
