@@ -47,7 +47,7 @@ class ConversationApplicationService:
         result = await self._review_and_answer(prompt, username)
         now = datetime.now(UTC)
         self._session.add(MessageModel(conversation_id=conversation.id, role="user", content=prompt, created_at=now))
-        self._session.add(MessageModel(conversation_id=conversation.id, role="assistant", content=result.answer or "", secure_interaction_id=result.interaction_id, created_at=result.generated_at or now))
+        self._session.add(MessageModel(conversation_id=conversation.id, role="assistant", content=result.answer or "", secure_interaction_id=result.interaction_id, created_at=now))
         conversation.updated_at = result.generated_at or now
         await self._session.commit()
         return result
@@ -63,7 +63,7 @@ class ConversationApplicationService:
         self._session.add(conversation)
         await self._session.flush()
         self._session.add(MessageModel(conversation_id=conversation.id, role="user", content=prompt, created_at=now))
-        self._session.add(MessageModel(conversation_id=conversation.id, role="assistant", content=result.answer or "", secure_interaction_id=result.interaction_id, created_at=result.generated_at or now))
+        self._session.add(MessageModel(conversation_id=conversation.id, role="assistant", content=result.answer or "", secure_interaction_id=result.interaction_id, created_at=now))
         await self._session.commit()
         return conversation, result
 
@@ -74,7 +74,7 @@ class ConversationApplicationService:
         conversation = await self._session.scalar(select(ConversationModel).where(ConversationModel.id == conversation_id, ConversationModel.user_id == user_id))
         if conversation is None:
             raise ConversationNotFoundError
-        messages = list((await self._session.scalars(select(MessageModel).where(MessageModel.conversation_id == conversation.id).order_by(MessageModel.created_at).offset((page - 1) * page_size).limit(page_size))).all())
+        messages = list((await self._session.scalars(select(MessageModel).where(MessageModel.conversation_id == conversation.id).order_by(MessageModel.created_at, MessageModel.id).offset((page - 1) * page_size).limit(page_size))).all())
         return conversation, messages
 
     async def _review_and_answer(self, prompt: str, username: str) -> ChatMessageResult:
