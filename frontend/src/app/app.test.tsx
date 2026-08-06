@@ -1,10 +1,9 @@
 import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { AuthProvider } from '@/contexts/iam/interfaces/auth-provider'
-import { allowedInteractionResource, stubFetch } from '@/test/builders'
+import { stubFetch } from '@/test/builders'
 
 import { AppRoutes } from './app-routes'
 
@@ -52,26 +51,10 @@ describe('Navegación', () => {
     const navigation = await screen.findByRole('navigation', { name: 'Navegación principal' })
     const links = Array.from(navigation.querySelectorAll('a')).map((link) => link.textContent)
 
-    expect(links).toEqual(['Nuevo chat', 'Chats', 'Consulta segura', 'Análisis', 'Auditoría'])
+    expect(links).toEqual(['Nuevo chat', 'Chats', 'Análisis'])
     expect(screen.queryByRole('link', { name: /dashboard/i })).not.toBeInTheDocument()
     expect(screen.queryByRole('link', { name: /panel/i })).not.toBeInTheDocument()
     expect(screen.queryByRole('link', { name: /conversacion/i })).not.toBeInTheDocument()
-  })
-
-  it('navigates from a new chat to the audit context', async () => {
-    renderApp('/', {
-        '/api/v1/interactions': {
-          items: [allowedInteractionResource()],
-          page: { page: 1, page_size: 10, total: 1 },
-        },
-      })
-    const user = userEvent.setup()
-
-    expect(await screen.findByRole('heading', { name: /¿En qué puedo ayudarte/i, level: 1 })).toBeInTheDocument()
-
-    await user.click(screen.getByRole('link', { name: 'Auditoría' }))
-
-    expect(await screen.findByRole('heading', { name: 'Auditoría', level: 1 })).toBeInTheDocument()
   })
 
   it('shows a friendly page for an unknown route', async () => {

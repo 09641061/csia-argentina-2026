@@ -50,6 +50,10 @@ async def initialize_database() -> None:
     from app.iam.infrastructure.persistence.sqlalchemy.models import (  # noqa: F401
         user_account_model,
     )
+    from app.chat.infrastructure.persistence.sqlalchemy.models import (  # noqa: F401
+        conversation_model,
+        message_model,
+    )
 
     async with engine.begin() as connection:
         await connection.run_sync(Base.metadata.create_all)

@@ -2,10 +2,9 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { HttpAnalysisRepository } from '@/contexts/analysis/infrastructure/http-analysis-repository'
 import { HttpChatRepository } from '@/contexts/chat/infrastructure/http-chat-repository'
-import { HttpDecisionRepository } from '@/contexts/decision/infrastructure/http-decision-repository'
 import { HttpAuthRepository } from '@/contexts/iam/infrastructure/http-auth-repository'
 import { getSystemHealth } from '@/shared/infrastructure/api/http-health-service'
-import { allowedInteractionResource, analysisResource, secureQueryResponse } from '@/test/builders'
+import { analysisResource } from '@/test/builders'
 
 afterEach(() => vi.unstubAllGlobals())
 
@@ -33,14 +32,9 @@ describe('Cobertura del contrato REST del backend', () => {
         'GET /api/v1/chat/conversations/1': { id: 1, title: 'Arquitectura DDD', created_at: now, updated_at: now, messages: [{ id: 1, role: 'user', content: 'Hola', created_at: now }] },
         'POST /api/v1/chat/conversations': { conversation_id: 1, answer: 'Respuesta', model_name: 'local', generated_at: now },
         'POST /api/v1/chat/conversations/1/messages': { conversation_id: 1, answer: 'Respuesta', model_name: 'local', generated_at: now },
-        'POST /api/v1/prompts/analyses': analysisResource(),
-        'POST /api/v1/documents/1/analyses': analysisResource({ content_type: 'document', document_id: 1 }),
         'GET /api/v1/analyses': { items: [analysisResource()], page: { page: 1, page_size: 12, total: 1 } },
         'GET /api/v1/analyses/10': analysisResource(),
         'GET /api/v1/analyses/10/findings': { analysis_id: 10, items: [] },
-        'POST /api/v1/secure-queries': secureQueryResponse(allowedInteractionResource()),
-        'GET /api/v1/interactions': { items: [allowedInteractionResource()], page: { page: 1, page_size: 15, total: 1 } },
-        'GET /api/v1/interactions/1': allowedInteractionResource(),
       }
       const body = responses[key]
       return new Response(JSON.stringify(body ?? { detail: `Unmocked ${key}` }), {
@@ -62,16 +56,9 @@ describe('Cobertura del contrato REST del backend', () => {
     await chat.send(1, 'Continúa')
 
     const analysis = new HttpAnalysisRepository()
-    await analysis.analyzePrompt('Revisa esto')
-    await analysis.analyzeDocument(1)
     await analysis.list(1, 12)
     await analysis.findById(10)
     await analysis.listFindings(10)
-
-    const decision = new HttpDecisionRepository()
-    await decision.submit({ prompt: 'Consulta segura', file: null })
-    await decision.list(1, 15)
-    await decision.findById(1)
 
     expect(calls).toEqual(new Set([
       'GET /api/v1/health',
@@ -82,15 +69,9 @@ describe('Cobertura del contrato REST del backend', () => {
       'POST /api/v1/chat/conversations',
       'GET /api/v1/chat/conversations/1',
       'POST /api/v1/chat/conversations/1/messages',
-      'POST /api/v1/prompts/analyses',
-      'POST /api/v1/documents/1/analyses',
       'GET /api/v1/analyses',
       'GET /api/v1/analyses/10',
       'GET /api/v1/analyses/10/findings',
-      'POST /api/v1/secure-queries',
-      'GET /api/v1/interactions',
-      'GET /api/v1/interactions/1',
     ]))
   })
 })
-

@@ -1,4 +1,4 @@
-import { ChevronDown, FileSearch, Menu, MessageCircle, PanelLeftClose, Plus, Search, ShieldCheck } from 'lucide-react'
+import { ChevronDown, FileSearch, Menu, MessageCircle, PanelLeftClose, Plus, Search } from 'lucide-react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 
 import { UserProfileMenu } from '@/contexts/iam/interfaces/user-profile-menu'
@@ -12,7 +12,6 @@ import { useChats } from './chat-context'
 
 const NAVIGATION = [
   { to: '/chats', label: 'Chats', icon: MessageCircle, match: ['/chats', '/chat/'] },
-  { to: '/consulta-segura', label: 'Consulta segura', icon: ShieldCheck, match: ['/consulta-segura'] },
   { to: '/analisis', label: 'Análisis', icon: FileSearch, match: ['/analisis'] },
 ] as const
 
@@ -44,7 +43,6 @@ function SidebarContent({ mobile = false }: { readonly mobile?: boolean }) {
           const link = <Link key={item.to} to={item.to} className={navClass(active)}><item.icon className="size-[19px]" /><span>{item.label}</span></Link>
           return wrap(link, item.to)
         })}
-        {wrap(<Link to="/auditoria" className={navClass(location.pathname.startsWith('/auditoria'))}><ShieldCheck className="size-[19px]" /><span>Auditoría</span></Link>, 'audit')}
       </div>
     </nav>
 
@@ -65,4 +63,3 @@ function SidebarContent({ mobile = false }: { readonly mobile?: boolean }) {
 function navClass(active: boolean): string {
   return cn('flex min-h-10 items-center gap-3 rounded-xl px-2.5 text-[14px] text-[#d6d4cc] no-underline transition hover:bg-white/[0.055] hover:text-white', active && 'bg-black/30 text-white')
 }
-

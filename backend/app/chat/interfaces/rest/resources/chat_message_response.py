@@ -6,6 +6,7 @@ from pydantic import BaseModel, ConfigDict, Field
 class ChatMessageResponse(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
+    conversation_id: int = Field(gt=0, description="Conversation containing the messages")
     answer: str = Field(
         min_length=1,
         description="Assistant response generated for the authorized message",

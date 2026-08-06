@@ -7,9 +7,6 @@ import { AnalysisDetailPage } from '@/contexts/analysis/interfaces/analysis-deta
 import { AnalysisPage } from '@/contexts/analysis/interfaces/analysis-page'
 import { ChatPage } from '@/contexts/chat/interfaces/chat-page'
 import { ChatsPage } from '@/contexts/chat/interfaces/chats-page'
-import { AuditDetailPage } from '@/contexts/decision/interfaces/audit-detail-page'
-import { AuditPage } from '@/contexts/decision/interfaces/audit-page'
-import { SecureQueryPage } from '@/contexts/decision/interfaces/secure-query-page'
 
 import { AppLayout } from './interfaces/app-layout'
 import { NotFoundPage } from './interfaces/not-found-page'
@@ -26,11 +23,8 @@ export function AppRoutes() {
           <Route index element={<ChatPage />} />
           <Route path="chats" element={<ChatsPage />} />
           <Route path="chat/:conversationId" element={<ChatPage />} />
-          <Route path="consulta-segura" element={<SecureQueryPage />} />
           <Route path="analisis" element={<AnalysisPage />} />
           <Route path="analisis/:analysisId" element={<AnalysisDetailPage />} />
-          <Route path="auditoria" element={<AuditPage />} />
-          <Route path="auditoria/:interactionId" element={<AuditDetailPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Route>
