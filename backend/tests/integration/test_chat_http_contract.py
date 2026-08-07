@@ -62,6 +62,28 @@ class FakeConversationService:
         return Conversation(), Result()
 
 
+class FakeConversationDetailService:
+    async def get_conversation(self, **kwargs):
+        del kwargs
+
+        class Conversation:
+            id = 7
+            title = "Foto"
+            created_at = datetime.now(UTC)
+            updated_at = created_at
+
+        class Message:
+            id = 11
+            role = "user"
+            content = "¿Qué es esto?"
+            attachment_url = "https://cdn.example.test/image.jpg"
+            attachment_name = "messi.jpg"
+            attachment_mime_type = "image/jpeg"
+            created_at = datetime.now(UTC)
+
+        return Conversation(), [Message()]
+
+
 @pytest.mark.asyncio
 async def test_create_conversation_http_contract_is_json_and_201() -> None:
     app.dependency_overrides[require_authenticated_user] = lambda: AuthenticatedUser(Username("alice"), account_id=1)
@@ -74,3 +96,20 @@ async def test_create_conversation_http_contract_is_json_and_201() -> None:
 
     assert response.status_code == 201
     assert response.json()["conversation_id"] == 7
+
+
+@pytest.mark.asyncio
+async def test_get_conversation_includes_message_attachment_metadata() -> None:
+    app.dependency_overrides[require_authenticated_user] = lambda: AuthenticatedUser(Username("alice"), account_id=1)
+    app.dependency_overrides[chat_router.get_conversation_service] = lambda: FakeConversationDetailService()
+    try:
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.get("/api/v1/chat/conversations/7")
+    finally:
+        app.dependency_overrides.clear()
+
+    assert response.status_code == 200
+    message = response.json()["messages"][0]
+    assert message["attachment_url"] == "https://cdn.example.test/image.jpg"
+    assert message["attachment_name"] == "messi.jpg"
+    assert message["attachment_mime_type"] == "image/jpeg"

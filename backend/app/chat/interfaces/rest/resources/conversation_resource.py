@@ -18,6 +18,9 @@ class ConversationMessageResource(BaseModel):
     id: int
     role: str
     content: str
+    attachment_url: str | None = None
+    attachment_name: str | None = None
+    attachment_mime_type: str | None = None
     created_at: datetime
 
 
