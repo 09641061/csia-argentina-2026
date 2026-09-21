@@ -1,0 +1,1 @@
+"""Internal Chat application layer."""

@@ -1,0 +1,126 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/geist";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  color-scheme: dark;
+  --radius: 0.75rem;
+  --background: #1b1b1a;
+  --foreground: #f3f1ea;
+  --card: #242422;
+  --card-foreground: #f3f1ea;
+  --popover: #242422;
+  --popover-foreground: #f3f1ea;
+  --primary: #d97757;
+  --primary-foreground: #181817;
+  --secondary: #eceae3;
+  --secondary-foreground: #222220;
+  --muted: #30302d;
+  --muted-foreground: #aaa89f;
+  --accent: #343431;
+  --accent-foreground: #faf9f5;
+  --destructive: #ef8f75;
+  --border: #383835;
+  --input: #454541;
+  --ring: #d97757;
+  --chart-1: #d97757;
+  --chart-2: #a7cfb0;
+  --chart-3: #d6b87b;
+  --chart-4: #9d9bc6;
+  --chart-5: #aaa89f;
+  --sidebar: #151514;
+  --sidebar-foreground: #f3f1ea;
+  --sidebar-primary: #d97757;
+  --sidebar-primary-foreground: #181817;
+  --sidebar-accent: #2a2a28;
+  --sidebar-accent-foreground: #faf9f5;
+  --sidebar-border: #2c2c2a;
+  --sidebar-ring: #d97757;
+}
+
+@theme inline {
+  --font-heading: "Geist Variable", sans-serif;
+  --font-sans: "Geist Variable", sans-serif;
+  --font-serif: Georgia, "Times New Roman", serif;
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    @apply font-sans;
+    background: var(--background);
+  }
+
+  body {
+    @apply min-h-svh bg-background text-foreground antialiased;
+    margin: 0;
+  }
+
+  button,
+  a,
+  label[for] {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60;
+  }
+
+  ::selection {
+    background: rgb(217 119 87 / 32%);
+  }
+}
+
+@layer utilities {
+  .page-heading {
+    @apply font-serif text-3xl font-normal tracking-[-0.025em] text-[#e5e2da] sm:text-4xl;
+  }
+
+  .page-description {
+    @apply mt-2 max-w-2xl text-sm leading-6 text-[#96958d] sm:text-[15px];
+  }
+
+  .claude-panel {
+    @apply rounded-[22px] border border-white/[0.08] bg-[#242422] shadow-[0_18px_55px_rgba(0,0,0,0.2)];
+  }
+}
